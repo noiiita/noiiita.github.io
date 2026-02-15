@@ -11,7 +11,30 @@
     <!-- Icon -->
     <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
 
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
     <!-- Bootstrap icons-->
+    <!-- jQuery (required by nanogallery2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- nanogallery2 CSS & JS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/nanogallery2/3.0.0/css/nanogallery2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nanogallery2/3.0.0/jquery.nanogallery2.min.js"></script>
+
+    <!-- Custom Lightbox CSS -->
+    <style>
+        .lightbox { display: none; position: fixed; z-index: 1500000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); }
+        .lightbox.active { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .lightbox-content { position: relative; max-width: 95%; max-height: 95%; }
+        .lightbox-img { max-width: 100%; max-height: 90vh; object-fit: contain; }
+        .lightbox-close { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; }
+        .lightbox-close:hover { color: #ccc; }
+        .lightbox-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; }
+        .lightbox-nav button { background: rgba(255,255,255,0.3); border: none; color: white; font-size: 30px; cursor: pointer; padding: 10px 15px; }
+        .lightbox-nav button:hover { background: rgba(255,255,255,0.5); }
+        .lightbox-caption { color: white; text-align: center; margin-top: 15px; font-size: 16px; }
+    </style>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
 
     <!-- Google fonts-->
@@ -23,6 +46,11 @@
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;1,400&amp;display=swap"
         rel="stylesheet" />
+    
+    <!-- Misans Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Misans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <!-- Core theme CSS (includes Bootstrap)-->
     <link type="text/css" href="static/css/styles.css" rel="stylesheet" />
@@ -79,7 +107,7 @@
 
 <body id="page-top">
     <!-- Navigation-->
-    <nav class="header navbar navbar-expand-lg navbar-light fixed-top shadow-sm" id="mainNav">
+    <nav class="header navbar navbar-expand-lg navbar-dark fixed-top shadow-sm" id="mainNav">
         <div class="container px-5">
             <a id="page-top-title" class="navbar-brand fw-bold" href="#page-top"></a>
             <!-- <a href="#page-top"><img src="static/assets/img/CUMT_LOGO.svg" style="width: 11rem;"></a> -->
@@ -97,7 +125,7 @@
                         <a class="nav-link me-lg-3" href="#publications">PUBLICATIONS</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link me-lg-3" href="#awards">AWARDS</a>
+                        <a class="nav-link me-lg-3" href="#gallery">GALLERY</a>
                     </li>
 
                 </ul>
@@ -107,11 +135,7 @@
 
     <!-- Top Section -->
     <section class="top-section" style="background-image: url('static/assets/img/background.jpeg');">
-        <div class="top-section-content">
-            <div class="container px-5">
-                <h2 id="top-section-bg-text" class="text-white display-3 lh-1 font-alt"></h2>
-            </div>
-        </div>
+        <h2 id="top-section-bg-text" class="hero-name">RUIHAO LUO</h2>
     </section>
     <!-- Top Section -->
 
@@ -147,18 +171,54 @@
     </section>
     <!-- Publications  -->
 
-    <!-- Awards -->
-    <section class="bg-gradient-primary-to-secondary-light mt5 md5" id="awards">
+    <!-- Gallery -->
+    <section class="bg-gradient-primary-to-secondary-light mt5 md5" id="gallery">
         <div class="container px-5">
             <header>
-                <h2 id="awards-subtitle"><i class="bi bi-award-fill"></i>AWARDS </h2>
+                <h2 id="gallery-subtitle"><i class="bi bi-images"></i>&nbsp;GALLERY</h2>
             </header>
-            <div class="main-body" id="awards-md"></div>
+
+            <!-- Scientific Visualization (Justified photo wall) -->
+            <div class="gallery-section" id="sciviz">
+                <header>
+                    <h3>Scientific Visualization work</h3>
+                </header>
+                <div id="sciviz-gallery"></div>
+            </div>
+
+            <!-- Photography (Railway) -->
+            <div class="gallery-section" id="photography">
+                <header>
+                    <h3>Railway Photo</h3>
+                </header>
+                <div id="railway-gallery" class="pswp-gallery railway-gallery"></div>
+            </div>
+
+            <!-- Plants -->
+            <div class="gallery-section" id="plants">
+                <header>
+                    <h3>Pot Plants</h3>
+                </header>
+                <div id="plants-gallery" class="pswp-gallery plants-gallery"></div>
+            </div>
 
         </div>
     </section>
-    <!-- Awards -->
+    <!-- Gallery -->
 
+
+    <!-- Custom Lightbox Container -->
+    <div id="lightbox" class="lightbox">
+        <div class="lightbox-content">
+            <span class="lightbox-close">&times;</span>
+            <img class="lightbox-img" src="" alt="" />
+            <div class="lightbox-caption"></div>
+        </div>
+        <div class="lightbox-nav">
+            <button id="lightbox-prev" title="Previous">&larr;</button>
+            <button id="lightbox-next" title="Next">&rarr;</button>
+        </div>
+    </div>
 
     <!-- Footer-->
     <footer class="bg-bottom text-center py-5">

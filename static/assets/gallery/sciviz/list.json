@@ -1,0 +1,10 @@
+[
+  { "src": "static/assets/gallery/sciviz/sciviz-01.jpg", "title": "Vis 1" },
+  { "src": "static/assets/gallery/sciviz/sciviz-02.jpg", "title": "Vis 2" },
+  { "src": "static/assets/gallery/sciviz/sciviz-03.jpg", "title": "Vis 3" },
+  { "src": "static/assets/gallery/sciviz/sciviz-04.jpg", "title": "Vis 4" },
+  { "src": "static/assets/gallery/sciviz/sciviz-05.jpg", "title": "Vis 5" },
+  { "src": "static/assets/gallery/sciviz/sciviz-06.jpg", "title": "Vis 6" },
+  { "src": "static/assets/gallery/sciviz/sciviz-07.jpg", "title": "Vis 7" },
+  { "src": "static/assets/gallery/sciviz/sciviz-08.jpg", "title": "Vis 8" }
+]

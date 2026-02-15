@@ -6,8 +6,40 @@
 }
 
 .header {
-    border-bottom: solid 2px var(--bs-blue);
-    z-index: 10000;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    border-bottom: none !important;
+    z-index: 10000 !important;
+    padding: 0.25rem 0 !important;
+    min-height: auto !important;
+}
+
+.header .navbar-brand {
+    display: none;
+}
+
+.header .nav-link {
+    color: #ffffff !important;
+    font-size: 0.75rem;
+    transition: opacity 0.3s ease;
+}
+
+.header .nav-link:hover {
+    opacity: 0.8;
+}
+
+.header .navbar-nav .nav-link {
+    color: #ffffff !important;
+}
+
+.navbar-toggler {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25) !important;
+}
+    border-color: rgba(255, 255, 255, 0.5) !important;
 }
 
 .bg-bottom {
@@ -16,19 +48,15 @@
 
 .top-section {
     position: relative;
-    padding: 10rem 0;
+    width: 100%;
+    height: 100vh;
     background-position: center;
     background-size: cover;
-    height: 25rem;
-}
-
-.top-section h2 {
-    font-weight: 400;
-}
-
-.top-section .top-section-content {
-    position: relative;
-    z-index: 1;
+    background-attachment: fixed;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    overflow: hidden;
 }
 
 .top-section:before {
@@ -38,7 +66,21 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+.top-section .hero-name {
+    position: relative;
+    z-index: 2;
+    font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 600;
+    font-size: 2.5vw;
+    color: #ffffff;
+    margin: 0 0 5rem 5rem;
+    margin-bottom: 5rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+    line-height: 1.1;
 }
 
 section header h2{
@@ -46,6 +88,29 @@ section header h2{
     color: var(--h-title-color);
     font-size: 2.3rem;
     line-height: 4rem;
+}
+
+/* PUBLICATIONS and GALLERY titles - pure black */
+#publications-subtitle,
+#gallery-subtitle {
+    color: #000 !important;
+}
+
+#publications-subtitle i,
+#gallery-subtitle i {
+    color: #000 !important;
+}
+
+section .main-body h4 {
+    font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 600;
+    margin-top: 4rem;
+}
+
+.gallery-section h3 {
+    font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 600;
+    margin-top: 4rem;
 }
 
 section .main-body{
@@ -57,6 +122,15 @@ section .main-body{
 
 .bg-gradient-primary-to-secondary-light {
     background: linear-gradient(45deg, #fcfcfc, #ffffff) !important;
+}
+
+.chinese-name {
+    font-family: "STZhongsong", "华文中宋", sans-serif;
+    font-weight: 400;
+}
+
+#home-subtitle {
+    color: #000000 !important;
 }
 
 .bg-gradient-primary-to-secondary-gray {
@@ -103,10 +177,110 @@ section .main-body{
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
 }
 
+/* Avatar initial hidden state and transition for scroll-up reveal */
+#avatar {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+}
 @media screen and (max-width: 991px) {
     #avatar {
         margin: 0;
     }
+}
+
+/* Social media icons */
+.main-body a i {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.main-body a:hover i {
+    transform: scale(1.2);
+    opacity: 0.8;
+}
+
+/* Footer styling - light black text */
+footer .text-white-50 {
+    color: #555 !important;
+}
+
+footer .text-white-50 a {
+    color: #555 !important;
+}
+
+footer .text-white-50 a:hover {
+    color: #333 !important;
+    text-decoration: underline;
+}
+
+/* Gallery styles: rounded corners, black border */
+#sciviz-gallery .nGY2-thumbnail {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 3px solid #000 !important;
+}
+
+#sciviz-gallery .nGY2-img {
+    border-radius: 12px;
+}
+
+/* Hide all thumbnail labels/titles by default */
+#sciviz-gallery .nGY2-label {
+    display: none !important;
+}
+
+/* PhotoSwipe gallery styles */
+.pswp-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 20px 0;
+    width: 100%;
+}
+
+.pswp-image {
+    display: inline-block !important;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 3px solid #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #f0f0f0;
+}
+
+.pswp-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.pswp-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Railway gallery: responsive sizing to fill width properly */
+#railway-gallery .pswp-image {
+    flex: 1 1 calc(33.333% - 12px);
+    max-width: calc(33.333% - 12px);
+    aspect-ratio: 4 / 3;
+    height: auto;
+}
+
+/* Plants gallery: 180x180px thumbnails */
+#plants-gallery .pswp-image {
+    width: 180px;
+    height: 180px;
+    flex-shrink: 0;
+}
+
+/* PhotoSwipe default styling */
+/* No longer needed - using custom lightbox instead */
+
+/* Pagination navigation: styled via JavaScript */
+#sciviz-gallery .nGY2-navigationPrev,
+#sciviz-gallery .nGY2-navigationNext {
+    display: none !important;
 }
 
 
