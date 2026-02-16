@@ -267,6 +267,12 @@ footer .text-white-50 a:hover {
     height: auto;
 }
 
+/* Railway gallery: featured images (4x size) */
+#railway-gallery .pswp-image.featured {
+    flex: 2 1 calc(66.666% - 12px);
+    max-width: calc(66.666% - 12px);
+}
+
 /* Plants gallery: 180x180px thumbnails */
 #plants-gallery .pswp-image {
     width: 180px;

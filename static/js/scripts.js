@@ -244,6 +244,12 @@ window.addEventListener('DOMContentLoaded', event => {
                 items.forEach((item, idx) => {
                     const a = document.createElement('a');
                     a.className = 'pswp-image';
+                    
+                    // Add featured class if item has featured flag
+                    if (item.featured) {
+                        a.classList.add('featured');
+                    }
+                    
                     a.style.display = 'inline-block';
                     a.style.overflow = 'hidden';
                     a.style.borderRadius = '8px';
