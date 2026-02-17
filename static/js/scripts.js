@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', event => {
     if (mainNav) {
         new bootstrap.ScrollSpy(document.body, {
             target: '#mainNav',
-            offset: 74,
+            offset: 100,
         });
     };
 
@@ -268,7 +268,23 @@ window.addEventListener('DOMContentLoaded', event => {
                     img.style.width = '100%';
                     img.style.height = '100%';
                     
+                    // Create caption element for hover effect
+                    if (item.title) {
+                        const caption = document.createElement('div');
+                        caption.className = 'gallery-caption';
+                        caption.textContent = item.title;
+                        a.appendChild(caption);
+                    }
+                    
                     a.appendChild(img);
+                    
+                    // Create caption element for hover effect
+                    if (item.title) {
+                        const caption = document.createElement('div');
+                        caption.className = 'gallery-caption';
+                        caption.textContent = item.title;
+                        a.appendChild(caption);
+                    }
                     
                     // Click handler
                     a.addEventListener('click', (e) => {
@@ -286,5 +302,51 @@ window.addEventListener('DOMContentLoaded', event => {
     // Load galleries
     initGallery('railway-gallery', 'static/assets/gallery/railway/list.json');
     initGallery('plants-gallery', 'static/assets/gallery/plants/list.json');
+
+    // Fade-in effect on scroll for gallery sections
+    const fadeOnScrollElements = document.querySelectorAll('.fade-on-scroll');
+    const earlyTriggerElements = document.querySelectorAll('.early-trigger');
+    
+    // Standard observer options
+    const standardObserverOptions = {
+        threshold: 0.0, // Trigger as soon as any part of the element is visible
+        rootMargin: '200px 0px -100px 0px' // Trigger much earlier: 200px before element enters viewport
+    };
+    
+    // Early trigger observer options (trigger even earlier)
+    const earlyObserverOptions = {
+        threshold: 0.0, // Trigger as soon as any part of the element is visible
+        rootMargin: '300px 0px -100px 0px' // Trigger even earlier: 300px before element enters viewport
+    };
+    
+    const standardObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            } else {
+                entry.target.classList.remove('visible');
+            }
+        });
+    }, standardObserverOptions);
+    
+    const earlyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            } else {
+                entry.target.classList.remove('visible');
+            }
+        });
+    }, earlyObserverOptions);
+    
+    fadeOnScrollElements.forEach(element => {
+        if (!element.classList.contains('early-trigger')) {
+            standardObserver.observe(element);
+        }
+    });
+    
+    earlyTriggerElements.forEach(element => {
+        earlyObserver.observe(element);
+    });
 
 }); 
