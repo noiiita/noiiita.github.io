@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', event => {
     if (mainNav) {
         new bootstrap.ScrollSpy(document.body, {
             target: '#mainNav',
-            offset: 100,
+            offset: 200,
         });
     };
 
@@ -35,6 +35,17 @@ window.addEventListener('DOMContentLoaded', event => {
             heroName.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none';
         });
     }
+
+    // Dynamic navbar style change on scroll
+    const scrollThreshold = 600; // pixels to scroll before changing style
+    
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > scrollThreshold) {
+            mainNav.classList.add('scrolled');
+        } else {
+            mainNav.classList.remove('scrolled');
+        }
+    });
 
     // Avatar reveal: slide up and fade in as user scrolls down (reversible)
     const avatar = document.getElementById('avatar');
