@@ -23,12 +23,40 @@
 
     <!-- Custom Lightbox CSS -->
     <style>
-        .lightbox { display: none; position: fixed; z-index: 1500000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); }
+       .lightbox { 
+        display: none; 
+        position: fixed; 
+        z-index: 1500000; 
+        left: 0; 
+        top: 0; 
+        width: 100%; 
+        height: 100%; 
+        
+        /* 1. 降低背景黑色的浓度，改为 0.65 (原为0.95)，这样背后的网页才能透过来 */
+        background: rgba(0, 0, 0, 0.8); 
+        
+        /* 2. 加上强力的毛玻璃模糊效果 */
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px); /* 兼容苹果设备 */
+    }
         .lightbox.active { display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .lightbox-content { position: relative; max-width: 95%; max-height: 95%; }
         .lightbox-img { max-width: 100%; max-height: 90vh; object-fit: contain; }
-        .lightbox-close { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; }
-        .lightbox-close:hover { color: #ccc; }
+        .lightbox-close { 
+                position: fixed; /* 关键：改为 fixed，使其相对于屏幕右上角定位，脱离图片区域 */
+                top: 20px; 
+                right: 40px; /* 翻页按钮外边距大约是30多像素，设置为40px刚好和右侧翻页按钮中心对齐 */
+                font-size: 45px; 
+                color: white; 
+                cursor: pointer; 
+                z-index: 10; /* 确保它不会被其他元素遮挡 */
+                line-height: 1;
+                transition: all 0.3s ease;
+            }
+        .lightbox-close:hover { 
+            color: #ff4d4d; /* 悬停时变成淡红色（你也可以保留原来的 #ccc 灰色） */
+            transform: scale(1.1) translateY(-2px); /* 悬停时稍微放大并微微上浮，和翻页按钮的交互感保持一致 */
+            }
         .lightbox-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; }
         .lightbox-nav button { background: rgba(255,255,255,0.3); border: none; color: white; font-size: 30px; cursor: pointer; padding: 10px 15px; }
         .lightbox-nav button:hover { background: rgba(255,255,255,0.5); }
@@ -205,7 +233,7 @@
                 <div class="railway-quote-container">
                     <div class="railway-quote-text">
                         <p>列车象惊马一般奔驰在平坦的原野上。</p>
-                        <p>车箱两边的窗口，不断飘飞出纸屑、食品袋、空汽车水瓶和废啤酒罐。</p>
+                        <p>车箱两边的窗口，不断飘飞出纸屑、食品袋、空汽水瓶和废啤酒罐。</p>
                         <p>车箱内，头顶的电风扇嗡嗡地作着三百六十度旋转，把凉风均匀地送到各个座位。</p>
                         <p>男女旅客都光膀子裸腿，吃着、喝着、赏心悦目地了望着盛夏丰茂碧绿的田野。</p>
                         <p class="quote-attribution">——路遥 《平凡的世界》 第三部 第19章</p>
@@ -239,8 +267,8 @@
             <div class="lightbox-caption"></div>
         </div>
         <div class="lightbox-nav">
-            <button id="lightbox-prev" title="Previous">&larr;</button>
-            <button id="lightbox-next" title="Next">&rarr;</button>
+            <button id="lightbox-prev" title="Previous">&lt;</button>
+            <button id="lightbox-next" title="Next">&gt;</button>
         </div>
     </div>
 

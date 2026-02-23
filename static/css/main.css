@@ -23,13 +23,14 @@
 
 .header.scrolled .nav-link,
 .header.scrolled .navbar-nav .nav-link {
-    background-color: white !important;
+    background-color: rgba(255, 255, 255, 0.542) !important;
     color: black !important;
     border: 1px solid #ccc !important;
     border-radius: 20px !important;
     padding: 0.5rem 1rem !important;
-    margin: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+    margin: 0.2rem 0.25rem !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(5px) !important;
     transition: all 0.3s ease;
 }
 
@@ -80,11 +81,107 @@
 .navbar-toggler {
     color: #000000 !important;
     border-color: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(5px) !important;
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    border-width: 1px !important;
 }
 
 .navbar-toggler:focus {
     box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25) !important;
     border-color: rgba(0, 0, 0, 0.5) !important;
+    border-width: 1px !important;
+}
+
+/* Navbar collapse animation for mobile - with smooth fade animations */
+.navbar-collapse {
+    transition: all 0.3s ease;
+}
+
+/* 仅在手机端 (小于 992px) 执行隐藏和展开动画 */
+@media screen and (max-width: 991px) {
+    /* Initial state for nav links - hidden */
+    .navbar-collapse .nav-link {
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+    }
+
+    /* Visible state for nav links - shown */
+    .navbar-collapse.show .nav-link {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 强制电脑端 (大于 992px) 始终完全显示，解决自动隐藏的 Bug */
+@media screen and (min-width: 992px) {
+    .navbar-collapse .nav-link {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+        visibility: visible !important;
+    }
+}
+
+/* =========================================
+   导航栏按钮的高级悬停 (Hover) 动画效果
+   ========================================= */
+
+/* 仅在电脑端（大于992px）添加悬停动画，防止手机端点击后动画卡住 */
+@media screen and (min-width: 992px) {
+    
+    /* 1. 覆盖原本代码中“只是文字变暗 (opacity: 0.8)”的旧效果 */
+    .header .nav-link:hover {
+        opacity: 1 !important; 
+    }
+
+    /* 2. 页面处于顶部（未滚动/透明状态）时：
+       悬停时增加一点半透明白底、缩小 95%、向上平移 5px */
+    .header:not(.scrolled) .nav-link:hover,
+    .header:not(.scrolled) .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.25) !important;
+        border-radius: 20px !important; /* 保持跟滚动后相同的圆角药丸形状 */
+        transform: translateY(-5px) scale(0.95) !important;
+    }
+
+    /* 3. 页面往下滚动后（白色半透明胶囊状态）时：
+       背景白色透明度减小(变实)、缩小 95%、向上平移 5px、加深阴影 */
+    .header.scrolled .nav-link:hover,
+    .header.scrolled .navbar-nav .nav-link:hover {
+        /* 原本是 0.542，现在悬停变成 0.92（透明度减小，颜色更偏实心白） */
+        background-color: rgba(255, 255, 255, 0.7) !important;
+        
+        /* 向上移动 5px，同时体积缩小到 95% */
+        transform: translateY(-3px) scale(0.95) !important;
+        
+        /* 额外添加类似 Lightbox 按钮的底层阴影，配合上移效果，产生极强的“悬浮”立体感 */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+        
+        /* 保证文字颜色仍然清晰 */
+        color: black !important;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
 }
 
 .bg-bottom {
@@ -120,11 +217,11 @@
     z-index: 2;
     font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-weight: 500;
-    font-size: 5vw;
-    color: #ffffffbb;
+    font-size: 30px;
+    color: #ffffffd8;
     margin: 0 0 5rem 5rem;
-    margin-bottom: 5rem;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+    margin-bottom: 10rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.025);
     line-height: 1.1;
     letter-spacing: 0.1em;
 }
@@ -480,6 +577,9 @@ footer .text-white-50 a:hover {
     opacity: 0;
     transform: translateY(100%);
     transition: all 0.5s ease;
+      /* 2. 核心：添加背景模糊（毛玻璃效果） */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px); /* 兼容 Safari 浏览器 */
 }
 
 .pswp-image:hover .gallery-caption {
@@ -527,4 +627,27 @@ footer .text-white-50 a:hover {
     font-weight: bold;
 }
 
+/* Lightbox navigation buttons - matching navbar style */
+.lightbox-nav button {
+    background-color: rgba(255, 255, 255, 0.222) !important;
+    color: white !important;
+    border: 1px solid #ccc !important;
+    border-radius: 25px !important;
+    padding: 0rem 1rem !important;
+    margin: 0 0.25rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(5px) !important;
+    transition: all 0.3s ease;
+    font-size: 1.5rem !important;
+    font-weight: normal !important;
+}
 
+.lightbox-nav button:hover {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+.lightbox-nav button:active {
+    transform: translateY(0);
+}

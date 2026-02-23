@@ -1,5 +1,3 @@
-
-
 const content_dir = 'contents/'
 const config_file = 'config.yml'
 const section_names = ['home', 'publications', 'gallery']
@@ -79,11 +77,11 @@ window.addEventListener('DOMContentLoaded', event => {
                 // items should be an array of {src: '...', srct: '...', title: '...'}
                 jQuery('#sciviz-gallery').nanogallery2({
                     items: items,
-                    // Justified layout with 2 rows per page
+                    // Justified layout showing all images in scroll mode
                     thumbnailHeight: '280',
                     thumbnailWidth: 'auto',
-                    galleryDisplayMode: 'pagination',
-                    galleryMaxRows: 2,
+                    galleryDisplayMode: 'scroll',
+                    galleryMaxRows: 0, // No limit on rows
                     gallerySorting: 'random',
                     thumbnailAlignment: 'fillWidth',
                     thumbnailL1GutterWidth: 20,
@@ -101,6 +99,14 @@ window.addEventListener('DOMContentLoaded', event => {
                     thumbnailDisplayInterval: 200,
                     thumbnailDisplayOrder: 'rowByRow',
 
+                    // Hide pagination controls
+                    viewerTools: {
+                        topLeft: '',
+                        topRight: '',
+                        bottomLeft: '',
+                        bottomRight: ''
+                    },
+
                     // Hover: show toolbar only (no label)
                     thumbnailHoverEffect2: 'toolsSlideUp',
                     touchAnimation: true,
@@ -109,7 +115,7 @@ window.addEventListener('DOMContentLoaded', event => {
                     // Theme: no borders, clean look
                     galleryTheme : {
                         thumbnail: { titleShadow : 'none', descriptionShadow : 'none', borderColor: 'transparent' },
-                        navigationPagination :  { background: 'transparent', color: '#fff', colorHover: '#aaa', borderRadius: '4px' }
+                        navigationPagination :  { display: false } // Hide pagination controls
                     },
 
                     // popup info callback (empty title/content)
@@ -124,19 +130,103 @@ window.addEventListener('DOMContentLoaded', event => {
             .catch(err => console.log('No sciviz list found', err));
     }
 
+    // Auto-collapse navbar after 3 seconds on mobile - with smooth animations
+    let navbarAutoCollapseTimer = null;
+    let isAnimating = false;
+    
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('#navbarResponsive');
+    
+    if (navbarToggler && navbarCollapse) {
+        // Handle navbar toggle button click
+        navbarToggler.addEventListener('click', function() {
+            // Prevent multiple rapid clicks
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            
+            // Clear any existing timer
+            if (navbarAutoCollapseTimer) {
+                clearTimeout(navbarAutoCollapseTimer);
+                navbarAutoCollapseTimer = null;
+            }
+            
+            const isExpanded = navbarCollapse.classList.contains('show');
+            
+            if (!isExpanded) {
+                // Navbar is being opened - set auto-collapse timer
+                // Use setTimeout to ensure CSS transition has time to trigger
+                setTimeout(() => {
+                    navbarAutoCollapseTimer = setTimeout(function() {
+                        if (navbarCollapse.classList.contains('show') && !isAnimating) {
+                            collapseNavbar();
+                        }
+                    }, 3000);
+                }, 100);
+            }
+            
+            // Reset animation flag after transition
+            setTimeout(() => {
+                isAnimating = false;
+            }, 350);
+        });
+        
+        // Function to collapse navbar with animation
+        function collapseNavbar() {
+            if (isAnimating) return;
+            isAnimating = true;
+            
+            const navLinks = navbarCollapse.querySelectorAll('.nav-link');
+            
+            // Apply fade out animation to all links
+            navLinks.forEach((link, index) => {
+                setTimeout(() => {
+                    link.style.animation = 'fadeOut 0.2s ease forwards';
+                }, index * 30); // Faster staggered animation
+            });
+            
+            // Collapse after animations complete
+            setTimeout(() => {
+                navbarToggler.click(); // Trigger Bootstrap collapse
+                isAnimating = false;
+                
+                // Clear animation styles after collapse
+                setTimeout(() => {
+                    navLinks.forEach(link => {
+                        link.style.animation = '';
+                    });
+                }, 300);
+            }, 250);
+        }
+        
+        // Handle individual nav link clicks
+        const navLinks = navbarCollapse.querySelectorAll('.nav-link');
+        //navLinks.forEach(link => {
+        //    link.addEventListener('click', function() {
+        //        if (window.getComputedStyle(navbarToggler).display !== 'none') {
+         //           collapseNavbar();
+         //       }
+         //   });
+        
+    }
+
     // Collapse responsive navbar when toggler is visible
-    const navbarToggler = document.body.querySelector('.navbar-toggler');
     const responsiveNavItems = [].slice.call(
         document.querySelectorAll('#navbarResponsive .nav-link')
     );
     responsiveNavItems.map(function (responsiveNavItem) {
         responsiveNavItem.addEventListener('click', () => {
             if (window.getComputedStyle(navbarToggler).display !== 'none') {
-                navbarToggler.click();
+                // Add fade out animation
+                //responsiveNavItem.style.animation = 'fadeOut 0.3s ease forwards';
+                
+                // Collapse navbar after short delay
+                setTimeout(() => {
+                    navbarToggler.click();
+                }, 200);
             }
         });
     });
-
 
     // Yaml
     fetch(content_dir + config_file)
