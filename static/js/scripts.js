@@ -63,73 +63,6 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     }
 
-    // Initialize nanogallery2 for Scientific Visualization
-    const scivizContainer = document.getElementById('sciviz-gallery');
-    if (scivizContainer && window.jQuery && window.jQuery.fn && !window.jQuery.fn.nanogallery2) {
-        // nanogallery2 not loaded or jQuery not available
-        console.warn('nanogallery2 or jQuery not available');
-    }
-    if (scivizContainer && window.jQuery && window.jQuery.fn && window.jQuery.fn.nanogallery2) {
-        // Try to load a local list.json describing images
-        fetch('static/assets/gallery/sciviz/list.json')
-            .then(r => r.json())
-            .then(items => {
-                // items should be an array of {src: '...', srct: '...', title: '...'}
-                jQuery('#sciviz-gallery').nanogallery2({
-                    items: items,
-                    // Justified layout showing all images in scroll mode
-                    thumbnailHeight: '280',
-                    thumbnailWidth: 'auto',
-                    galleryDisplayMode: 'scroll',
-                    galleryMaxRows: 0, // No limit on rows
-                    gallerySorting: 'random',
-                    thumbnailAlignment: 'fillWidth',
-                    thumbnailL1GutterWidth: 20,
-                    thumbnailL1GutterHeight: 20,
-                    thumbnailBorderHorizontal: 0,
-                    thumbnailBorderVertical: 0,
-
-                    // Hide all labels/titles, keep toolbar only
-                    thumbnailL1Label: { display: false },
-                    thumbnailToolbarImage :  { topLeft: '', bottomRight : 'display,download,info' },
-
-                    // Display animation
-                    thumbnailDisplayTransition: 'flipUp',
-                    thumbnailDisplayTransitionDuration: 400,
-                    thumbnailDisplayInterval: 200,
-                    thumbnailDisplayOrder: 'rowByRow',
-
-                    // Hide pagination controls
-                    viewerTools: {
-                        topLeft: '',
-                        topRight: '',
-                        bottomLeft: '',
-                        bottomRight: ''
-                    },
-
-                    // Hover: show toolbar only (no label)
-                    thumbnailHoverEffect2: 'toolsSlideUp',
-                    touchAnimation: true,
-                    touchAutoOpenDelay: -1,
-
-                    // Theme: no borders, clean look
-                    galleryTheme : {
-                        thumbnail: { titleShadow : 'none', descriptionShadow : 'none', borderColor: 'transparent' },
-                        navigationPagination :  { display: false } // Hide pagination controls
-                    },
-
-                    // popup info callback (empty title/content)
-                    fnPopupMediaInfo: function(item, title, content){
-                        return {title: '', content: ''};
-                    },
-
-                    // Deep linking disabled
-                    locationHash: false
-                });
-            })
-            .catch(err => console.log('No sciviz list found', err));
-    }
-
     // Auto-collapse navbar after 3 seconds on mobile - with smooth animations
     let navbarAutoCollapseTimer = null;
     let isAnimating = false;
@@ -326,23 +259,79 @@ window.addEventListener('DOMContentLoaded', event => {
     // Initialize lightbox
     lightbox.init();
 
-    // Initialize galleries for Railway and Plants
-    const initGallery = (galleryId, jsonFile) => {
+    // Initialize galleries for Railway, Plants, and Sciviz
+    const initGallery = (galleryId, jsonFile, options = {}) => {
         const galleryEl = document.getElementById(galleryId);
         if (!galleryEl) {
             console.log(`Gallery element not found: ${galleryId}`);
             return;
         }
 
-        // Only apply fixed width for Plants gallery
         const isPlants = galleryId === 'plants-gallery';
+        const isSciviz = galleryId === 'sciviz-gallery';
         const imgWidth = isPlants ? '180px' : 'auto';
         const imgHeight = isPlants ? '180px' : 'auto';
 
         fetch(jsonFile)
             .then(r => r.json())
             .then(items => {
-                items.forEach((item, idx) => {
+                let sortedItems = [...items];
+                let firstItem = null;
+                
+                // For sciviz: sciviz-01.jpg always first, others random
+                if (isSciviz) {
+                    firstItem = items.find(item => item.src && item.src.includes('sciviz-01.jpg'));
+                    const otherItems = items.filter(item => !(item.src && item.src.includes('sciviz-01.jpg')));
+                    // Shuffle other items randomly
+                    for (let i = otherItems.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [otherItems[i], otherItems[j]] = [otherItems[j], otherItems[i]];
+                    }
+                    sortedItems = firstItem ? [firstItem, ...otherItems] : otherItems;
+                    
+                    // Create first image container separately (outside masonry)
+                    if (firstItem) {
+                        const firstContainer = document.getElementById('sciviz-first-image');
+                        if (firstContainer) {
+                            const a = document.createElement('a');
+                            a.className = 'pswp-image sciviz-first-item';
+                            a.style.display = 'block';
+                            a.style.width = '100%';
+                            a.style.borderRadius = '12px';
+                            a.style.overflow = 'hidden';
+                            a.style.cursor = 'pointer';
+                            a.style.marginBottom = '20px';
+                            
+                            const img = document.createElement('img');
+                            img.src = firstItem.src;
+                            img.alt = firstItem.title || '';
+                            img.style.width = '100%';
+                            img.style.height = 'auto';
+                            img.style.display = 'block';
+                            
+                            a.appendChild(img);
+                            
+                            if (firstItem.title) {
+                                const caption = document.createElement('div');
+                                caption.className = 'gallery-caption';
+                                caption.textContent = firstItem.title;
+                                a.appendChild(caption);
+                            }
+                            
+                            a.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                lightbox.open(sortedItems, 0);
+                            });
+                            
+                            firstContainer.appendChild(a);
+                        }
+                    }
+                }
+
+                sortedItems.forEach((item, idx) => {
+                    // Skip first item for sciviz (already rendered above)
+                    if (isSciviz && idx === 0) return;
+                    
                     const a = document.createElement('a');
                     a.className = 'pswp-image';
                     
@@ -365,17 +354,9 @@ window.addEventListener('DOMContentLoaded', event => {
                     const img = document.createElement('img');
                     img.src = item.src;
                     img.alt = item.title || '';
-                    img.style.objectFit = 'cover';
+                    img.style.objectFit = isSciviz ? 'contain' : 'cover';
                     img.style.width = '100%';
-                    img.style.height = '100%';
-                    
-                    // Create caption element for hover effect
-                    if (item.title) {
-                        const caption = document.createElement('div');
-                        caption.className = 'gallery-caption';
-                        caption.textContent = item.title;
-                        a.appendChild(caption);
-                    }
+                    img.style.height = isSciviz ? 'auto' : '100%';
                     
                     a.appendChild(img);
                     
@@ -387,20 +368,21 @@ window.addEventListener('DOMContentLoaded', event => {
                         a.appendChild(caption);
                     }
                     
-                    // Click handler
+                    // Click handler - adjust index for sciviz
                     a.addEventListener('click', (e) => {
                         e.preventDefault();
-                        lightbox.open(items, idx);
+                        lightbox.open(sortedItems, idx);
                     });
                     
                     galleryEl.appendChild(a);
                 });
-                console.log(`Loaded ${items.length} images for ${galleryId}`);
+                console.log(`Loaded ${sortedItems.length} images for ${galleryId}`);
             })
             .catch(err => console.error(`Error loading gallery ${galleryId}:`, err));
     };
 
     // Load galleries
+    initGallery('sciviz-gallery', 'static/assets/gallery/sciviz/list.json');
     initGallery('railway-gallery', 'static/assets/gallery/railway/list.json');
     initGallery('plants-gallery', 'static/assets/gallery/plants/list.json');
 

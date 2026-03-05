@@ -15,11 +15,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
     <!-- Bootstrap icons-->
-    <!-- jQuery (required by nanogallery2) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- nanogallery2 CSS & JS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/nanogallery2/3.0.0/css/nanogallery2.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/nanogallery2/3.0.0/jquery.nanogallery2.min.js"></script>
 
     <!-- Custom Lightbox CSS -->
     <style>
@@ -47,18 +42,18 @@
                 top: 20px; 
                 right: 40px; /* 翻页按钮外边距大约是30多像素，设置为40px刚好和右侧翻页按钮中心对齐 */
                 font-size: 45px; 
-                color: white; 
+                color: #ff9999; /* 初始颜色改为浅红色 */
                 cursor: pointer; 
                 z-index: 10; /* 确保它不会被其他元素遮挡 */
                 line-height: 1;
                 transition: all 0.3s ease;
             }
         .lightbox-close:hover { 
-            color: #ff4d4d; /* 悬停时变成淡红色（你也可以保留原来的 #ccc 灰色） */
+            color: #ff4d4d; /* 悬停时变成更深的红色 */
             transform: scale(1.1) translateY(-2px); /* 悬停时稍微放大并微微上浮，和翻页按钮的交互感保持一致 */
             }
         .lightbox-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; }
-        .lightbox-nav button { background: rgba(255,255,255,0.3); border: none; color: white; font-size: 30px; cursor: pointer; padding: 10px 15px; }
+        .lightbox-nav button { background: rgba(255,255,255,0.3); border: none; color: #000000; font-size: 30px; cursor: pointer; padding: 10px 15px; }
         .lightbox-nav button:hover { background: rgba(255,255,255,0.5); }
         .lightbox-caption { color: white; text-align: center; margin-top: 15px; font-size: 16px; }
     </style>
@@ -83,6 +78,7 @@
     <!-- Core theme CSS (includes Bootstrap)-->
     <link type="text/css" href="static/css/styles.css" rel="stylesheet" />
     <link type="text/css" href="static/css/main.css" rel="stylesheet" />
+    <link type="text/css" href="static/css/k8525.css" rel="stylesheet" />
 
     <!-- Bootstrap core JS-->
     <script type="text/javascript" src="static/js/bootstrap.bundle.min.js"></script>
@@ -129,6 +125,7 @@
     
     <!-- Core JS-->
     <script type="text/javascript" src="static/js/scripts.js"></script>
+    <script type="text/javascript" src="static/js/k8525.js"></script>
     <script type="text/javascript" src="static/js/js-yaml.min.js"></script>
 
 </head>
@@ -211,15 +208,17 @@
                 <h2 id="gallery-subtitle"><i class="bi bi-images"></i>&nbsp;GALLERY</h2>
             </header>
 
-            <!-- Scientific Visualization (Justified photo wall) -->
+            <!-- Scientific Visualization -->
             <div class="gallery-section" id="sciviz">
                 <header>
                     <h3>Scientific Visualization Work</h3>
                 </header>
-                <div id="sciviz-gallery"></div>
+                <div id="sciviz-first-image"></div>
+                <div id="sciviz-gallery" class="pswp-gallery sciviz-gallery"></div>
                 <div class="sciviz-note">
-                    <p>推荐使用开源三维图形软件<a href="https://www.blender.org/" target="_blank">Blender</a>来完成建模和渲染 😚 I recommend using the open-source 3D graphics software <a href="https://www.chemblender.com/" target="_blank">Blender</a> for modeling and rendering.（<a href="https://www.blender.org/" target="_blank">🔗ChemBlender</a>，<a href="https://space.bilibili.com/1095345213" target="_blank">🔗Blender科研绘图-bilibili</a>）</p>
-                      </div>
+                    <p>推荐使用开源三维图形软件<a href="https://www.blender.org/" target="_blank">Blender</a>来完成建模和渲染 😚 </p>
+                    <p>I recommend using the open-source 3D graphics software <a href="https://www.chemblender.com/" target="_blank">Blender</a> for modeling and rendering.</p><a href="https://www.blender.org/" target="_blank">🔗ChemBlender</a>，<a href="https://space.bilibili.com/1095345213" target="_blank">🔗Blender科研绘图-bilibili</a></p>
+                </div>
             </div>
 
             <!-- Photography (Railway) -->
@@ -238,11 +237,129 @@
                         <p>男女旅客都光膀子裸腿，吃着、喝着、赏心悦目地了望着盛夏丰茂碧绿的田野。</p>
                         <p class="quote-attribution">——路遥 《平凡的世界》 第三部 第19章</p>
                     </div>
-                    <div class="railway-quote-image">
-                        <img src="static/assets/gallery/railway/cover.jpg" alt="铁路风景" class="quote-cover-image">
-                        <p class="quote-image-description">K8525 合肥—芜湖</p>
+                    <div class="railway-quote-image" id="k8525-entrance">
+                        <div class="k8525-image-wrapper">
+                            <img src="static/assets/gallery/railway/cover.jpg" alt="铁路风景" class="quote-cover-image">
+                            <div class="k8525-entrance-overlay">
+                                <span class="k8525-entrance-text">👆了解K8525次列车</span>
+                            </div>
+                        </div>
+                        <p class="quote-image-description">K8525 合肥—芜湖 Hefei-Wuhu</p>
                     </div>
                 </div>
+                
+                <!-- K8525 Photo Essay (Hidden by default) -->
+                <div id="k8525-photo-essay" class="k8525-photo-essay">
+                    <div class="k8525-essay-content">
+                        <div class="k8525-slide" data-image="static/assets/gallery/railway/K8525/K8525_0.jpg">
+                            <div class="k8525-slide-image"></div>
+                            <div class="k8525-slide-content">
+                                <div class="k8525-slide-text">
+                                    <h4>前身</h4>
+                                    <p>2018年末 安徽省中南部的庐铜铁路开通运营 为单线非电气化铁路</p>
+                                    <p>2019年3月 合肥-无为南K8591/8592次列车上线</p>
+                                    <p>同年4月 路线延长至芜湖 开行两对 车次号K8521/K8525</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="k8525-slide" data-image="static/assets/gallery/railway/K8525/K8525_1.jpg">
+                            <div class="k8525-slide-image"></div>
+                            <div class="k8525-slide-content">
+                                <div class="k8525-slide-text">
+                                    <h4>唯一的真绿皮</h4>
+                                    <p>2019年5月这两对列车调换为25B非空调车厢</p>
+                                    <p>这是很多中国人记忆中的绿皮车</p>
+                                    <p>而今华东地区仅此一对</p>
+                                    <p>代号 庐铜小绿皮</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="k8525-slide" data-image="static/assets/gallery/railway/K8525/K8525_2.jpg">
+                            <div class="k8525-slide-image"></div>
+                            <div class="k8525-slide-content">
+                                <div class="k8525-slide-text">
+                                    <h4>铁协</h4>
+                                    <p>2019年9月科大铁协群友组织运转</p>
+                                    <p>有两位老师 三个本科生</p>
+                                    <p>这是我第二次体验庐铜小绿皮</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="k8525-slide" data-image="static/assets/gallery/railway/K8525/K8525_3.jpg">
+                            <div class="k8525-slide-image"></div>
+                            <div class="k8525-slide-content">
+                                <div class="k8525-slide-text">
+                                    <h4>空旷</h4>
+                                    <p>这趟车绕路 绝非往返合芜的最佳选择</p>
+                                    <p>乘客大多是沿线庐江、无为等地的居民</p>
+                                    <p>以及我们这些铁路爱好者</p>
+                                    <p>这是我见过最空旷的车厢</p>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="k8525-slide" data-image="static/assets/gallery/railway/K8525/K8525_4.jpg">
+                            <div class="k8525-slide-image"></div>
+                            <div class="k8525-slide-content">
+                                <div class="k8525-slide-text">
+                                    <h4>合客</h4>
+                                    <p>在过去某个时刻这节车厢满载着漂泊的人</p>
+                                    <p>正驶向千里之外的终点站</p>
+                                    <p>上一个坐在这里的人 他要去哪里</p>
+                                    <p>只有面前这个果渣盘知道</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="k8525-slide" data-image="static/assets/gallery/railway/K8525/K8525_5.jpg">
+                            <div class="k8525-slide-image"></div>
+                            <div class="k8525-slide-content">
+                                <div class="k8525-slide-text">
+                                    <h4>YZ 25B</h4>
+                                    <p>1993年冬天 这一型号客车在T59/60首次运用</p>
+                                    <p>车内有燃煤供暖</p>
+                                    <p>要是在炎炎夏日</p>
+                                    <p>就不得不开窗吹风</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="k8525-slide" data-image="static/assets/gallery/railway/K8525/K8525_6.jpg">
+                            <div class="k8525-slide-image"></div>
+                            <div class="k8525-slide-content">
+                                <div class="k8525-slide-text">
+                                    <h4>窗外</h4>
+                                    <p>吹进来的风里有拖拉机的味道</p>
+                                    <p>实际上是内燃机车的尾气</p>
+                                    <p>把手伸出去</p>
+                                    <p>能接住火车头喷出的灰尘</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="k8525-slide" data-image="static/assets/gallery/railway/K8525/K8525_7.jpg">
+                            <div class="k8525-slide-image"></div>
+                            <div class="k8525-slide-content">
+                                <div class="k8525-slide-text">
+                                    <h4>长江</h4>
+                                    <p>在经铜陵大桥过江之前</p>
+                                    <p>列车穿过一大片水田</p>
+                                    <p>此时农夫都已回家 夕阳就要落山</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="k8525-slide" data-image="static/assets/gallery/railway/K8525/K8525_8.jpg">
+                            <div class="k8525-slide-image"></div>
+                            <div class="k8525-slide-content">
+                                <div class="k8525-slide-text">
+                                    <h4>终点</h4>
+                                    <p>2025年2月26日 这是庐铜小绿皮的最后一天</p>
+                                    <p>中午过后 改用25G型空调客车</p>
+                                    <p>而这些25B车厢可能就此退休</p>
+                                    <p>就像突然结束的我的学生时代一样</p>
+                                    <p>永远留在了过去</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div id="railway-gallery" class="pswp-gallery railway-gallery"></div>
             </div>
 

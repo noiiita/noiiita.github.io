@@ -1,0 +1,326 @@
+/* K8525 Photo Essay - Refactored */
+.k8525-photo-essay {
+    position: relative;
+    margin: 0;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: none;
+}
+
+.k8525-photo-essay.active {
+    height: 0;
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Hide the original essay content - it's only used as data source */
+.k8525-essay-content {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* Black background overlay */
+.k8525-black-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(0, 0, 0);
+    z-index: 9998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+    pointer-events: none;
+}
+
+.k8525-black-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Photo essay container */
+.k8525-essay-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.k8525-essay-container.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Background image layer */
+.k8525-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.8s ease;
+    z-index: 1;
+}
+
+.k8525-background-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.k8525-background-item.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Text layer */
+.k8525-text-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 10;
+    pointer-events: auto;
+    scroll-snap-type: y mandatory;
+}
+
+.k8525-text-layer::-webkit-scrollbar {
+    display: none;
+}
+
+.k8525-text-layer {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Scroll spacer for exit gesture */
+.k8525-scroll-spacer {
+    height: 100vh;
+    pointer-events: none;
+}
+
+/* Text sections */
+.k8525-text-section {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-snap-align: center;
+    position: relative;
+}
+
+.k8525-text-content {
+    max-width: 800px;
+    padding: 40px 60px;
+    color: white;
+    text-align: center;
+    opacity: 0;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s ease;
+}
+
+/* Left-aligned text for first two slides - 固定偏左位置 */
+.k8525-text-section:nth-child(1) .k8525-text-content,
+.k8525-text-section:nth-child(2) .k8525-text-content {
+    text-align: left;
+    margin-right: auto;
+    margin-left: 10%;
+}
+
+/* Right-aligned text for second to last slide */
+.k8525-text-section:nth-last-child(2) .k8525-text-content {
+    text-align: right;
+    margin-left: auto;
+    margin-right: 10%;
+}
+
+/* Enter from bottom (down scroll) - 默认居中 */
+.k8525-text-content.enter-bottom {
+    transform: translateY(100%);
+}
+
+/* Enter from bottom - 前两张只有Y轴运动，X轴保持恒定偏左位置 */
+.k8525-text-section:nth-child(1) .k8525-text-content.enter-bottom,
+.k8525-text-section:nth-child(2) .k8525-text-content.enter-bottom {
+    transform: translateY(100%);
+}
+
+/* Enter from bottom - 倒数第二张 */
+.k8525-text-section:nth-last-child(2) .k8525-text-content.enter-bottom {
+    transform: translateY(100%);
+}
+
+/* Enter visible state - 默认居中 */
+.k8525-text-content.enter-bottom.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Enter visible - 前两张保持在偏左位置，只有Y轴变化 */
+.k8525-text-section:nth-child(1) .k8525-text-content.enter-bottom.visible,
+.k8525-text-section:nth-child(2) .k8525-text-content.enter-bottom.visible {
+    transform: translateY(0);
+}
+
+/* Enter visible - 倒数第二张 */
+.k8525-text-section:nth-last-child(2) .k8525-text-content.enter-bottom.visible {
+    transform: translateY(0);
+}
+
+/* Enter from top (up scroll) - 默认居中 */
+.k8525-text-content.enter-top {
+    transform: translateY(-100%);
+}
+
+/* Enter from top - 前两张只有Y轴运动 */
+.k8525-text-section:nth-child(1) .k8525-text-content.enter-top,
+.k8525-text-section:nth-child(2) .k8525-text-content.enter-top {
+    transform: translateY(-100%);
+}
+
+/* Enter from top - 倒数第二张 */
+.k8525-text-section:nth-last-child(2) .k8525-text-content.enter-top {
+    transform: translateY(-100%);
+}
+
+/* Enter from top visible - 默认居中 */
+.k8525-text-content.enter-top.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Enter from top visible - 前两张保持在偏左位置 */
+.k8525-text-section:nth-child(1) .k8525-text-content.enter-top.visible,
+.k8525-text-section:nth-child(2) .k8525-text-content.enter-top.visible {
+    transform: translateY(0);
+}
+
+/* Enter from top visible - 倒数第二张 */
+.k8525-text-section:nth-last-child(2) .k8525-text-content.enter-top.visible {
+    transform: translateY(0);
+}
+
+/* Exit upwards - 默认居中 */
+.k8525-text-content.exit-up {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+/* Exit upwards - 前两张只有Y轴运动，保持在偏左位置 */
+.k8525-text-section:nth-child(1) .k8525-text-content.exit-up,
+.k8525-text-section:nth-child(2) .k8525-text-content.exit-up {
+    transform: translateY(-100%);
+}
+
+/* Exit upwards - 倒数第二张 */
+.k8525-text-section:nth-last-child(2) .k8525-text-content.exit-up {
+    transform: translateY(-100%);
+}
+
+/* Exit downwards - 默认居中 */
+.k8525-text-content.exit-down {
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+/* Exit downwards - 前两张只有Y轴运动，保持在偏左位置 */
+.k8525-text-section:nth-child(1) .k8525-text-content.exit-down,
+.k8525-text-section:nth-child(2) .k8525-text-content.exit-down {
+    transform: translateY(100%);
+}
+
+/* Exit downwards - 倒数第二张 */
+.k8525-text-section:nth-last-child(2) .k8525-text-content.exit-down {
+    transform: translateY(100%);
+}
+
+.k8525-text-content h4 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.k8525-text-content p {
+    font-size: 1rem;
+    font-weight: 300;
+    margin-bottom: 12px;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+/* Railway gallery animations */
+#railway-gallery {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+/* 下沉淡化消失动画 */
+#railway-gallery.sink-fade-out {
+    transform: translateY(50px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* 上升渐变出现动画 */
+#railway-gallery.rise-fade-in {
+    transform: translateY(-50px);
+    opacity: 0;
+}
+
+#railway-gallery.rise-fade-in.active {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .k8525-text-content {
+        padding: 40px 30px;
+    }
+    
+    .k8525-text-content h4 {
+        font-size: 1.3rem;
+    }
+    
+    .k8525-text-content p {
+        font-size: 0.9rem;
+    }
+    
+    /* Mobile: reset margins for all special slides */
+    .k8525-text-section:nth-child(1) .k8525-text-content,
+    .k8525-text-section:nth-child(2) .k8525-text-content,
+    .k8525-text-section:nth-last-child(2) .k8525-text-content {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+    
+    /* Mobile: adjust railway gallery animations */
+    #railway-gallery.sink-fade-out {
+        transform: translateY(30px);
+    }
+    
+    #railway-gallery.rise-fade-in {
+        transform: translateY(-30px);
+    }
+}

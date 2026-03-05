@@ -376,38 +376,137 @@ footer .text-white-50 a:hover {
     text-decoration: underline;
 }
 
-/* Gallery styles: rounded corners, white border */
-#sciviz-gallery .nGY2-thumbnail {
+/* Railway quote image entrance for K8525 */
+#k8525-entrance {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.k8525-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+#k8525-entrance:hover .quote-cover-image {
+    filter: blur(5px) brightness(0.7);
+    transform: scale(1.05);
+}
+
+/* Ensure quote-image-description is always visible */
+#k8525-entrance .quote-image-description {
+    position: relative;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-weight: 300;
+    text-align: center;
+    color: #666;
+}
+
+.k8525-entrance-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#k8525-entrance:hover .k8525-entrance-overlay {
+    opacity: 1;
+}
+
+.k8525-entrance-text {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Sciviz first image container (full width, outside masonry) */
+#sciviz-first-image {
+    padding: 20px 0 0 0;
+}
+
+#sciviz-first-image .pswp-image.sciviz-first-item {
+    display: block;
+    width: 100%;
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid #fff;
-    box-shadow: none !important;
-    outline: none !important;
 }
 
-#sciviz-gallery .nGY2-img {
-    border-radius: 12px;
-    box-shadow: none !important;
-    outline: none !important;
+#sciviz-first-image .pswp-image.sciviz-first-item img {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
-/* Hide all thumbnail labels/titles by default */
-#sciviz-gallery .nGY2-label {
-    display: none !important;
+/* Sciviz gallery: masonry layout with no cropping */
+#sciviz-gallery.sciviz-gallery {
+    display: block;
+    column-count: 3;
+    column-gap: 20px;
+    padding: 0 0 20px 0;
 }
 
-/* Remove any additional borders/shadows that might appear */
-#sciviz-gallery .nGY2-container,
-#sciviz-gallery .nGY2-wrapper,
-#sciviz-gallery .nGY2-inner {
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
+/* Responsive columns */
+@media (max-width: 1200px) {
+    #sciviz-gallery.sciviz-gallery {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 768px) {
+    #sciviz-gallery.sciviz-gallery {
+        column-count: 1;
+    }
+}
+
+/* Sciviz gallery items: no cropping, maintain aspect ratio */
+#sciviz-gallery .pswp-image {
+    break-inside: avoid;
+    margin-bottom: 20px;
+    width: 100%;
+    aspect-ratio: auto;
+    min-height: auto;
+    max-height: none;
+    border: 3px solid #fff;
+    background: #f0f0f0;
+}
+
+/* Images maintain original aspect ratio */
+#sciviz-gallery .pswp-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* First image also has border */
+#sciviz-first-image .pswp-image.sciviz-first-item {
+    border: 3px solid #fff;
+    background: #f0f0f0;
 }
 
 /* Style for sciviz note section */
 .sciviz-note {
-    margin: 2rem 0;
+    margin-top: 2rem;
+    margin-bottom: 6rem;
     padding: 1rem 2rem;
     text-align: center;
 }
@@ -436,7 +535,8 @@ footer .text-white-50 a:hover {
     display: flex;
     align-items: flex-start;
     gap: 4rem;
-    margin: 2rem 0;
+    margin-top: 4rem;
+    margin-bottom: 6rem;
     padding-right: 0.8rem;
     padding-left: 0.5rem;
 }
@@ -590,47 +690,10 @@ footer .text-white-50 a:hover {
 /* PhotoSwipe default styling */
 /* No longer needed - using custom lightbox instead */
 
-/* Pagination navigation: styled via JavaScript */
-#sciviz-gallery .nGY2-navigationPrev,
-#sciviz-gallery .nGY2-navigationNext {
-    display: none !important;
-}
-
-/* Alternative higher specificity selector for nav buttons */
-#sciviz > div > .nGY2-navigationPrev,
-#sciviz > div > .nGY2-navigationNext {
-    display: none !important;
-}
-
-/* General selector for any remaining navigation elements in sciviz */
-#sciviz .nGY2-navigation {
-    display: none !important;
-}
-
-/* Hide nGY2GalleryBottom element */
-#sciviz-gallery .nGY2GalleryBottom {
-    display: none !important;
-}
-
-/* Customize navigation bar buttons for sciviz gallery */
-.nanogallery_gallerytheme_custom_sciviz-gallery .nGY2NavPagination {
-    color: #000 !important;
-    background-color: transparent !important;
-}
-
-.nanogallery_gallerytheme_custom_sciviz-gallery .nGY2NavPagination:hover {
-    color: #333 !important;
-}
-
-.nanogallery_gallerytheme_custom_sciviz-gallery .nGY2NavPagination.nGY2Active {
-    color: #000 !important;
-    font-weight: bold;
-}
-
 /* Lightbox navigation buttons - matching navbar style */
 .lightbox-nav button {
-    background-color: rgba(255, 255, 255, 0.222) !important;
-    color: white !important;
+    background-color: rgba(255, 255, 255, 0.489) !important;
+    color: rgb(67, 67, 67) !important;
     border: 1px solid #ccc !important;
     border-radius: 25px !important;
     padding: 0rem 1rem !important;

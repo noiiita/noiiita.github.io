@@ -11,7 +11,7 @@
   </a>
 </div>
 
-former chem student, currently unemployed   <span style="font-weight: 500; ">🚆Railway fan </span>   <span style="font-weight: 500; ">🪴Pot plants lover</span>
+graduate student in chemistry, <span style="font-weight: 500; ">🚆Railway fan </span>   <span style="font-weight: 500; ">🪴Pot plants lover</span>
 
 #### Contact
 
@@ -22,5 +22,5 @@ M.S., Energy Chem, Univ Sci Tech China, 2022—2025.\
 B.E., Polymer Sci & Eng, Univ Sci Tech China, 2018—2022.
 
 #### Research Interests
-no more research, thanku, next 🫠
+no more battery research, thanku, next 🫠
 
