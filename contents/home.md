@@ -22,5 +22,5 @@ M.S., Energy Chem, Univ Sci Tech China, 2022—2025.\
 B.E., Polymer Sci & Eng, Univ Sci Tech China, 2018—2022.
 
 #### Research Interests
-no more battery research, thanku, next 🫠
+battery, energy conversion, materials engineering, semiconductor fabrication
 

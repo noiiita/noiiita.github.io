@@ -714,3 +714,9 @@ footer .text-white-50 a:hover {
 .lightbox-nav button:active {
     transform: translateY(0);
 }
+
+/* Lightbox image and caption transition */
+.lightbox-img,
+.lightbox-caption {
+    transition: opacity 0.2s ease;
+}

@@ -28,7 +28,7 @@
         height: 100%; 
         
         /* 1. 降低背景黑色的浓度，改为 0.65 (原为0.95)，这样背后的网页才能透过来 */
-        background: rgba(0, 0, 0, 0.8); 
+        background: rgba(0, 0, 0, 0.3); 
         
         /* 2. 加上强力的毛玻璃模糊效果 */
         backdrop-filter: blur(15px);
@@ -52,10 +52,19 @@
             color: #ff4d4d; /* 悬停时变成更深的红色 */
             transform: scale(1.1) translateY(-2px); /* 悬停时稍微放大并微微上浮，和翻页按钮的交互感保持一致 */
             }
-        .lightbox-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; }
+        .lightbox-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; transform: translateY(-50%); }
         .lightbox-nav button { background: rgba(255,255,255,0.3); border: none; color: #000000; font-size: 30px; cursor: pointer; padding: 10px 15px; }
         .lightbox-nav button:hover { background: rgba(255,255,255,0.5); }
         .lightbox-caption { color: white; text-align: center; margin-top: 15px; font-size: 16px; }
+        
+        /* Responsive lightbox navigation buttons */
+        @media screen and (max-width: 768px) {
+            .lightbox-nav {
+                top: auto;
+                bottom: 80px;
+                transform: translateY(0);
+            }
+        }
     </style>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
@@ -267,10 +276,10 @@
                             <div class="k8525-slide-content">
                                 <div class="k8525-slide-text">
                                     <h4>唯一的真绿皮</h4>
-                                    <p>2019年5月这两对列车调换为25B非空调车厢</p>
-                                    <p>这是很多中国人记忆中的绿皮车</p>
-                                    <p>而今华东地区仅此一对</p>
-                                    <p>代号 庐铜小绿皮</p>
+                                    <p>2019年5月 这趟列车调换为25B非空调车厢</p>
+                                    <p>这是很多人记忆中的绿皮车</p>
+                                    <p>发展的车轮滚滚向前</p>
+                                    <p>转眼间华东地区只剩这一列还在运客</p>
                                 </div>
                             </div>
                         </div>
@@ -279,7 +288,7 @@
                             <div class="k8525-slide-content">
                                 <div class="k8525-slide-text">
                                     <h4>铁协</h4>
-                                    <p>2019年9月科大铁协群友组织运转</p>
+                                    <p>2019年9月 科大铁协群友组织运转</p>
                                     <p>有两位老师 三个本科生</p>
                                     <p>这是我第二次体验庐铜小绿皮</p>
                                 </div>
@@ -303,7 +312,7 @@
                                 <div class="k8525-slide-text">
                                     <h4>合客</h4>
                                     <p>在过去某个时刻这节车厢满载着漂泊的人</p>
-                                    <p>正驶向千里之外的终点站</p>
+                                    <p>驶向千里之外的终点站</p>
                                     <p>上一个坐在这里的人 他要去哪里</p>
                                     <p>只有面前这个果渣盘知道</p>
                                 </div>
@@ -326,10 +335,10 @@
                             <div class="k8525-slide-content">
                                 <div class="k8525-slide-text">
                                     <h4>窗外</h4>
-                                    <p>吹进来的风里有拖拉机的味道</p>
+                                    <p>吹进来的风有时带着拖拉机的味道</p>
                                     <p>实际上是内燃机车的尾气</p>
-                                    <p>把手伸出去</p>
-                                    <p>能接住火车头喷出的灰尘</p>
+                                    <p>把手机伸出去</p>
+                                    <p>屏幕沾满火车头喷出的灰尘</p>
                                 </div>
                             </div>
                         </div>
@@ -340,7 +349,8 @@
                                     <h4>长江</h4>
                                     <p>在经铜陵大桥过江之前</p>
                                     <p>列车穿过一大片水田</p>
-                                    <p>此时农夫都已回家 夕阳就要落山</p>
+                                    <p>此时农夫都已回家</p>
+                                    <p>夕阳就要落山</p>
                                 </div>
                             </div>
                         </div>
@@ -349,9 +359,9 @@
                             <div class="k8525-slide-content">
                                 <div class="k8525-slide-text">
                                     <h4>终点</h4>
-                                    <p>2025年2月26日 这是庐铜小绿皮的最后一天</p>
-                                    <p>中午过后 改用25G型空调客车</p>
-                                    <p>而这些25B车厢可能就此退休</p>
+                                    <p>2025年2月26日</p>
+                                    <p>中午过后 将改用25G型空调客车</p>
+                                    <p>陪伴了我六年的庐铜小绿皮就此退休</p>
                                     <p>就像突然结束的我的学生时代一样</p>
                                     <p>永远留在了过去</p>
                                 </div>
@@ -370,7 +380,6 @@
                 </header>
                 <div id="plants-gallery" class="pswp-gallery plants-gallery"></div>
             </div>
-
         </div>
     </section>
     <!-- Gallery -->

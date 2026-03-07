@@ -137,9 +137,9 @@ window.addEventListener('DOMContentLoaded', event => {
         //navLinks.forEach(link => {
         //    link.addEventListener('click', function() {
         //        if (window.getComputedStyle(navbarToggler).display !== 'none') {
-         //           collapseNavbar();
-         //       }
-         //   });
+        //           collapseNavbar();
+        //       }
+        //   });
         
     }
 
@@ -200,6 +200,8 @@ window.addEventListener('DOMContentLoaded', event => {
         el: document.getElementById('lightbox'),
         img: null,
         caption: null,
+        touchStartX: 0,
+        touchEndX: 0,
 
         init() {
             this.img = this.el.querySelector('.lightbox-img');
@@ -224,6 +226,42 @@ window.addEventListener('DOMContentLoaded', event => {
                 if (e.key === 'ArrowLeft') this.prev();
                 if (e.key === 'ArrowRight') this.next();
             });
+            
+            // Mouse wheel support
+            document.addEventListener('wheel', (e) => {
+                if (!this.el.classList.contains('active')) return;
+                e.preventDefault();
+                if (e.deltaY > 0) {
+                    this.next();
+                } else {
+                    this.prev();
+                }
+            }, { passive: false });
+            
+            // Touch gesture support
+            this.el.addEventListener('touchstart', (e) => {
+                this.touchStartX = e.changedTouches[0].screenX;
+            });
+            
+            this.el.addEventListener('touchend', (e) => {
+                this.touchEndX = e.changedTouches[0].screenX;
+                this.handleSwipe();
+            });
+        },
+
+        handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = this.touchStartX - this.touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe left - next
+                    this.next();
+                } else {
+                    // Swipe right - prev
+                    this.prev();
+                }
+            }
         },
 
         open(items, index) {
@@ -231,18 +269,36 @@ window.addEventListener('DOMContentLoaded', event => {
             this.currentIndex = index;
             this.show();
             this.el.classList.add('active');
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
         },
 
         close() {
             this.el.classList.remove('active');
+            
+            // Restore body scroll
+            document.body.style.overflow = '';
         },
 
         show() {
             const item = this.items[this.currentIndex];
-            this.img.src = item.src;
-            this.img.alt = item.title || '';
-            this.caption.textContent = item.title || '';
-            this.caption.textContent += ` (${this.currentIndex + 1}/${this.items.length})`;
+            
+            // Add fade out animation
+            this.img.style.opacity = '0';
+            this.caption.style.opacity = '0';
+            
+            // Change image source
+            setTimeout(() => {
+                this.img.src = item.src;
+                this.img.alt = item.title || '';
+                this.caption.textContent = item.title || '';
+                this.caption.textContent += ` (${this.currentIndex + 1}/${this.items.length})`;
+                
+                // Fade in
+                this.img.style.opacity = '1';
+                this.caption.style.opacity = '1';
+            }, 150);
         },
 
         next() {
