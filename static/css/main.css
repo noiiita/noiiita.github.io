@@ -21,8 +21,50 @@
     box-shadow: none !important;
 }
 
-.header.scrolled .nav-link,
-.header.scrolled .navbar-nav .nav-link {
+/* Enhanced Glass Effect for Chromium-based browsers */
+.glass-effect-supported .header.scrolled .nav-link,
+.glass-effect-supported .header.scrolled .navbar-nav .nav-link {
+    position: relative;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.27) 0%, rgba(255, 255, 255, 0.4) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    border-radius: 20px !important;
+    padding: 0.5rem 1rem !important;
+    margin: 0.2rem 0.25rem !important;
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow: hidden;
+    color: black !important;
+}
+
+.glass-effect-supported .header.scrolled .nav-link::before,
+.glass-effect-supported .header.scrolled .navbar-nav .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transition: left 0.5s ease;
+}
+
+.glass-effect-supported .header.scrolled .nav-link:hover::before,
+.glass-effect-supported .header.scrolled .navbar-nav .nav-link:hover::before {
+    left: 100%;
+}
+
+/* For unsupported browsers, use original styles */
+.glass-effect-unsupported .header.scrolled .nav-link,
+.glass-effect-unsupported .header.scrolled .navbar-nav .nav-link {
     background-color: rgba(255, 255, 255, 0.542) !important;
     color: black !important;
     border: 1px solid #ccc !important;
@@ -82,7 +124,7 @@
     color: #000000 !important;
     border-color: rgba(0, 0, 0, 0.5) !important;
     backdrop-filter: blur(5px) !important;
-    background-color: rgba(255, 255, 255, 0.5) !important;
+    background-color: rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
     border-width: 1px !important;
 }
@@ -195,10 +237,21 @@
     background-position: center;
     background-size: cover;
     background-attachment: fixed;
+    background-image: url('static/assets/img/background.jpeg');
     display: flex;
     align-items: flex-end;
     justify-content: flex-start;
     overflow: hidden;
+}
+
+.top-section-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
 }
 
 .top-section:before {
@@ -215,15 +268,51 @@
 .top-section .hero-name {
     position: relative;
     z-index: 2;
-    font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-weight: 500;
+    font-family: "Silkscreen", "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 700;
     font-size: 30px;
-    color: #ffffffd8;
+    color: #ffffffdc;
     margin: 0 0 5rem 5rem;
     margin-bottom: 10rem;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.025);
     line-height: 1.1;
     letter-spacing: 0.1em;
+    transition: transform 0.3s ease-in-out;
+}
+
+.top-section .hero-name:hover {
+    transform: translateY(-10px);
+}
+
+/* Home video note styling */
+.home-video-note {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #666;
+    margin-bottom: 6rem;
+    margin-top: -4rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.home-video-note:hover {
+    color: #333;
+    transform: translateY(-3px);
+}
+
+.k8525-link {
+    color: #3948d2;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: all 0.4s ease;
+    display: inline-block;
+    transform-origin: center center;
+}
+
+.k8525-link:hover {
+    color: #2a36b1;
+    text-decoration: none;
+    font-size: 200%;
 }
 
 section header h2{
@@ -354,12 +443,65 @@ section .main-body{
 
 /* Social media icons */
 .main-body a i {
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 .main-body a:hover i {
     transform: scale(1.2);
     opacity: 0.8;
+}
+
+/* Social links with hover effects */
+.social-link {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #00aced;
+    transition: all 0.3s ease-in-out;
+    text-decoration: none;
+}
+
+.social-link i {
+    transition: transform 0.3s ease-in-out;
+}
+
+.social-link .social-platform-name {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-weight: 500;
+    color: currentColor;
+    opacity: 0;
+    white-space: nowrap;
+    transition: all 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+.social-link:hover {
+    transform: translateY(-3px);
+}
+
+.social-link:hover i {
+    transform: scale(1.1);
+}
+
+.social-link:hover .social-platform-name {
+    opacity: 1;
+    bottom: -35px;
+}
+
+/* Specific colors for each platform */
+.social-link[data-platform="B站"] {
+    color: #00aced;
+}
+
+.social-link[data-platform="小红书"] {
+    color: #ff0000;
 }
 
 /* Footer styling - light black text */
@@ -385,13 +527,27 @@ footer .text-white-50 a:hover {
 
 .k8525-image-wrapper {
     position: relative;
-    overflow: hidden;
     border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#k8525-entrance:hover .k8525-image-wrapper {
+    transform: scale(1.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.quote-cover-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
 #k8525-entrance:hover .quote-cover-image {
-    filter: blur(5px) brightness(0.7);
-    transform: scale(1.05);
+    filter: blur(3px) brightness(0.8);
 }
 
 /* Ensure quote-image-description is always visible */
@@ -403,8 +559,18 @@ footer .text-white-50 a:hover {
     margin-top: 0.5rem;
     font-size: 1rem;
     font-weight: 300;
+    text-decoration: underline;
     text-align: center;
     color: #666;
+    transition: transform 0.3s ease, margin-top 0.3s ease;
+}
+
+#k8525-entrance:hover .quote-image-description {
+    transform: translateY(30px);
+    font-weight: 600;
+    text-shadow: #555;
+    color:#000;
+    margin-top: 0.8rem;
 }
 
 .k8525-entrance-overlay {
@@ -516,6 +682,21 @@ footer .text-white-50 a:hover {
     font-weight: 300; /* light weight */
     margin: 0.5rem 0;
     line-height: 1.6;
+}
+
+/* Hover effect for sciviz-note links */
+.sciviz-note a {
+    color: #ff6b00; /* Blender orange color */
+    text-decoration: underline;
+    transition: all 0.4s ease;
+    display: inline-block;
+    transform-origin: center center;
+}
+
+.sciviz-note a:hover {
+    color: #cc5500;
+    text-decoration: none;
+    font-size: 200%;
 }
 
 /* Fade-in effect on scroll for gallery sections */
@@ -720,3 +901,222 @@ footer .text-white-50 a:hover {
 .lightbox-caption {
     transition: opacity 0.2s ease;
 }
+
+/* =========================================
+   增强玻璃态悬停效果 - 仅针对支持的浏览器
+   ========================================= */
+@media screen and (min-width: 992px) {
+    /* Enhanced glass hover effect for supported browsers */
+    .glass-effect-supported .header.scrolled .nav-link:hover,
+    .glass-effect-supported .header.scrolled .navbar-nav .nav-link:hover {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 100%) !important;
+        transform: translateY(-5px) scale(0.98) !important;
+        box-shadow: 
+            0 12px 24px rgba(0, 0, 0, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+        border-color: rgba(255, 255, 255, 0.9) !important;
+        color: black !important;
+    }
+    
+    /* For unsupported browsers, keep original styles */
+    .glass-effect-unsupported .header.scrolled .nav-link:hover,
+    .glass-effect-unsupported .header.scrolled .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.7) !important;
+        transform: translateY(-3px) scale(0.95) !important;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+        color: black !important;
+    }
+}
+
+/* =========================================
+   科研绘图流程样式
+   ========================================= */
+.sciviz-workflow {
+    margin: 2rem 0;
+    padding: 0rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.workflow-title {
+    text-align: center;
+    color: #000000;
+    margin-bottom: 2rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.workflow-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    row-gap: 0.5rem;
+    column-gap: 0rem;
+    position: relative;
+    padding: 2rem;
+    border: 1.5px solid #b96000;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ffffff 0%, #fffbf2 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.workflow-step {
+    flex: 1;
+    min-width: 180px;
+    max-width: 220px;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.workflow-step:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.workflow-step:hover .step-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.workflow-step:hover .step-name-en {
+    font-size: 0.96rem;
+    font-weight: 600;
+}
+
+.workflow-step:hover .step-description {
+    font-size: 0.9rem;
+    
+}
+
+.workflow-step:hover .step-description-en {
+    font-size: 0.8rem;
+    
+}
+
+.step-logo {
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.logo-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffcc92 0%, #fa8919 100%);
+    color: white;
+    border: 1.5px solid;
+    border-color:  linear-gradient(135deg, #ffffff 0%, #ffc58f 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto;
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.workflow-step:hover .logo-circle {
+    transform: scale(1.1);
+    box-shadow: 
+        0 6px 12px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.step-name {
+    color: #333;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0.5rem 0 0.25rem 0;
+    transition: all 0.3s ease;
+}
+
+.step-name-en {
+    color: #666;
+    font-size: 0.8rem;
+    font-weight: 400;
+    margin: 0 0 0.75rem 0;
+    transition: all 0.3s ease;
+}
+
+.step-description {
+    color: #555;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 0 0 0.5rem 0;
+    transition: all 0.3s ease;
+}
+
+.step-description-en {
+    color: #777;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    margin: 0;
+    transition: all 0.3s ease;
+}
+
+.workflow-arrow {
+    display: flex;
+    align-items: center;
+    color: #df661c;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 1.5rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.workflow-step:hover + .workflow-arrow,
+.workflow-arrow:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .workflow-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .workflow-arrow {
+        transform: rotate(90deg);
+        margin: 1rem 0;
+    }
+    
+    .workflow-step {
+        max-width: 90%;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.workflow-step {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.workflow-step.step-1 { animation-delay: 0.1s; }
+.workflow-step.step-2 { animation-delay: 0.2s; }
+.workflow-step.step-3 { animation-delay: 0.3s; }
+.workflow-step.step-4 { animation-delay: 0.4s; }
+.workflow-step.step-5 { animation-delay: 0.5s; }

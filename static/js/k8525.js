@@ -289,83 +289,93 @@
             }
         };
         
-        // Entrance click handler
-        entrance.addEventListener('click', () => {
+        // Open K8525 Photo Essay
+        const openK8525PhotoEssay = () => {
+            if (!entrance || !photoEssay) return;
+            
             if (!essayContainer) {
                 createEssayContainer();
             }
             
-            photoEssay.classList.toggle('active');
+            photoEssay.classList.add('active');
             
-            if (photoEssay.classList.contains('active')) {
-                // Entering photo essay
-                isInPhotoEssay = true;
-                exitTriggered = false;
-                
-                // Store original scroll position
-                originalScrollPosition = window.scrollY;
-                
-                // Hide body scrollbar
-                document.body.style.overflow = 'hidden';
-                
-                // Show black overlay first (slightly before essay container)
-                if (blackOverlay) {
-                    blackOverlay.classList.add('active');
-                }
-                
-                // Add sink fade out animation to railway gallery
-                if (railwayGallery) {
-                    railwayGallery.classList.remove('rise-fade-in');
-                    railwayGallery.classList.remove('active');
-                    railwayGallery.classList.add('sink-fade-out');
-                }
-                
-                // Show essay container after a short delay
-                setTimeout(() => {
-                    essayContainer.style.opacity = '0';
-                    essayContainer.style.visibility = 'visible';
-                    essayContainer.classList.add('active');
-                    
-                    // Fade in animation
-                    setTimeout(() => {
-                        essayContainer.style.transition = 'opacity 0.5s ease';
-                        essayContainer.style.opacity = '1';
-                    }, 50);
-                }, 100);
-                
-                // Convert back to top button to close button
-                convertToCloseButton();
-                
-                // Reset to first slide
-                currentIndex = 0;
-                lastScrollTop = 0;
-                
-                // Scroll to top
-                textLayer.scrollTop = 0;
-                
-                // Reset text content classes
-                const textContents = textLayer.querySelectorAll('.k8525-text-content');
-                textContents.forEach((content, index) => {
-                    content.className = 'k8525-text-content enter-bottom';
-                    if (index === 0) {
-                        content.classList.add('visible');
-                    }
-                });
-                
-                // Reset background images
-                const backgroundItems = backgroundLayer.querySelectorAll('.k8525-background-item');
-                backgroundItems.forEach((item, i) => {
-                    if (i === 0) {
-                        item.classList.add('active');
-                    } else {
-                        item.classList.remove('active');
-                    }
-                });
-            } else {
-                // Exiting photo essay
-                exitPhotoEssay();
+            // Entering photo essay
+            isInPhotoEssay = true;
+            exitTriggered = false;
+            
+            // Store original scroll position
+            originalScrollPosition = window.scrollY;
+            
+            // Hide body scrollbar
+            document.body.style.overflow = 'hidden';
+            
+            // Show black overlay first (slightly before essay container)
+            if (blackOverlay) {
+                blackOverlay.classList.add('active');
             }
+            
+            // Add sink fade out animation to railway gallery
+            if (railwayGallery) {
+                railwayGallery.classList.remove('rise-fade-in');
+                railwayGallery.classList.remove('active');
+                railwayGallery.classList.add('sink-fade-out');
+            }
+            
+            // Show essay container after a short delay
+            setTimeout(() => {
+                essayContainer.style.opacity = '0';
+                essayContainer.style.visibility = 'visible';
+                essayContainer.classList.add('active');
+                
+                // Fade in animation
+                setTimeout(() => {
+                    essayContainer.style.transition = 'opacity 0.5s ease';
+                    essayContainer.style.opacity = '1';
+                }, 50);
+            }, 100);
+            
+            // Convert back to top button to close button
+            convertToCloseButton();
+            
+            // Reset to first slide
+            currentIndex = 0;
+            lastScrollTop = 0;
+            
+            // Scroll to top
+            textLayer.scrollTop = 0;
+            
+            // Reset text content classes
+            const textContents = textLayer.querySelectorAll('.k8525-text-content');
+            textContents.forEach((content, index) => {
+                content.className = 'k8525-text-content enter-bottom';
+                if (index === 0) {
+                    content.classList.add('visible');
+                }
+            });
+            
+            // Reset background images
+            const backgroundItems = backgroundLayer.querySelectorAll('.k8525-background-item');
+            backgroundItems.forEach((item, i) => {
+                if (i === 0) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        };
+        
+        // Entrance click handler
+        entrance.addEventListener('click', () => {
+            openK8525PhotoEssay();
         });
+        
+        // Direct link click handler
+        const directLink = document.querySelector('.k8525-direct-link');
+        if (directLink) {
+            directLink.addEventListener('click', () => {
+                openK8525PhotoEssay();
+            });
+        }
         
         // Handle keyboard navigation
         const handleKeyDown = (e) => {

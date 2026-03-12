@@ -268,37 +268,40 @@ window.addEventListener('DOMContentLoaded', event => {
             this.items = items;
             this.currentIndex = index;
             this.show();
-            this.el.classList.add('active');
+            
+            // Show lightbox first (display: flex)
+            this.el.style.display = 'flex';
+            
+            // Then trigger fade in animation
+            setTimeout(() => {
+                this.el.classList.add('active');
+            }, 10);
             
             // Prevent body scroll
             document.body.style.overflow = 'hidden';
         },
 
         close() {
+            // Trigger fade out animation
             this.el.classList.remove('active');
             
-            // Restore body scroll
-            document.body.style.overflow = '';
+            // Wait for fade out to complete, then hide
+            setTimeout(() => {
+                this.el.style.display = 'none';
+                
+                // Restore body scroll
+                document.body.style.overflow = '';
+            }, 300);
         },
 
         show() {
             const item = this.items[this.currentIndex];
             
-            // Add fade out animation
-            this.img.style.opacity = '0';
-            this.caption.style.opacity = '0';
-            
-            // Change image source
-            setTimeout(() => {
-                this.img.src = item.src;
-                this.img.alt = item.title || '';
-                this.caption.textContent = item.title || '';
-                this.caption.textContent += ` (${this.currentIndex + 1}/${this.items.length})`;
-                
-                // Fade in
-                this.img.style.opacity = '1';
-                this.caption.style.opacity = '1';
-            }, 150);
+            // Direct image switch without fade animation
+            this.img.src = item.src;
+            this.img.alt = item.title || '';
+            this.caption.textContent = item.title || '';
+            this.caption.textContent += ` (${this.currentIndex + 1}/${this.items.length})`;
         },
 
         next() {

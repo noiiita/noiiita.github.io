@@ -26,15 +26,23 @@
         top: 0; 
         width: 100%; 
         height: 100%; 
+        opacity: 0;
+        transition: opacity 0.3s ease;
         
         /* 1. 降低背景黑色的浓度，改为 0.65 (原为0.95)，这样背后的网页才能透过来 */
-        background: rgba(0, 0, 0, 0.3); 
+        background: rgba(0, 0, 0, 0.5); 
         
         /* 2. 加上强力的毛玻璃模糊效果 */
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px); /* 兼容苹果设备 */
     }
-        .lightbox.active { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .lightbox.active { 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            opacity: 1;
+        }
         .lightbox-content { position: relative; max-width: 95%; max-height: 95%; }
         .lightbox-img { max-width: 100%; max-height: 90vh; object-fit: contain; }
         .lightbox-close { 
@@ -78,6 +86,7 @@
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;1,400&amp;display=swap"
         rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&amp;display=swap" rel="stylesheet" />
     
     <!-- Misans Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -136,6 +145,24 @@
     <script type="text/javascript" src="static/js/scripts.js"></script>
     <script type="text/javascript" src="static/js/k8525.js"></script>
     <script type="text/javascript" src="static/js/js-yaml.min.js"></script>
+    
+    <!-- Browser detection for glass effect -->
+    <script>
+        (function() {
+            function isChromiumBased() {
+                const userAgent = navigator.userAgent.toLowerCase();
+                return userAgent.indexOf('chrome') !== -1 || 
+                       userAgent.indexOf('edge') !== -1 ||
+                       userAgent.indexOf('chromium') !== -1;
+            }
+            
+            if (isChromiumBased()) {
+                document.documentElement.classList.add('glass-effect-supported');
+            } else {
+                document.documentElement.classList.add('glass-effect-unsupported');
+            }
+        })();
+    </script>
 
 </head>
 
@@ -173,8 +200,11 @@
     </nav>
 
     <!-- Top Section -->
-    <section class="top-section" style="background-image: url('static/assets/img/background.jpeg');">
-        <h2 id="top-section-bg-text" class="hero-name">RUIHAO LUO</h2>
+    <section class="top-section">
+        <video class="top-section-video" autoplay muted loop playsinline preload="auto">
+            <source src="static/assets/img/background.mp4" type="video/mp4">
+        </video>
+        <h2 id="top-section-bg-text" class="hero-name">LUO RUIHAO</h2>
     </section>
     <!-- Top Section -->
 
@@ -190,6 +220,10 @@
     <section class="bg-gradient-primary-to-secondary-light mt5 md5" id="home">
         <div class="container px-5">
             <header>
+                <p class="home-video-note">
+                    video shot on CR train
+                    <span class="k8525-link k8525-direct-link">K8525</span>, 2024.5.2
+                    </p>
                 <h2 id="home-subtitle"> </h2>
                 <!-- <span class="bi bi-list"></span> -->
             </header>
@@ -224,9 +258,70 @@
                 </header>
                 <div id="sciviz-first-image"></div>
                 <div id="sciviz-gallery" class="pswp-gallery sciviz-gallery"></div>
+                
+                <!-- Scientific Visualization Workflow -->
+                <div class="sciviz-workflow">
+                    <h4 class="workflow-title">科研绘图流程 / Workflow</h4>
+                    <div class="workflow-container">
+                        <div class="workflow-step step-1">
+                            <div class="step-logo">
+                                <div class="logo-circle">1</div>
+                            </div>
+                            <h5 class="step-name">了解需求</h5>
+                            <h6 class="step-name-en">Understand Requirements</h6>
+                            <p class="step-description">询问图的用处、论文原理、风格需求</p>
+                            <p class="step-description-en">Ask about the purpose, paper principles, and style requirements</p>
+                        </div>
+                        <div class="workflow-arrow">👉</div>
+                        <div class="workflow-step step-2">
+                            <div class="step-logo">
+                                <div class="logo-circle">2</div>
+                            </div>
+                            <h5 class="step-name">积累素材</h5>
+                            <h6 class="step-name-en">Gather Materials</h6>
+                            <p class="step-description">公众号文章、xhs</p>
+                            <p class="step-description-en">WeChat articles, Xiaohongshu</p>
+                        </div>
+                        <div class="workflow-arrow">👉</div>
+                        <div class="workflow-step step-3">
+                            <div class="step-logo">
+                                <div class="logo-circle">3</div>
+                            </div>
+                            <h5 class="step-name">建模or利用素材</h5>
+                            <h6 class="step-name-en">Modeling or Searching</h6>
+                            <p class="step-description">Sketchfab, BlenderKit</p>
+                            <p class="step-description-en"> </p>
+                        </div>
+                        <div class="workflow-arrow">👉</div>
+                        <div class="workflow-step step-4">
+                            <div class="step-logo">
+                                <div class="logo-circle">4️</div>
+                            </div>
+                            <h5 class="step-name">渲染</h5>
+                            <h6 class="step-name-en">Rendering</h6>
+                            <p class="step-description">需要高性能GPU</p>
+                            <p class="step-description-en">Requires high-performance GPU</p>
+                        </div>
+                        <div class="workflow-arrow">👉</div>
+                        <div class="workflow-step step-5">
+                            <div class="step-logo">
+                                <div class="logo-circle">5</div>
+                            </div>
+                            <h5 class="step-name">后期拼装</h5>
+                            <h6 class="step-name-en">Post-production</h6>
+                            <p class="step-description">调整亮度对比度、放入PPT中添加文字</p>
+                            <p class="step-description-en">Adjust brightness/contrast, add text in PPT</p>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="sciviz-note">
                     <p>推荐使用开源三维图形软件<a href="https://www.blender.org/" target="_blank">Blender</a>来完成建模和渲染 😚 </p>
-                    <p>I recommend using the open-source 3D graphics software <a href="https://www.chemblender.com/" target="_blank">Blender</a> for modeling and rendering.</p><a href="https://www.blender.org/" target="_blank">🔗ChemBlender</a>，<a href="https://space.bilibili.com/1095345213" target="_blank">🔗Blender科研绘图-bilibili</a></p>
+                    <p>I recommend using the open-source 3D graphics software <a href="https://www.blender.org/" target="_blank">Blender</a> for modeling and rendering.</p>
+                    <p><a href="https://www.chemblender.com/" target="_blank">🔗ChemBlender (分子建模插件)</a> </p>
+                    <p><a href="https://space.bilibili.com/1095345213" target="_blank">🔗Blender科研绘图-bilibili (科研绘图案例&教程)</a></p>
+                    <p><a href="https://sketchfab.com/" target="_blank">🔗Sketchfab (模型素材下载)</a> </p>
+                    <p><a href="https://www.blenderkit.com/" target="_blank">🔗BlnderKit (插件-Blender材质模型库)</a> </p>
                 </div>
             </div>
 
@@ -265,9 +360,10 @@
                             <div class="k8525-slide-content">
                                 <div class="k8525-slide-text">
                                     <h4>前身</h4>
-                                    <p>2018年末 安徽省中南部的庐铜铁路开通运营 为单线非电气化铁路</p>
+                                    <p>2018年末 安徽省中南部的庐铜铁路开通运营</p>
                                     <p>2019年3月 合肥-无为南K8591/8592次列车上线</p>
-                                    <p>同年4月 路线延长至芜湖 开行两对 车次号K8521/K8525</p>
+                                    <p>同年4月 路线延长至芜湖 开行两对</p>
+                                    <p>车次号K8521/K8525</p>
                                 </div>
                             </div>
                         </div>
