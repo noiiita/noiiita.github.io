@@ -699,6 +699,21 @@ footer .text-white-50 a:hover {
     font-size: 200%;
 }
 
+/* Hover effect for publications links */
+#publications-md a {
+    color: #1E90FF; /* Sky blue color */
+    text-decoration: underline;
+    transition: all 0.4s ease;
+    display: inline-block;
+    transform-origin: center center;
+}
+
+#publications-md a:hover {
+    color: #0066CC;
+    text-decoration: none;
+    font-size: 180%;
+}
+
 /* Fade-in effect on scroll for gallery sections */
 .fade-on-scroll {
     opacity: 0;

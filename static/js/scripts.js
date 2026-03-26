@@ -291,7 +291,7 @@ window.addEventListener('DOMContentLoaded', event => {
                 
                 // Restore body scroll
                 document.body.style.overflow = '';
-            }, 300);
+            }, 400);
         },
 
         show() {
@@ -337,16 +337,21 @@ window.addEventListener('DOMContentLoaded', event => {
                 let sortedItems = [...items];
                 let firstItem = null;
                 
-                // For sciviz: sciviz-01.jpg always first, others random
+                // For sciviz: sciviz-01.jpg and sciviz-02.jpg always first, others random
                 if (isSciviz) {
-                    firstItem = items.find(item => item.src && item.src.includes('sciviz-01.jpg'));
-                    const otherItems = items.filter(item => !(item.src && item.src.includes('sciviz-01.jpg')));
+                    const firstItem = items.find(item => item.src && item.src.includes('sciviz-01.jpg'));
+                    const secondItem = items.find(item => item.src && item.src.includes('sciviz-02.jpg'));
+                    const otherItems = items.filter(item => !(item.src && (item.src.includes('sciviz-01.jpg') || item.src.includes('sciviz-02.jpg'))));
                     // Shuffle other items randomly
                     for (let i = otherItems.length - 1; i > 0; i--) {
                         const j = Math.floor(Math.random() * (i + 1));
                         [otherItems[i], otherItems[j]] = [otherItems[j], otherItems[i]];
                     }
-                    sortedItems = firstItem ? [firstItem, ...otherItems] : otherItems;
+                    // Create sorted array with first and second items at the beginning
+                    sortedItems = [];
+                    if (firstItem) sortedItems.push(firstItem);
+                    if (secondItem) sortedItems.push(secondItem);
+                    sortedItems = [...sortedItems, ...otherItems];
                     
                     // Create first image container separately (outside masonry)
                     if (firstItem) {
@@ -385,11 +390,49 @@ window.addEventListener('DOMContentLoaded', event => {
                             firstContainer.appendChild(a);
                         }
                     }
+                    
+                    // Create second image container separately (outside masonry)
+                    if (secondItem) {
+                        const secondContainer = document.getElementById('sciviz-second-image');
+                        if (secondContainer) {
+                            const a = document.createElement('a');
+                            a.className = 'pswp-image sciviz-first-item';
+                            a.style.display = 'block';
+                            a.style.width = '100%';
+                            a.style.borderRadius = '12px';
+                            a.style.overflow = 'hidden';
+                            a.style.cursor = 'pointer';
+                            a.style.marginBottom = '20px';
+                            
+                            const img = document.createElement('img');
+                            img.src = secondItem.src;
+                            img.alt = secondItem.title || '';
+                            img.style.width = '100%';
+                            img.style.height = 'auto';
+                            img.style.display = 'block';
+                            
+                            a.appendChild(img);
+                            
+                            if (secondItem.title) {
+                                const caption = document.createElement('div');
+                                caption.className = 'gallery-caption';
+                                caption.textContent = secondItem.title;
+                                a.appendChild(caption);
+                            }
+                            
+                            a.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                lightbox.open(sortedItems, 1);
+                            });
+                            
+                            secondContainer.appendChild(a);
+                        }
+                    }
                 }
 
                 sortedItems.forEach((item, idx) => {
-                    // Skip first item for sciviz (already rendered above)
-                    if (isSciviz && idx === 0) return;
+                    // Skip first two items for sciviz (already rendered above)
+                    if (isSciviz && (idx === 0 || idx === 1)) return;
                     
                     const a = document.createElement('a');
                     a.className = 'pswp-image';
