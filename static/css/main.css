@@ -117,7 +117,7 @@
 }
 
 .header .navbar-nav .nav-link {
-    color: #ffffff !important;
+    color: #ffffffae !important;
 }
 
 .navbar-toggler {
@@ -181,9 +181,9 @@
        悬停时增加一点半透明白底、缩小 95%、向上平移 5px */
     .header:not(.scrolled) .nav-link:hover,
     .header:not(.scrolled) .navbar-nav .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.25) !important;
+        background-color: rgba(255, 255, 255, 0) !important;
         border-radius: 20px !important; /* 保持跟滚动后相同的圆角药丸形状 */
-        transform: translateY(-5px) scale(0.95) !important;
+        transform: translateY(5px) scale(1.05) !important;
     }
 
     /* 3. 页面往下滚动后（白色半透明胶囊状态）时：
@@ -316,7 +316,7 @@
 }
 
 section header h2{
-    font-family: "Kanit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+    font-family: "Google Sans Flex", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
     color: var(--h-title-color);
     font-size: 2.3rem;
     line-height: 4rem;
@@ -336,7 +336,7 @@ section header h2{
 section .main-body h4 {
     font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-weight: 600;
-    margin-top: 4rem;
+    margin-top: 2rem;
 }
 
 .gallery-section h3 {
@@ -365,7 +365,7 @@ section .main-body h4 {
 }
 
 section .main-body{
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 200;
     line-height: 2.4rem;
 }
@@ -382,6 +382,17 @@ section .main-body{
 
 #home-subtitle {
     color: #000000 !important;
+    font-family: "Google Sans Flex", "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 800;
+    font-stretch: extra-expanded;
+    transition: all 0.3s ease;
+    padding-right: 8rem;
+}
+
+#home-subtitle:hover {
+    font-weight: 800;
+    font-stretch: extra-expanded;
+    transform: translateY(-10px);
 }
 
 .bg-gradient-primary-to-secondary-gray {
@@ -936,7 +947,7 @@ footer .text-white-50 a:hover {
     /* For unsupported browsers, keep original styles */
     .glass-effect-unsupported .header.scrolled .nav-link:hover,
     .glass-effect-unsupported .header.scrolled .navbar-nav .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.7) !important;
+        background-color: rgba(255, 255, 255, 0.227) !important;
         transform: translateY(-3px) scale(0.95) !important;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
         color: black !important;
@@ -961,6 +972,7 @@ footer .text-white-50 a:hover {
     margin-bottom: 2rem;
     font-size: 1.25rem;
     font-weight: 600;
+    font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .workflow-container {
@@ -1052,6 +1064,7 @@ footer .text-white-50 a:hover {
     font-weight: 600;
     margin: 0.5rem 0 0.25rem 0;
     transition: all 0.3s ease;
+    font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .step-name-en {
@@ -1060,6 +1073,7 @@ footer .text-white-50 a:hover {
     font-weight: 400;
     margin: 0 0 0.75rem 0;
     transition: all 0.3s ease;
+    font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .step-description {
@@ -1068,6 +1082,7 @@ footer .text-white-50 a:hover {
     line-height: 1.4;
     margin: 0 0 0.5rem 0;
     transition: all 0.3s ease;
+    font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .step-description-en {
@@ -1076,6 +1091,7 @@ footer .text-white-50 a:hover {
     line-height: 1.3;
     margin: 0;
     transition: all 0.3s ease;
+    font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .workflow-arrow {

@@ -1,12 +1,12 @@
 [
-  { "src": "static/assets/gallery/sciviz/sciviz-01.jpg", "title": "polluted water treatment" },
-  { "src": "static/assets/gallery/sciviz/sciviz-02.jpg", "title": "in-grid energy storage" },
+  { "src": "static/assets/gallery/sciviz/sciviz-01.jpg", "title": "polluted water treatment (draft)" },
+  { "src": "static/assets/gallery/sciviz/sciviz-02.jpg", "title": "energy storage for solar&wind" },
   { "src": "static/assets/gallery/sciviz/sciviz-03.jpg", "title": "AEM reactor" },
-  { "src": "static/assets/gallery/sciviz/sciviz-04.jpg", "title": "ammonia leaving catalyst" },
-  { "src": "static/assets/gallery/sciviz/sciviz-05.jpg", "title": "battery box" },
-  { "src": "static/assets/gallery/sciviz/sciviz-06.jpg", "title": "3-phase interface in H-electrode" },
+  { "src": "static/assets/gallery/sciviz/sciviz-04.jpg", "title": "Ru catalyst for N2RR" },
+  { "src": "static/assets/gallery/sciviz/sciviz-05.jpg", "title": "Zn-halogen battery" },
+  { "src": "static/assets/gallery/sciviz/sciviz-06.jpg", "title": "three-phase interface in H-electrode" },
   { "src": "static/assets/gallery/sciviz/sciviz-07.jpg", "title": "Si in Li-ion battery" },
-  { "src": "static/assets/gallery/sciviz/sciviz-08.jpg", "title": "gel for halogen cathode" },
+  { "src": "static/assets/gallery/sciviz/sciviz-08.jpg", "title": "MnCoO catalyst for HER" },
   { "src": "static/assets/gallery/sciviz/sciviz-09.jpg", "title": "nano catalyst" },
   { "src": "static/assets/gallery/sciviz/sciviz-10.jpg", "title": "Cu foam" }
 ]
