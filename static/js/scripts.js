@@ -534,4 +534,69 @@ window.addEventListener('DOMContentLoaded', event => {
         earlyObserver.observe(element);
     });
 
+    // 暗黑模式切换功能
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+
+    // 检查本地存储中的主题设置
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        htmlElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+    }
+
+    // 切换主题
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+    }
+
+    // 更新主题图标
+    function updateThemeIcon(theme) {
+        if (themeToggle) {
+            const icon = themeToggle.querySelector('i');
+            if (icon) {
+                icon.className = theme === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
+            }
+        }
+    }
+
+    // 监听系统主题变化
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            htmlElement.setAttribute('data-theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+    });
+
+    // Top section mouse follow blur effect
+    const topSection = document.querySelector('.top-section');
+    const videoMask = document.querySelector('.video-mask');
+
+    if (topSection && videoMask) {
+        topSection.addEventListener('mousemove', (e) => {
+            const rect = topSection.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            videoMask.style.setProperty('--x', `${x}px`);
+            videoMask.style.setProperty('--y', `${y}px`);
+        });
+
+        topSection.addEventListener('mouseleave', () => {
+            videoMask.style.opacity = '0';
+        });
+
+        topSection.addEventListener('mouseenter', () => {
+            videoMask.style.opacity = '1';
+        });
+    }
+
 }); 

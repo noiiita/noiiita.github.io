@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="utf-8" />
@@ -188,6 +188,11 @@
                         <a class="nav-link me-lg-3" href="#gallery">GALLERY</a>
                     </li>
                     <li class="nav-item">
+                        <button id="theme-toggle" class="nav-link me-lg-3" style="background: none; border: none; cursor: pointer; padding: 8px 16px;">
+                            <i class="bi bi-moon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link me-lg-3 back-to-top-btn" href="#page-top" title="回到顶部">
                             <i class="bi bi-arrow-up"></i>
                         </a>
@@ -203,12 +208,13 @@
         <video class="top-section-video" autoplay muted loop playsinline preload="auto">
             <source src="static/assets/img/background.mp4" type="video/mp4">
         </video>
+        <div class="video-mask"></div>
         <h2 id="top-section-bg-text" class="hero-name">LUO RUIHAO</h2>
     </section>
     <!-- Top Section -->
 
     <!-- Photo -->
-    <div class="container px-5">
+    <div class="container px-5 bg-gradient-primary-to-secondary-light">
         <div id="avatar">
             <img class="shadow" src="static/assets/img/photo.png">
         </div>
@@ -254,7 +260,7 @@
             <div class="gallery-section" id="sciviz">
                 <header>
                     <h3>Scientific Visualization</h3>
-                    <p style="color: #000000; font-size: 1rem; margin: 1rem 0 0 0;">Sometimes I draw schematic figures for labmates' projects in exchange for bubble tea 🧋</p>
+                    <p style="font-size: 1rem; margin: 1rem 0 0 0;">Sometimes I draw schematic figures for labmates' projects in exchange for bubble tea 🧋</p>
                 </header>
                 <div id="sciviz-first-image"></div>
                 <div id="sciviz-second-image"></div>
@@ -333,7 +339,7 @@
                         Railway Photo
                         <span class="subtitle">CC BY-NC 转载请署名 Nit/Nobeen</span>
                     </h3>
-                    <p style="color: #000000; font-size: 1rem; margin: 1rem 0 0 0;">The village of my hometown is traversed by the railway. The sound of trains evokes a sense of nostalgia.</p>
+                    <!--<p style="color: #000000; font-size: 1rem; margin: 1rem 0 0 0;">The village of my hometown is traversed by the railway. The sound of trains evokes a sense of nostalgia.</p> -->
                 </header>
                 <div class="railway-quote-container">
                     <div class="railway-quote-text">
