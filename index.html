@@ -203,39 +203,41 @@
         </div>
     </nav>
 
-    <!-- Top Section -->
-    <section class="top-section">
+    <!-- Top Section with Video Background -->
+    <div class="video-background-container">
         <video class="top-section-video" autoplay muted loop playsinline preload="auto">
             <source src="static/assets/img/background.mp4" type="video/mp4">
         </video>
         <div class="video-mask"></div>
-        <h2 id="top-section-bg-text" class="hero-name">LUO RUIHAO</h2>
-    </section>
-    <!-- Top Section -->
-
-    <!-- Photo -->
-    <div class="container px-5 bg-gradient-primary-to-secondary-light">
-        <div id="avatar">
-            <img class="shadow" src="static/assets/img/photo.png">
+        
+        <!-- Top Section Content -->
+        <section class="top-section">
+            <h2 id="top-section-bg-text" class="hero-name">LUO RUIHAO</h2>
+        </section>
+        
+        <!-- Photo -->
+        <div class="container px-5 photo-container">
+            <div id="avatar">
+                <img class="shadow" src="static/assets/img/photo.png">
+            </div>
         </div>
+        
+        <!-- Home Section -->
+        <section class="mt5 md5 home-section-with-video-bg" id="home">
+            <div class="container px-5">
+                <header>
+                    <p class="home-video-note">
+                        video shot on CR train
+                        <span class="k8525-link k8525-direct-link">K8525</span>, 2024.5.2
+                        </p>
+                    <h2 id="home-subtitle"> </h2>
+                    <!-- <span class="bi bi-list"></span> -->
+                </header>
+                <div class="main-body" id="home-md"></div>
+            </div>
+        </section>
     </div>
-    <!-- Photo -->
-    
-    <!-- Home -->
-    <section class="bg-gradient-primary-to-secondary-light mt5 md5" id="home">
-        <div class="container px-5">
-            <header>
-                <p class="home-video-note">
-                    video shot on CR train
-                    <span class="k8525-link k8525-direct-link">K8525</span>, 2024.5.2
-                    </p>
-                <h2 id="home-subtitle"> </h2>
-                <!-- <span class="bi bi-list"></span> -->
-            </header>
-            <div class="main-body" id="home-md"></div>
-        </div>
-    </section>
-    <!-- Home -->
+    <!-- Video Background Container -->
 
     <!-- Publications -->
     <section class="bg-gradient-primary-to-secondary-gray mt5 md5" id="publications">

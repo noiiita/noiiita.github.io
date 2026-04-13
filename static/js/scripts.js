@@ -14,23 +14,27 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     };
 
-    // Fade out hero name on scroll
+    // Fade out hero name on scroll - simple smooth upward fade
     const heroName = document.querySelector('.hero-name');
     if (heroName) {
         window.addEventListener('scroll', () => {
             const scrollY = window.scrollY;
-            // Fade from 0 to 150px scroll distance (faster)
-            // From 100% opacity to 0% opacity
-            const fadeStart = 0;
-            const maxScroll = 150;
+            // Fade out and move up smoothly as user scrolls
+            const maxScroll = 50; // Adjust this value to control how long the fade takes
             
-            let opacity = 1;
-            if (scrollY > fadeStart) {
-                opacity = Math.max(0, 1 - (scrollY - fadeStart) / maxScroll);
+            if (scrollY <= maxScroll) {
+                const opacity = Math.max(0, 1 - scrollY / maxScroll);
+                const translateY = -scrollY * 0.3; // Adjust multiplier for speed of upward movement
+                
+                heroName.style.opacity = opacity;
+                heroName.style.transform = `translateY(${translateY}px)`;
+                heroName.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none';
+            } else {
+                // Completely hidden after maxScroll
+                heroName.style.opacity = '0';
+                heroName.style.transform = `translateY(-30px)`; // Move up enough to be out of view
+                heroName.style.pointerEvents = 'none';
             }
-            
-            heroName.style.opacity = opacity;
-            heroName.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none';
         });
     }
 
@@ -581,6 +585,10 @@ window.addEventListener('DOMContentLoaded', event => {
     const videoMask = document.querySelector('.video-mask');
 
     if (topSection && videoMask) {
+        // 初始设置videoMask为可见
+        videoMask.style.opacity = '1';
+        
+        // 鼠标移动事件，更新模糊区域位置
         topSection.addEventListener('mousemove', (e) => {
             const rect = topSection.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -589,14 +597,44 @@ window.addEventListener('DOMContentLoaded', event => {
             videoMask.style.setProperty('--x', `${x}px`);
             videoMask.style.setProperty('--y', `${y}px`);
         });
-
-        topSection.addEventListener('mouseleave', () => {
-            videoMask.style.opacity = '0';
-        });
-
-        topSection.addEventListener('mouseenter', () => {
-            videoMask.style.opacity = '1';
-        });
     }
 
-}); 
+    // Scroll effects for video background and sections
+    // Use existing heroName variable declared earlier
+    const homeSection = document.querySelector('.home-section-with-video-bg');
+    const videoBackground = document.querySelector('.top-section-video');
+    const videoBackgroundContainer = document.querySelector('.video-background-container');
+    const publicationsSection = document.getElementById('publications');
+
+    function handleScroll() {
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+        
+        // Calculate positions
+        const homeSectionTop = homeSection.offsetTop;
+        const homeSectionHeight = homeSection.offsetHeight;
+        const publicationsTop = publicationsSection.offsetTop;
+        
+        // Calculate when home section is fully visible
+        const homeSectionVisible = scrollY >= homeSectionTop - windowHeight;
+        const homeSectionFullyVisible = scrollY >= homeSectionTop;
+        const nearPublications = scrollY >= publicationsTop - windowHeight * 1.5;
+        
+        // When near publications, start fading out video background
+        if (nearPublications) {
+            const fadeOutPercentage = (scrollY - (publicationsTop - windowHeight * 1.5)) / (windowHeight * 0.5);
+            const videoOpacity = Math.max(0, 1 - fadeOutPercentage);
+            videoBackground.style.opacity = videoOpacity;
+            videoMask.style.opacity = videoOpacity;
+        } else {
+            videoBackground.style.opacity = '1';
+            videoMask.style.opacity = '1';
+        }
+    }
+
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+    // Call once on load to set initial state
+    handleScroll();
+
+});
