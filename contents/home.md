@@ -4,8 +4,8 @@
 
 
 
-Master's graduate in chemistry, research on zinc-halogen battery for energy storage,
- <span style="font-weight: 500; ">railway fan, </span>   <span style="font-weight: 500; ">pot plants lover</span>
+Master's graduate in chemistry, research on zinc-halogen battery for energy storage.  Things i love:
+ <span style="font-weight: 500; ">railway, </span>   <span style="font-weight: 500; ">pot plants & minecraft</span> 
 
 #### Contact
 

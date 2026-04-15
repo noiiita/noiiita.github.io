@@ -589,10 +589,9 @@ window.addEventListener('DOMContentLoaded', event => {
         videoMask.style.opacity = '1';
         
         // 鼠标移动事件，更新模糊区域位置
-        topSection.addEventListener('mousemove', (e) => {
-            const rect = topSection.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
             
             videoMask.style.setProperty('--x', `${x}px`);
             videoMask.style.setProperty('--y', `${y}px`);
@@ -607,6 +606,8 @@ window.addEventListener('DOMContentLoaded', event => {
     const publicationsSection = document.getElementById('publications');
 
     function handleScroll() {
+        if (!homeSection || !videoBackground || !publicationsSection) return;
+        
         const scrollY = window.scrollY;
         const windowHeight = window.innerHeight;
         
@@ -623,7 +624,7 @@ window.addEventListener('DOMContentLoaded', event => {
         // When near publications, start fading out video background
         if (nearPublications) {
             const fadeOutPercentage = (scrollY - (publicationsTop - windowHeight * 1.5)) / (windowHeight * 0.5);
-            const videoOpacity = Math.max(0, 1 - fadeOutPercentage);
+            const videoOpacity = Math.max(0.7, 1 - fadeOutPercentage); // 最小透明度为0.5，而不是0
             videoBackground.style.opacity = videoOpacity;
             videoMask.style.opacity = videoOpacity;
         } else {
@@ -634,7 +635,8 @@ window.addEventListener('DOMContentLoaded', event => {
 
     // Add scroll event listener
     window.addEventListener('scroll', handleScroll);
-    // Call once on load to set initial state
-    handleScroll();
+    
+    // Call once after DOM is fully loaded to set initial state
+    window.addEventListener('DOMContentLoaded', handleScroll);
 
 });
