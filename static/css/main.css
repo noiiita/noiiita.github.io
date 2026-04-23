@@ -61,7 +61,7 @@
 .glass-effect-supported .header.scrolled .nav-link,
 .glass-effect-supported .header.scrolled .navbar-nav .nav-link {
     position: relative;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.27) 0%, rgba(255, 255, 255, 0.4) 100%) !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.188) 0%, rgba(255, 255, 255, 0.126) 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.8) !important;
     border-radius: 20px !important;
     padding: 0.5rem 1rem !important;
@@ -69,7 +69,7 @@
     box-shadow: 
         0 4px 12px rgba(0, 0, 0, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
-    backdrop-filter: blur(6px) !important;
+    backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(6px) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     overflow: hidden;
@@ -101,7 +101,7 @@
 /* For unsupported browsers, use original styles */
 .glass-effect-unsupported .header.scrolled .nav-link,
 .glass-effect-unsupported .header.scrolled .navbar-nav .nav-link {
-    background-color: rgba(255, 255, 255, 0.542) !important;
+    background-color: rgba(255, 255, 255, 0.319) !important;
     color: black !important;
     border: 1px solid #ccc !important;
     border-radius: 20px !important;
@@ -536,12 +536,15 @@
 /* Home video note styling */
 .home-video-note {
     font-size: 0.9rem;
+    font-weight: 300;
     font-style: italic;
-    color: #ffffff84;
-    margin-bottom: 2rem;
-    margin-top: 1rem;
+    color: #ffffffa8;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
     transition: all 0.3s ease;
     cursor: pointer;
+    text-align: end;
 }
 
 .home-video-note:hover {
@@ -584,8 +587,8 @@ section header h2{
 
 section .main-body h4 {
     font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-weight: 600;
-    margin-top: 3rem;
+    font-weight: 500;
+    margin-top: 2rem;
 }
 
 .gallery-section h3 {
@@ -632,16 +635,16 @@ section .main-body{
 #home-subtitle {
     color: var(--text-primary) !important;
     font-family: "Google Sans Flex", "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-weight: 800;
+    font-weight: 600;
     font-stretch: extra-expanded;
     transition: all 0.3s ease;
     padding-right: 8rem;
 }
 
 #home-subtitle:hover {
-    font-weight: 800;
+    font-weight: 200;
     font-stretch: extra-expanded;
-    transform: translateY(-10px);
+    transform: translateY(-5px);
 }
 
 .bg-gradient-primary-to-secondary-gray {

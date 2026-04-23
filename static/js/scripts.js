@@ -20,19 +20,19 @@ window.addEventListener('DOMContentLoaded', event => {
         window.addEventListener('scroll', () => {
             const scrollY = window.scrollY;
             // Fade out and move up smoothly as user scrolls
-            const maxScroll = 50; // Adjust this value to control how long the fade takes
+            const maxScroll = 120; // Adjust this value to control how long the fade takes
             
             if (scrollY <= maxScroll) {
                 const opacity = Math.max(0, 1 - scrollY / maxScroll);
-                const translateY = -scrollY * 0.3; // Adjust multiplier for speed of upward movement
+                //const translateY = -scrollY * 0.3; // Adjust multiplier for speed of upward movement
                 
                 heroName.style.opacity = opacity;
-                heroName.style.transform = `translateY(${translateY}px)`;
+                //heroName.style.transform = `translateY(${translateY}px)`;
                 heroName.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none';
             } else {
                 // Completely hidden after maxScroll
                 heroName.style.opacity = '0';
-                heroName.style.transform = `translateY(-30px)`; // Move up enough to be out of view
+                //heroName.style.transform = `translateY(-30px)`; // Move up enough to be out of view
                 heroName.style.pointerEvents = 'none';
             }
         });

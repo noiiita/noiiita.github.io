@@ -2,7 +2,7 @@
 [🔗Google Scholar](https://scholar.google.com/citations?user=4-Rvxc4AAAAJ&hl=en)
 #### In progress
 
-- <strong>R. Luo</strong>, Z. Zhang, et al., X. Zheng*, W. Chen*. Polycation-enhanced Phase Separation for High-capacity Zinc-halogen Battery. <strong>Submitted</strong> 
+- <strong>R. Luo</strong>, Z. Zhang, et al., X. Zheng*, W. Chen*. Polycation-enhanced Phase Separation for High-capacity Zinc-halogen Battery. <strong> </strong> 
 
 
 #### Published
