@@ -637,6 +637,255 @@ window.addEventListener('DOMContentLoaded', event => {
     window.addEventListener('scroll', handleScroll);
     
     // Call once after DOM is fully loaded to set initial state
-    window.addEventListener('DOMContentLoaded', handleScroll);
+    handleScroll();
+
+    // Initialize railway mileage charts
+    (function initCharts() {
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js is not loaded');
+            return;
+        }
+
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        var textColor = isDark ? '#e0e0e0' : '#333';
+        var subColor = isDark ? '#ffffffff' : '#666';
+        var lineLen = 26;
+        var animSpeed =0.32;
+
+        var labelPlugin = {
+            id: 'doughnutLabels',
+            beforeDraw: function(chart) {
+                var ctx = chart.ctx;
+                var area = chart.chartArea;
+                var cx = (area.left + area.right) / 2;
+                var cy = (area.top + area.bottom) / 2;
+                var title = chart.options._centerTitle;
+                if (!title) return;
+
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                ctx.font = 'bold 28px sans-serif';
+                ctx.fillStyle = textColor;
+                ctx.fillText(title.big, cx, cy - 6);
+
+                ctx.font = '13px sans-serif';
+                ctx.fillStyle = subColor;
+                ctx.fillText(title.small, cx, cy + 18);
+            },
+            afterDraw: function(chart) {
+                var ctx = chart.ctx;
+                var meta = chart.getDatasetMeta(0);
+                var dataset = chart.data.datasets[0];
+                var total = dataset.data.reduce(function(a, b) { return a + b; }, 0);
+                var anims = chart._hoverAnims;
+                var positions = [];
+
+                function lerp(a, b, t) { return a + (b - a) * t; }
+
+                meta.data.forEach(function(arc, i) {
+                    var value = dataset.data[i];
+                    if (value === 0) return;
+
+                    var t = anims ? (anims[i] || 0) : 0;
+                    var angle = (arc.startAngle + arc.endAngle) / 2;
+                    var outerR = arc.outerRadius;
+
+                    var sx = arc.x + Math.cos(angle) * outerR;
+                    var sy = arc.y + Math.sin(angle) * outerR;
+                    var ex = arc.x + Math.cos(angle) * (outerR + lineLen);
+                    var ey = arc.y + Math.sin(angle) * (outerR + lineLen);
+
+                    ctx.beginPath();
+                    ctx.moveTo(sx, sy);
+                    ctx.lineTo(ex, ey);
+                    ctx.strokeStyle = dataset.backgroundColor[i];
+                    ctx.lineWidth = lerp(1.5, 3, t);
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, lerp(3, 6, t), 0, Math.PI * 2);
+                    ctx.fillStyle = dataset.backgroundColor[i];
+                    ctx.fill();
+
+                    var pct = ((value / total) * 100).toFixed(1);
+                    var label = chart.data.labels[i];
+                    var tx = arc.x + Math.cos(angle) * (outerR + lineLen + lerp(10, 18, t));
+                    var ty = arc.y + Math.sin(angle) * (outerR + lineLen);
+
+                    positions.push({ x: tx, y: ty });
+
+                    var isRight = Math.cos(angle) >= 0;
+                    ctx.textAlign = isRight ? 'left' : 'right';
+                    ctx.textBaseline = 'middle';
+
+                    var labelSize = Math.round(lerp(13,14, t));
+                    var valSize = Math.round(lerp(12, 18, t));
+                    var rowH = Math.round(lerp(14, 20, t));
+
+                    ctx.font = labelSize + 'px sans-serif';
+                    ctx.fillStyle = textColor;
+                    ctx.fillText(label, tx, ty - rowH);
+
+                    ctx.font = valSize + 'px sans-serif';
+                    ctx.fillStyle = subColor;
+                    ctx.fillText(value + ' km', tx, ty);
+
+                    ctx.font = valSize + 'px sans-serif';
+                    ctx.fillStyle = subColor;
+                    ctx.fillText(pct + '%', tx, ty + rowH);
+                });
+
+                chart._labelPositions = positions;
+            }
+        };
+
+        var tooltipCb = function(ctx) {
+            var v = ctx.parsed;
+            var total = ctx.dataset.data.reduce(function(a, b) { return a + b; }, 0);
+            var pct = ((v / total) * 100).toFixed(1);
+            return ctx.label + ': ' + v + ' km (' + pct + '%)';
+        };
+
+        var basePadding = { top: 50, bottom: 50, left: 60, right: 60 };
+
+        function bindHover(chartInstance, canvas) {
+            var count = chartInstance.data.datasets[0].data.length;
+            var targets = new Array(count).fill(0);
+            var anims = new Array(count).fill(0);
+            chartInstance._hoverAnims = anims;
+            var running = false;
+
+            function tick() {
+                var changed = false;
+                for (var i = 0; i < count; i++) {
+                    var diff = targets[i] - anims[i];
+                    if (Math.abs(diff) < 0.005) {
+                        anims[i] = targets[i];
+                    } else {
+                        anims[i] += diff * animSpeed;
+                        changed = true;
+                    }
+                }
+                if (changed) {
+                    chartInstance.draw();
+                    requestAnimationFrame(tick);
+                } else {
+                    running = false;
+                }
+            }
+
+            function startAnim() {
+                if (!running) {
+                    running = true;
+                    requestAnimationFrame(tick);
+                }
+            }
+
+            function getHoverIndex(e) {
+                var pts = chartInstance.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false);
+                if (pts.length) return pts[0].index;
+
+                var labelPositions = chartInstance._labelPositions;
+                if (!labelPositions) return -1;
+
+                var rect = canvas.getBoundingClientRect();
+                var mx = e.clientX - rect.left;
+                var my = e.clientY - rect.top;
+                var threshold = 40;
+
+                for (var i = 0; i < labelPositions.length; i++) {
+                    var dx = mx - labelPositions[i].x;
+                    var dy = my - labelPositions[i].y;
+                    if (dx * dx + dy * dy < threshold * threshold) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            canvas.addEventListener('mousemove', function(e) {
+                var hoverIdx = getHoverIndex(e);
+                for (var i = 0; i < count; i++) {
+                    targets[i] = (i === hoverIdx) ? 1 : 0;
+                }
+                startAnim();
+            });
+            canvas.addEventListener('mouseleave', function() {
+                targets.fill(0);
+                startAnim();
+            });
+        }
+
+        var mileageCtx = document.getElementById('mileageChart');
+        if (mileageCtx) {
+            try {
+                var chart1 = new Chart(mileageCtx, {
+                    type: 'doughnut',
+                    plugins: [labelPlugin],
+                    data: {
+                        labels: ['高速铁路', '普速铁路'],
+                        datasets: [{
+                            data: [6243, 3378],
+                            backgroundColor: ['#af4949ff', '#4b8f5aff'],
+                            borderColor: ['#b03434ff', '#176929ff'],
+                            borderWidth: 1,
+                            hoverOffset: 12,
+                            radius: '73%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '72%',
+                        layout: { padding: basePadding },
+                        _centerTitle: { big: '9621 km', small: '总运转里程' },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: tooltipCb } }
+                        }
+                    }
+                });
+                bindHover(chart1, mileageCtx);
+            } catch (e) {
+                console.error('Error creating mileageChart:', e);
+            }
+        }
+
+        var highSpeedCtx = document.getElementById('highSpeedChart');
+        if (highSpeedCtx) {
+            try {
+                var chart2 = new Chart(highSpeedCtx, {
+                    type: 'doughnut',
+                    plugins: [labelPlugin],
+                    data: {
+                        labels: ['已运转高铁', '未运转高铁'],
+                        datasets: [{
+                            data: [6243, 50000 - 6243],
+                            backgroundColor: ['#527fe8ff', '#7e7e7eff'],
+                            borderColor: ['#2a36b1', '#484848ff'],
+                            borderWidth: 1,
+                            hoverOffset: 12,
+                            radius: '73%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '72%',
+                        layout: { padding: basePadding },
+                        _centerTitle: { big: '50000 km', small: '全国高铁总里程' },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: tooltipCb } }
+                        }
+                    }
+                });
+                bindHover(chart2, highSpeedCtx);
+            } catch (e) {
+                console.error('Error creating highSpeedChart:', e);
+            }
+        }
+    })();
 
 });

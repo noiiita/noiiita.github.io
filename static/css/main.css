@@ -997,7 +997,7 @@ footer .text-white-50 a:hover {
     align-items: flex-start;
     gap: 4rem;
     margin-top: 4rem;
-    margin-bottom: 6rem;
+    margin-bottom: 2rem;
     padding-right: 0.8rem;
     padding-left: 0.5rem;
 }
@@ -1146,6 +1146,66 @@ footer .text-white-50 a:hover {
 .pswp-image:hover .gallery-caption {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Railway Statistics */
+.railway-statistics-container {
+    margin: 1rem 0rem;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.railway-statistics-container h3 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+    font-family: "Google Sans Flex", sans-serif;
+}
+
+.railway-charts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.chart-container {
+    position: relative;
+    width: 420px;
+    height: 420px;
+    text-align: center;
+    overflow: visible;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 420px;
+    max-height: 420px;
+}
+
+.chart-description {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .railway-statistics-container {
+    background: var(--bg-secondary);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+[data-theme="dark"] .railway-statistics-container h3 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .chart-description {
+    color: var(--text-secondary);
 }
 
 /* PhotoSwipe default styling */
