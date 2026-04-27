@@ -77,40 +77,34 @@ window.addEventListener('DOMContentLoaded', event => {
     if (navbarToggler && navbarCollapse) {
         // Handle navbar toggle button click
         navbarToggler.addEventListener('click', function() {
-            // Prevent multiple rapid clicks
-            if (isAnimating) return;
+            // Check current state BEFORE Bootstrap processes the click
+            const isExpanded = navbarCollapse.classList.contains('show');
             
-            isAnimating = true;
-            
-            // Clear any existing timer
+            if (!isExpanded) {
+                // Menu is opening - set auto-collapse timer
+                clearAutoCollapseTimer();
+                navbarAutoCollapseTimer = setTimeout(function() {
+                    collapseNavbar();
+                }, 3000);
+            } else {
+                // Menu is closing - clear auto-collapse timer
+                clearAutoCollapseTimer();
+            }
+        });
+        
+        // Function to clear auto-collapse timer
+        function clearAutoCollapseTimer() {
             if (navbarAutoCollapseTimer) {
                 clearTimeout(navbarAutoCollapseTimer);
                 navbarAutoCollapseTimer = null;
             }
-            
-            const isExpanded = navbarCollapse.classList.contains('show');
-            
-            if (!isExpanded) {
-                // Navbar is being opened - set auto-collapse timer
-                // Use setTimeout to ensure CSS transition has time to trigger
-                setTimeout(() => {
-                    navbarAutoCollapseTimer = setTimeout(function() {
-                        if (navbarCollapse.classList.contains('show') && !isAnimating) {
-                            collapseNavbar();
-                        }
-                    }, 3000);
-                }, 100);
-            }
-            
-            // Reset animation flag after transition
-            setTimeout(() => {
-                isAnimating = false;
-            }, 350);
-        });
+        }
         
         // Function to collapse navbar with animation
         function collapseNavbar() {
             if (isAnimating) return;
+            if (!navbarCollapse.classList.contains('show')) return;
+            
             isAnimating = true;
             
             const navLinks = navbarCollapse.querySelectorAll('.nav-link');
@@ -119,48 +113,54 @@ window.addEventListener('DOMContentLoaded', event => {
             navLinks.forEach((link, index) => {
                 setTimeout(() => {
                     link.style.animation = 'fadeOut 0.2s ease forwards';
-                }, index * 30); // Faster staggered animation
+                }, index * 30);
             });
             
-            // Collapse after animations complete
+            // Collapse after animations complete using Bootstrap API
             setTimeout(() => {
-                navbarToggler.click(); // Trigger Bootstrap collapse
-                isAnimating = false;
-                
-                // Clear animation styles after collapse
-                setTimeout(() => {
-                    navLinks.forEach(link => {
-                        link.style.animation = '';
-                    });
-                }, 300);
+                const bsCollapse = bootstrap.Collapse.getOrCreateInstance(navbarCollapse);
+                bsCollapse.hide();
             }, 250);
         }
         
-        // Handle individual nav link clicks
-        const navLinks = navbarCollapse.querySelectorAll('.nav-link');
-        //navLinks.forEach(link => {
-        //    link.addEventListener('click', function() {
-        //        if (window.getComputedStyle(navbarToggler).display !== 'none') {
-        //           collapseNavbar();
-        //       }
-        //   });
+        // Listen to Bootstrap collapse events for proper state management
+        navbarCollapse.addEventListener('hide.bs.collapse', function() {
+            isAnimating = true;
+        });
         
+        navbarCollapse.addEventListener('hidden.bs.collapse', function() {
+            isAnimating = false;
+            clearAutoCollapseTimer();
+            
+            // Clear animation styles
+            const navLinks = navbarCollapse.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.style.animation = '';
+            });
+        });
+        
+        navbarCollapse.addEventListener('show.bs.collapse', function() {
+            isAnimating = true;
+        });
+        
+        navbarCollapse.addEventListener('shown.bs.collapse', function() {
+            isAnimating = false;
+        });
     }
 
-    // Collapse responsive navbar when toggler is visible
+    // Collapse responsive navbar when nav link is clicked
     const responsiveNavItems = [].slice.call(
-        document.querySelectorAll('#navbarResponsive .nav-link')
+        document.querySelectorAll('#navbarResponsive .nav-link, #navbarResponsive button.nav-link')
     );
     responsiveNavItems.map(function (responsiveNavItem) {
         responsiveNavItem.addEventListener('click', () => {
             if (window.getComputedStyle(navbarToggler).display !== 'none') {
-                // Add fade out animation
-                //responsiveNavItem.style.animation = 'fadeOut 0.3s ease forwards';
+                // Clear auto-collapse timer since user is navigating
+                clearAutoCollapseTimer();
                 
-                // Collapse navbar after short delay
-                setTimeout(() => {
-                    navbarToggler.click();
-                }, 200);
+                // Close navbar immediately using Bootstrap API
+                const bsCollapse = bootstrap.Collapse.getOrCreateInstance(navbarCollapse);
+                bsCollapse.hide();
             }
         });
     });
@@ -184,18 +184,26 @@ window.addEventListener('DOMContentLoaded', event => {
 
     // Marked
     marked.use({ mangle: false, headerIds: false })
-    section_names.forEach((name, idx) => {
-        fetch(content_dir + name + '.md')
+
+    Promise.all(section_names.map(name => {
+        return fetch(content_dir + name + '.md')
             .then(response => response.text())
             .then(markdown => {
                 const html = marked.parse(markdown);
                 document.getElementById(name + '-md').innerHTML = html;
-            }).then(() => {
-                // MathJax
-                MathJax.typeset();
             })
             .catch(error => console.log(error));
-    })
+    })).then(() => {
+        // MathJax
+        MathJax.typeset();
+        // Setup scroll animation after content is loaded
+        console.log('Content loaded, setting up scroll animation...');
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+            setupScrollAnimation();
+        } else {
+            console.error('GSAP or ScrollTrigger not available');
+        }
+    });
 
     // Simple custom lightbox implementation
     const lightbox = {
@@ -626,10 +634,14 @@ window.addEventListener('DOMContentLoaded', event => {
             const fadeOutPercentage = (scrollY - (publicationsTop - windowHeight * 1.5)) / (windowHeight * 0.5);
             const videoOpacity = Math.max(0.7, 1 - fadeOutPercentage); // 最小透明度为0.5，而不是0
             videoBackground.style.opacity = videoOpacity;
-            videoMask.style.opacity = videoOpacity;
+            if (videoMask) {
+                videoMask.style.opacity = videoOpacity;
+            }
         } else {
             videoBackground.style.opacity = '1';
-            videoMask.style.opacity = '1';
+            if (videoMask) {
+                videoMask.style.opacity = '1';
+            }
         }
     }
 
@@ -826,7 +838,7 @@ window.addEventListener('DOMContentLoaded', event => {
                     data: {
                         labels: ['高速铁路', '普速铁路'],
                         datasets: [{
-                            data: [6243, 3378],
+                            data: [6758, 3378],
                             backgroundColor: ['#af4949ff', '#4b8f5aff'],
                             borderColor: ['#b03434ff', '#176929ff'],
                             borderWidth: 1,
@@ -839,7 +851,7 @@ window.addEventListener('DOMContentLoaded', event => {
                         maintainAspectRatio: false,
                         cutout: '72%',
                         layout: { padding: basePadding },
-                        _centerTitle: { big: '9621 km', small: '总运转里程' },
+                        _centerTitle: { big: '10136 km', small: '总运转里程' },
                         plugins: {
                             legend: { display: false },
                             tooltip: { callbacks: { label: tooltipCb } }
@@ -861,7 +873,7 @@ window.addEventListener('DOMContentLoaded', event => {
                     data: {
                         labels: ['已运转高铁', '未运转高铁'],
                         datasets: [{
-                            data: [6243, 50000 - 6243],
+                            data: [6758, 50400 - 6758],
                             backgroundColor: ['#527fe8ff', '#7e7e7eff'],
                             borderColor: ['#2a36b1', '#484848ff'],
                             borderWidth: 1,
@@ -874,7 +886,7 @@ window.addEventListener('DOMContentLoaded', event => {
                         maintainAspectRatio: false,
                         cutout: '72%',
                         layout: { padding: basePadding },
-                        _centerTitle: { big: '50000 km', small: '全国高铁总里程' },
+                        _centerTitle: { big: '50400 km', small: '全国高铁总里程' },
                         plugins: {
                             legend: { display: false },
                             tooltip: { callbacks: { label: tooltipCb } }
@@ -887,5 +899,662 @@ window.addEventListener('DOMContentLoaded', event => {
             }
         }
     })();
+
+    // Advanced scroll-reveal text animation with GSAP + ScrollTrigger
+    function setupScrollAnimation() {
+        console.log('setupScrollAnimation called');
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+            console.error('GSAP or ScrollTrigger not defined');
+            return;
+        }
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        const sections = [
+            { selector: '.home-section-with-video-bg', containerId: 'home-md' },
+            { selector: '#publications', containerId: 'publications-md' }
+        ];
+
+        sections.forEach(section => {
+            const sectionEl = document.querySelector(section.selector);
+            const container = section.containerId ? document.getElementById(section.containerId) : null;
+
+            if (!sectionEl) {
+                console.log(`Section ${section.selector} not found`);
+                return;
+            }
+
+            const targetElements = container ?
+                container.querySelectorAll('p, li, span') :
+                sectionEl.querySelectorAll('p, li, span');
+
+            console.log(`Section ${section.selector}: found ${targetElements.length} elements`);
+
+            if (targetElements.length === 0) return;
+
+            targetElements.forEach((element, index) => {
+                if (!element.textContent.trim()) return;
+
+                element.classList.add('scroll-reveal-init');
+
+                gsap.fromTo(element,
+                    { opacity: 0.25 },
+                    {
+                        opacity: 1,
+                        duration: 1,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: element,
+                            start: 'top 90%',
+                            end: 'top 60%',
+                            scrub: true
+                        }
+                    }
+                );
+            });
+        });
+    }
+
+    // Home subtitle letter hover effect
+    function setupHomeSubtitleEffect() {
+        const letters = document.querySelectorAll('#home-subtitle .letter');
+        letters.forEach(letter => {
+            letter.addEventListener('mouseenter', function() {
+                this.style.fontVariationSettings = '"wdth" 125, "wght" 700';
+                this.style.transform = 'scale(1.1)';
+            });
+            letter.addEventListener('mouseleave', function() {
+                this.style.fontVariationSettings = '"wdth" 100, "wght" 400';
+                this.style.transform = 'scale(1)';
+            });
+        });
+    }
+
+    // High-performance Magnetic Hero Letter Effect
+    function setupHeroNameEffect() {
+        console.log('setupHeroNameEffect called');
+        const heroName = document.querySelector('.top-section .hero-name');
+        
+        if (!heroName) {
+            console.log('Hero name not found');
+            return;
+        }
+        
+        console.log('Setting up magnetic hero letter effect');
+        console.log('Hero name element:', heroName);
+        
+        // Fix visibility and pointer events
+        heroName.style.opacity = '1';
+        heroName.style.pointerEvents = 'auto';
+        console.log('Fixed hero name visibility and pointer events');
+        
+        // Force split text into individual letters regardless of existing elements
+        console.log('Forcing split of text into letters');
+        const text = heroName.textContent;
+        console.log('Hero name text:', text);
+        heroName.innerHTML = '';
+        
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const span = document.createElement('span');
+            span.className = 'hero-letter';
+            span.textContent = char;
+            span.tabIndex = 0;
+            heroName.appendChild(span);
+            console.log('Created letter span:', char);
+        }
+        
+        let letters = document.querySelectorAll('.top-section .hero-letter');
+        console.log('Letters after splitting:', letters.length);
+        
+        // Convert NodeList to array
+        letters = Array.from(letters);
+        console.log('Letters after conversion to array:', letters.length);
+        
+        console.log('Found letters:', letters.length);
+        letters.forEach((letter, index) => {
+            console.log('Letter', index, ':', letter.textContent, letter);
+        });
+        
+        // Configuration
+        const config = {
+            defaultWeight: 300,
+            defaultWidth: 100,
+            maxWeight: 900,
+            maxWidth: 150,
+            maxDistance: 200,
+            lerpFactor: 0.15
+        };
+        
+        // Initialize letter state
+        const letterStates = letters.map(() => ({
+            targetWeight: config.defaultWeight,
+            targetWidth: config.defaultWidth,
+            currentWeight: config.defaultWeight,
+            currentWidth: config.defaultWidth
+        }));
+        
+        // Animation loop
+        let animationId = null;
+        
+        function animate() {
+            let hasChanges = false;
+            
+            letters.forEach((letter, index) => {
+                const state = letterStates[index];
+                
+                // Lerp to target values
+                const newWeight = state.currentWeight + (state.targetWeight - state.currentWeight) * config.lerpFactor;
+                const newWidth = state.currentWidth + (state.targetWidth - state.currentWidth) * config.lerpFactor;
+                
+                // Check if values have changed significantly
+                if (Math.abs(newWeight - state.currentWeight) > 0.1 || Math.abs(newWidth - state.currentWidth) > 0.1) {
+                    state.currentWeight = newWeight;
+                    state.currentWidth = newWidth;
+                    hasChanges = true;
+                    
+                    // Apply styles using font-variation-settings
+                    letter.style.fontVariationSettings = `"wght" ${Math.round(newWeight)}, "wdth" ${Math.round(newWidth)}`;
+                    console.log('Applied styles to:', letter.textContent, 'fontVariationSettings:', letter.style.fontVariationSettings);
+                }
+            });
+            
+            if (hasChanges) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+        
+        // Mouse move handler
+        function handleMouseMove(e) {
+            console.log('Mouse move event triggered at:', e.clientX, e.clientY);
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            
+            letters.forEach((letter, index) => {
+                const rect = letter.getBoundingClientRect();
+                console.log('Letter', letter.textContent, 'rect:', rect);
+                const letterX = rect.left + rect.width / 2;
+                const letterY = rect.top + rect.height / 2;
+                
+                const dx = mouseX - letterX;
+                const dy = mouseY - letterY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                console.log('Letter', letter.textContent, 'distance:', distance);
+                
+                if (distance < config.maxDistance) {
+                    const intensity = 1 - Math.min(distance / config.maxDistance, 1);
+                    const weight = config.defaultWeight + (config.maxWeight - config.defaultWeight) * intensity;
+                    const width = config.defaultWidth + (config.maxWidth - config.defaultWidth) * intensity;
+                    
+                    console.log('Setting target style for:', letter.textContent, 'Distance:', distance, 'Intensity:', intensity, 'Weight:', weight, 'Width:', width);
+                    
+                    // Update target values
+                    letterStates[index].targetWeight = weight;
+                    letterStates[index].targetWidth = width;
+                } else {
+                    // Reset to default
+                    console.log('Resetting target style for:', letter.textContent);
+                    letterStates[index].targetWeight = config.defaultWeight;
+                    letterStates[index].targetWidth = config.defaultWidth;
+                }
+            });
+            
+            // Start animation if not already running
+            if (!animationId) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+        
+        // Mouse leave handler
+        function handleMouseLeave() {
+            console.log('Mouse leave event triggered');
+            letters.forEach((letter, index) => {
+                // Reset to default
+                console.log('Resetting target style for:', letter.textContent);
+                letterStates[index].targetWeight = config.defaultWeight;
+                letterStates[index].targetWidth = config.defaultWidth;
+            });
+            
+            // Start animation if not already running
+            if (!animationId) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+        
+        // Add event listeners
+        console.log('Adding event listeners to heroName element');
+        heroName.addEventListener('mousemove', handleMouseMove);
+        heroName.addEventListener('mouseleave', handleMouseLeave);
+        
+        // Add mouseenter event listener for debugging
+        heroName.addEventListener('mouseenter', function(e) {
+            console.log('Mouse entered heroName element at:', e.clientX, e.clientY);
+        });
+        
+        console.log('Magnetic hero letter effect initialized');
+        console.log('Event listeners added successfully');
+        
+        // Test the event listeners by triggering a mouseenter event
+        console.log('Testing event listeners...');
+        const testEvent = new MouseEvent('mouseenter', {
+            clientX: 100,
+            clientY: 100,
+            bubbles: true,
+            cancelable: true
+        });
+        heroName.dispatchEvent(testEvent);
+    }
+
+    // Setup test hero name effect (now used for the main hero name)
+    function setupTestHeroNameEffect() {
+        console.log('setupTestHeroNameEffect called');
+        const heroName = document.querySelector('.top-section .test-hero-name');
+        
+        if (!heroName) {
+            console.log('Test hero name not found');
+            return;
+        }
+        
+        console.log('Setting up test magnetic hero letter effect');
+        console.log('Test hero name element:', heroName);
+        
+        // Fix visibility and pointer events
+        heroName.style.opacity = '1';
+        heroName.style.pointerEvents = 'auto';
+        console.log('Fixed test hero name visibility and pointer events');
+        
+        // Force split text into individual letters
+        console.log('Forcing split of test text into letters');
+        const text = heroName.textContent;
+        console.log('Test hero name text:', text);
+        heroName.innerHTML = '';
+        
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const span = document.createElement('span');
+            span.className = 'test-hero-letter';
+            span.textContent = char;
+            span.tabIndex = 0;
+            heroName.appendChild(span);
+            console.log('Created test letter span:', char);
+        }
+        
+        let letters = document.querySelectorAll('.top-section .test-hero-letter');
+        console.log('Test letters after splitting:', letters.length);
+        
+        // Convert NodeList to array
+        letters = Array.from(letters);
+        console.log('Test letters after conversion to array:', letters.length);
+        
+        // Log each letter
+        letters.forEach((letter, index) => {
+            console.log('Test letter', index, ':', letter.textContent, letter);
+        });
+        
+        // Configuration
+        const config = {
+            defaultWeight: 300,
+            defaultWidth: 100,
+            maxWeight: 800,
+            maxWidth: 130,
+            maxDistance: 200,
+            lerpFactor: 0.15,
+            falloffPower: 2
+        };
+        
+        // Initialize letter state
+        const letterStates = letters.map(() => ({
+            targetWeight: config.defaultWeight,
+            targetWidth: config.defaultWidth,
+            currentWeight: config.defaultWeight,
+            currentWidth: config.defaultWidth
+        }));
+        
+        // Animation loop
+        let animationId = null;
+        
+        function animate() {
+            let hasChanges = false;
+            
+            letters.forEach((letter, index) => {
+                const state = letterStates[index];
+                
+                // Lerp to target values
+                const newWeight = state.currentWeight + (state.targetWeight - state.currentWeight) * config.lerpFactor;
+                const newWidth = state.currentWidth + (state.targetWidth - state.currentWidth) * config.lerpFactor;
+                
+                // Check if values have changed significantly
+                if (Math.abs(newWeight - state.currentWeight) > 0.1 || Math.abs(newWidth - state.currentWidth) > 0.1) {
+                    state.currentWeight = newWeight;
+                    state.currentWidth = newWidth;
+                    hasChanges = true;
+                    
+                    // Apply styles using font-variation-settings
+                    letter.style.fontVariationSettings = `"wght" ${Math.round(newWeight)}, "wdth" ${Math.round(newWidth)}`;
+                    console.log('Applied test styles to:', letter.textContent, 'fontVariationSettings:', letter.style.fontVariationSettings);
+                }
+            });
+            
+            if (hasChanges) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+        
+        // Mouse move handler
+        function handleMouseMove(e) {
+            console.log('Test mouse move event triggered at:', e.clientX, e.clientY);
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            
+            letters.forEach((letter, index) => {
+                const rect = letter.getBoundingClientRect();
+                console.log('Test letter', letter.textContent, 'rect:', rect);
+                const letterX = rect.left + rect.width / 2;
+                const letterY = rect.top + rect.height / 2;
+                
+                const dx = mouseX - letterX;
+                const dy = mouseY - letterY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                console.log('Test letter', letter.textContent, 'distance:', distance);
+                
+                if (distance < config.maxDistance) {
+                    const intensity = 1 - Math.min(distance / config.maxDistance, 1);
+                    const weight = config.defaultWeight + (config.maxWeight - config.defaultWeight) * intensity;
+                    const width = config.defaultWidth + (config.maxWidth - config.defaultWidth) * intensity;
+                    
+                    console.log('Setting target test style for:', letter.textContent, 'Distance:', distance, 'Intensity:', intensity, 'Weight:', weight, 'Width:', width);
+                    
+                    // Update target values
+                    letterStates[index].targetWeight = weight;
+                    letterStates[index].targetWidth = width;
+                } else {
+                    // Reset to default
+                    console.log('Resetting target test style for:', letter.textContent);
+                    letterStates[index].targetWeight = config.defaultWeight;
+                    letterStates[index].targetWidth = config.defaultWidth;
+                }
+            });
+            
+            // Start animation if not already running
+            if (!animationId) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+        
+        // Mouse leave handler
+        function handleMouseLeave() {
+            console.log('Test mouse leave event triggered');
+            letters.forEach((letter, index) => {
+                // Reset to default
+                console.log('Resetting target test style for:', letter.textContent);
+                letterStates[index].targetWeight = config.defaultWeight;
+                letterStates[index].targetWidth = config.defaultWidth;
+            });
+            
+            // Start animation if not already running
+            if (!animationId) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+        
+        // Add event listeners
+        console.log('Adding event listeners to test heroName element');
+        heroName.addEventListener('mousemove', handleMouseMove);
+        heroName.addEventListener('mouseleave', handleMouseLeave);
+        
+        // Add mouseenter event listener for debugging
+        heroName.addEventListener('mouseenter', function(e) {
+            console.log('Test mouse entered heroName element at:', e.clientX, e.clientY);
+        });
+        
+        console.log('Test magnetic hero letter effect initialized');
+        console.log('Test event listeners added successfully');
+        
+        // Test the event listeners by triggering a mouseenter event
+        console.log('Testing test event listeners...');
+        const testEvent = new MouseEvent('mouseenter', {
+            clientX: 100,
+            clientY: 100,
+            bubbles: true,
+            cancelable: true
+        });
+        heroName.dispatchEvent(testEvent);
+    }
+
+    // Setup new hero name effect
+    function setupNewHeroNameEffect() {
+        console.log('setupNewHeroNameEffect called');
+        
+        // Get the parent section instead of the text container
+        const heroSection = document.querySelector('.new-hero-section');
+        const heroName = document.querySelector('.new-hero-letter');
+        
+        if (!heroName || !heroSection) {
+            console.log('New hero name or section not found');
+            return;
+        }
+        
+        console.log('Setting up new magnetic hero letter effect');
+        console.log('New hero name element:', heroName);
+        console.log('New hero section element:', heroSection);
+        
+        // Fix visibility and pointer events
+        heroName.style.opacity = '1';
+        heroName.style.pointerEvents = 'auto';
+        console.log('Fixed new hero name visibility and pointer events');
+        
+        // Force split text into individual letters
+        console.log('Forcing split of new text into letters');
+        const text = heroName.textContent;
+        console.log('New hero name text:', text);
+        heroName.innerHTML = '';
+        
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const span = document.createElement('span');
+            span.className = 'new-hero-letter-span';
+            span.textContent = char;
+            span.tabIndex = 0;
+            heroName.appendChild(span);
+            console.log('Created new letter span:', char);
+        }
+        
+        let letters = document.querySelectorAll('.new-hero-letter-span');
+        console.log('New letters after splitting:', letters.length);
+        
+        // Convert NodeList to array
+        letters = Array.from(letters);
+        console.log('New letters after conversion to array:', letters.length);
+        
+        // Log each letter
+        letters.forEach((letter, index) => {
+            console.log('New letter', index, ':', letter.textContent, letter);
+        });
+        
+        // Configuration
+        const config = {
+            defaultWeight: 100,
+            defaultWidth: 87.5,
+            maxWeight: 800,
+            maxWidth: 150,
+            maxDistance: 300,
+            lerpFactor: 0.55,
+            defaultFontSize: 100, // 100% (默认字体大小)
+            maxFontSize: 135,     // 120% (最大字体大小)
+            defaultSkew: -10,     // 默认倾斜角度 (-10deg)
+            maxSkew: 0            // 最大倾斜角度 (0deg)
+        };
+        
+        // Initialize letter state
+        const letterStates = letters.map(() => ({
+            targetWeight: config.defaultWeight,
+            targetWidth: config.defaultWidth,
+            currentWeight: config.defaultWeight,
+            currentWidth: config.defaultWidth,
+            targetFontSize: config.defaultFontSize,
+            currentFontSize: config.defaultFontSize,
+            targetSkew: config.defaultSkew,
+            currentSkew: config.defaultSkew
+        }));
+        
+        // Animation state
+        let animationId = null;
+        let isMouseInSection = false;
+        
+        // Always keep animation running, but change target values based on mouse position
+        function animate() {
+            let hasChanges = false;
+            
+            letters.forEach((letter, index) => {
+                const state = letterStates[index];
+                
+                // Lerp to target values
+                const newWeight = state.currentWeight + (state.targetWeight - state.currentWeight) * config.lerpFactor;
+                const newWidth = state.currentWidth + (state.targetWidth - state.currentWidth) * config.lerpFactor;
+                const newFontSize = state.currentFontSize + (state.targetFontSize - state.currentFontSize) * config.lerpFactor;
+                const newSkew = state.currentSkew + (state.targetSkew - state.currentSkew) * config.lerpFactor;
+                
+                // Check if values have changed significantly
+                if (Math.abs(newWeight - state.currentWeight) > 0.1 || Math.abs(newWidth - state.currentWidth) > 0.1 || Math.abs(newFontSize - state.currentFontSize) > 0.1 || Math.abs(newSkew - state.currentSkew) > 0.1) {
+                    state.currentWeight = newWeight;
+                    state.currentWidth = newWidth;
+                    state.currentFontSize = newFontSize;
+                    state.currentSkew = newSkew;
+                    hasChanges = true;
+                    
+                    // Apply styles using font-variation-settings
+                    letter.style.fontVariationSettings = `"wght" ${Math.round(newWeight)}, "wdth" ${Math.round(newWidth)}`;
+                    // Apply font size
+                    letter.style.fontSize = `${Math.round(newFontSize)}%`;
+                    // Apply skew
+                    letter.style.transform = `skew(${Math.round(newSkew)}deg)`;
+                }
+            });
+            
+            if (hasChanges) {
+                animationId = requestAnimationFrame(animate);
+            } else {
+                animationId = null;
+            }
+        }
+        
+        // Mouse move handler - attached to the section
+        function handleMouseMove(e) {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            
+            letters.forEach((letter, index) => {
+                const rect = letter.getBoundingClientRect();
+                const letterX = rect.left + rect.width / 2;
+                const letterY = rect.top + rect.height / 2;
+                
+                const dx = mouseX - letterX;
+                const dy = mouseY - letterY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < config.maxDistance) {
+                    const intensity = 1 - Math.min(distance / config.maxDistance, 1);
+                    const weight = config.defaultWeight + (config.maxWeight - config.defaultWeight) * intensity;
+                    const width = config.defaultWidth + (config.maxWidth - config.defaultWidth) * intensity;
+                    const fontSize = config.defaultFontSize + (config.maxFontSize - config.defaultFontSize) * intensity;
+                    const skew = config.defaultSkew + (config.maxSkew - config.defaultSkew) * intensity;
+                    
+                    // Update target values
+                    letterStates[index].targetWeight = weight;
+                    letterStates[index].targetWidth = width;
+                    letterStates[index].targetFontSize = fontSize;
+                    letterStates[index].targetSkew = skew;
+                } else {
+                    // Reset to default
+                    letterStates[index].targetWeight = config.defaultWeight;
+                    letterStates[index].targetWidth = config.defaultWidth;
+                    letterStates[index].targetFontSize = config.defaultFontSize;
+                    letterStates[index].targetSkew = config.defaultSkew;
+                }
+            });
+            
+            // Start animation if not already running
+            if (!animationId) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+        
+        // Mouse enter handler - attached to the section
+        function handleMouseEnter(e) {
+            // Only activate if entering from outside the section
+            if (!isMouseInSection) {
+                console.log('Mouse entered section');
+                isMouseInSection = true;
+            }
+        }
+        
+        // Mouse leave handler - attached to the section
+        function handleMouseLeave(e) {
+            // Only deactivate if actually leaving the section
+            if (e.relatedTarget && !heroSection.contains(e.relatedTarget)) {
+                console.log('Mouse left section');
+                isMouseInSection = false;
+                
+                // Reset all letters to default
+                letters.forEach((letter, index) => {
+                    letterStates[index].targetWeight = config.defaultWeight;
+                    letterStates[index].targetWidth = config.defaultWidth;
+                    letterStates[index].targetFontSize = config.defaultFontSize;
+                    letterStates[index].targetSkew = config.defaultSkew;
+                });
+                
+                // Start animation to reset styles
+                if (!animationId) {
+                    animationId = requestAnimationFrame(animate);
+                }
+            }
+        }
+        
+        // Scroll handler to check if element is in viewport
+        function handleScroll() {
+            const rect = heroSection.getBoundingClientRect();
+            const isInViewport = (
+                rect.top < window.innerHeight &&
+                rect.bottom > 0
+            );
+            
+            if (!isInViewport && isMouseInSection) {
+                console.log('Section out of viewport, deactivating');
+                isMouseInSection = false;
+                
+                // Reset all letters to default
+                letters.forEach((letter, index) => {
+                    letterStates[index].targetWeight = config.defaultWeight;
+                    letterStates[index].targetWidth = config.defaultWidth;
+                    letterStates[index].targetFontSize = config.defaultFontSize;
+                    letterStates[index].targetSkew = config.defaultSkew;
+                });
+                
+                // Start animation to reset styles
+                if (!animationId) {
+                    animationId = requestAnimationFrame(animate);
+                }
+            }
+        }
+        
+        // Add event listeners to the section instead of the text container
+        console.log('Adding event listeners to heroSection element');
+        heroSection.addEventListener('mousemove', handleMouseMove);
+        heroSection.addEventListener('mouseenter', handleMouseEnter);
+        heroSection.addEventListener('mouseleave', handleMouseLeave);
+        window.addEventListener('scroll', handleScroll);
+        
+        console.log('New magnetic hero letter effect initialized');
+        console.log('Event listeners added to section element');
+    }
+
+    // Initialize all effects
+    setupScrollAnimation();
+    // setupHomeSubtitleEffect(); // Disabled to test CSS hover
+    setupHeroNameEffect();
+    setupTestHeroNameEffect();
+    setupNewHeroNameEffect();
 
 });

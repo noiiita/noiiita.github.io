@@ -157,12 +157,12 @@
 }
 
 .navbar-toggler {
-    color: #000000 !important;
-    border-color: rgba(0, 0, 0, 0.5) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.682) !important;
     backdrop-filter: blur(5px) !important;
     background-color: rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-    border-width: 1px !important;
+    border-width: 1.5px !important;
 }
 
 .navbar-toggler:focus {
@@ -325,7 +325,7 @@
     align-items: flex-end;
     justify-content: flex-start;
     overflow: hidden;
-    z-index: 1;
+    z-index: 10;
 }
 
 .top-section:before {
@@ -341,17 +341,29 @@
 
 .top-section .hero-name {
     position: relative;
-    z-index: 2;
-    font-family: "Silkscreen", "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-weight: 700;
-    font-size: 30px;
-    color: rgba(255, 255, 255, 0.49);
-    margin: 0 0 5rem 5rem;
-    margin-bottom: 10rem;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.025);
+    z-index: 10;
+    font-family: "TikTok Sans", sans-serif !important;
+    font-size: 2rem;
+    font-variation-settings: "wdth" 150, "wght" 600;
+    color: rgb(255, 255, 255);
+    margin-top: 15rem;
+    
+    margin-bottom: 12rem;
     line-height: 1.1;
-    letter-spacing: 0.1em;
-    transition: transform 0.2s ease-in-out, opacity 0.2s ease-out;
+    letter-spacing: 0.05em;
+    backdrop-filter: blur(1px);
+    pointer-events: auto;
+}
+
+.top-section .hero-name .hero-letter {
+    display: inline-block;
+    font-family: "TikTok Sans", sans-serif !important;
+    font-weight: 300;
+    font-stretch: 100%;
+    transform: skew(-10deg);
+    will-change: font-weight, font-stretch, transform;
+    pointer-events: auto;
+    transition: font-weight 0.3s ease, font-stretch 0.3s ease;
 }
 
 /* Photo Container */
@@ -438,8 +450,12 @@
 }
 
 [data-theme="dark"] .top-section .hero-name {
-    color: rgba(255, 255, 255, 0.684);
-    text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.1);
+    color: rgb(255, 255, 255);
+    text-shadow:
+        0 0 10px rgba(255, 255, 255, 0.1),
+        0 0 20px rgba(255, 255, 255, 0.08),
+        0 0 40px rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(1px);
 }
 
 [data-theme="dark"] #home-subtitle {
@@ -568,10 +584,30 @@
 }
 
 section header h2{
-    font-family: "Google Sans Flex", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+    font-family: "TikTok Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+    font-weight: 700;
     color: var(--h-title-color);
     font-size: 2rem;
     line-height: 4rem;
+}
+
+/* Home subtitle letter hover effect */
+#home-subtitle {
+    font-family: "TikTok Sans", sans-serif;
+    font-weight: 300;
+}
+
+#home-subtitle .letter {
+    display: inline-block;
+    font-family: "TikTok Sans", sans-serif;
+    font-weight: 300;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+#home-subtitle .letter:hover {
+    font-weight: 700;
+    transform: scale(1.2);
 }
 
 /* PUBLICATIONS and GALLERY titles - pure black */
@@ -586,14 +622,14 @@ section header h2{
 }
 
 section .main-body h4 {
-    font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-weight: 500;
+    font-family: "TikTok Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 700;
     margin-top: 2rem;
 }
 
 .gallery-section h3 {
-    font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-weight: 600;
+    font-family: "TikTok Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 700;
     margin-top: 4rem;
 }
 
@@ -622,6 +658,14 @@ section .main-body{
     line-height: 2.4rem;
 }
 
+.scroll-reveal-init {
+    opacity: 0.25;
+}
+
+[data-theme="dark"] .scroll-reveal-init {
+    opacity: 0.25;
+}
+
 
 .bg-gradient-primary-to-secondary-light {
     background: linear-gradient(45deg, #fcfcfc, #ffffff) !important;
@@ -635,16 +679,17 @@ section .main-body{
 #home-subtitle {
     color: var(--text-primary) !important;
     font-family: "Google Sans Flex", "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-weight: 600;
-    font-stretch: extra-expanded;
+    font-weight: 400;
+    font-size: 1.5rem;
+    font-stretch: semi-expanded;
     transition: all 0.3s ease;
     padding-right: 8rem;
 }
 
 #home-subtitle:hover {
-    font-weight: 200;
-    font-stretch: extra-expanded;
-    transform: translateY(-5px);
+    font-weight: 800;
+    font-stretch: expanded;
+    transform: translateY(-1px);
 }
 
 .bg-gradient-primary-to-secondary-gray {
@@ -826,7 +871,7 @@ footer .text-white-50 a:hover {
     font-weight: 300;
     text-decoration: underline;
     text-align: center;
-    color: #666;
+    color: #bbbbbb;
     transition: transform 0.3s ease, margin-top 0.3s ease;
 }
 
@@ -1151,18 +1196,75 @@ footer .text-white-50 a:hover {
 /* Railway Statistics */
 .railway-statistics-container {
     margin: 1rem 0rem;
+    margin-right: 0.75rem;
     margin-bottom: 3rem;
     padding: 2rem;
-    background: var(--bg-secondary);
+    background-color: #0a0a0a;
     border-radius: 16px;
     box-shadow: 0 4px 12px var(--shadow-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.railway-statistics-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.7) 0%,
+        rgba(0, 0, 0, 0.5) 50%,
+        rgba(0, 0, 0, 0.7) 100%
+    );
+    z-index: 2;
+    border-radius: 16px;
+    pointer-events: none;
+}
+
+.railway-statistics-container::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: url('../assets/CR.svg');
+    background-size: 180px 180px;
+    background-repeat: repeat;
+    opacity: 0.12;
+    transform: rotate(-25deg);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.railway-statistics-container > * {
+    position: relative;
+    z-index: 3;
+}
+
+.railway-statistics-container a {
+    color: #66b3ff;
+    text-decoration: underline;
+    transition: all 0.4s ease;
+    display: inline-block;
+    transform-origin: center center;
+}
+
+.railway-statistics-container a:hover {
+    color: #3399ff;
+    text-decoration: none;
+    font-size: 200%;
 }
 
 .railway-statistics-container h3 {
     text-align: center;
     margin-bottom: 2rem;
-    color: var(--text-primary);
-    font-family: "Google Sans Flex", sans-serif;
+    color: #ffffff;
+    font-family: "TikTok Sans", sans-serif;
+    font-weight: 700;
 }
 
 .railway-charts {
@@ -1191,21 +1293,20 @@ footer .text-white-50 a:hover {
     margin-top: 1rem;
     margin-bottom: 2rem;
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 /* Dark mode adjustments */
 [data-theme="dark"] .railway-statistics-container {
-    background: var(--bg-secondary);
     box-shadow: 0 4px 12px var(--shadow-color);
 }
 
 [data-theme="dark"] .railway-statistics-container h3 {
-    color: var(--text-primary);
+    color: #ffffff;
 }
 
 [data-theme="dark"] .chart-description {
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 /* PhotoSwipe default styling */
