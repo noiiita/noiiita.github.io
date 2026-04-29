@@ -211,7 +211,7 @@
 
     <section class="new-hero-section" style="position: relative; z-index: 10; padding: 100px 0; background-color: transparent;">
         <div class="container px-5">
-            <div class="new-hero-letter" style="position: relative; z-index: 10; font-family: 'TikTok Sans', sans-serif; font-size: 4rem; color: rgb(255, 255, 255); text-align: center; margin-top: 13rem; margin-bottom: 15rem; line-height: 1.1; letter-spacing: 0em; backdrop-filter: blur(0px); pointer-events: auto;">
+            <div class="new-hero-letter" style="position: relative; z-index: 10; font-family: 'TikTok Sans', sans-serif; font-size: 4rem; color: rgb(255, 255, 255); text-align: right; margin-top: 13rem; margin-bottom: 15rem; line-height: 1.1; letter-spacing: 0em; backdrop-filter: blur(0px); pointer-events: auto;">
                 LUO RUIHAO
             </div>
         </div>
@@ -380,9 +380,11 @@
                 </div>
             </div>
 
+            <div id="railway"></div> <!-- Anchor for railway link -->
+            <p> </p>
             <!-- Photography (Railway) -->
             <div class="gallery-section fade-on-scroll" id="photography">
-                <div id="railway"></div> <!-- Anchor for railway link -->
+                
                 <header>
                     <h3>
                         Railway Photo
@@ -392,12 +394,14 @@
                 </header>
                 <div class="railway-quote-container">
                     <div class="railway-quote-text">
-                        <p>已运转：</p>
-                        <p>成渝线、成昆线、成达线、成灌城际、成渝高速线、成绵乐城际（西成客专、成贵客专）、
-                        沪蓉线、合福高铁、合杭高铁、合蚌高铁、京沪高铁、郑阜高铁、徐兰高铁、京港高铁、合新高铁、
-                        合九线、庐铜线、淮南线、芜铜线、宁芜线、武西高铁、郑渝高铁、海南环岛高铁...</p> 
-                        <p class="quote-attribution"> 📱 Mi 11 ultra</p>
-                        <p class="quote-attribution"> 📸 Nikon Z30 DX50-250</p>
+                        <p>News: </p>
+                        <p>2026.4.8 - 武汉市开通普速环线列车 全程票价6元</p>
+                        <p>2026.3.31 - 成渝中线全线桥梁合龙 预留提速至400km/h条件</p>
+                        <p>2026.2.2 - CR450动车组试验考核里程过半</p>
+                        <p>2025.12.30 - 合新高铁安徽段开通 新合肥西站启用</p>
+                        <p>2025.12.26 - 合肥地铁6号线开通</p>
+                        <p></p>  
+                        
                     </div>
                     <div class="railway-quote-image" id="k8525-entrance">
                         <div class="k8525-image-wrapper">
@@ -594,6 +598,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <!-- Core theme JS-->
+    <script src="static/js/smooth-scroll.js"></script>
+    <script src="static/js/gallery-loader.js"></script>
     <script src="static/js/scripts.js"></script>
 
 </body>

@@ -330,6 +330,8 @@ window.addEventListener('DOMContentLoaded', event => {
     // Initialize lightbox
     lightbox.init();
 
+    const galleryLazyRegistry = window.__galleryLazyRegistry || { elements: [], galleryLoadingStarted: false };
+
     // Initialize galleries for Railway, Plants, and Sciviz
     const initGallery = (galleryId, jsonFile, options = {}) => {
         const galleryEl = document.getElementById(galleryId);
@@ -342,6 +344,7 @@ window.addEventListener('DOMContentLoaded', event => {
         const isSciviz = galleryId === 'sciviz-gallery';
         const imgWidth = isPlants ? '180px' : 'auto';
         const imgHeight = isPlants ? '180px' : 'auto';
+        const useLazy = options.lazy !== false && !galleryLazyRegistry.galleryLoadingStarted;
 
         fetch(jsonFile)
             .then(r => r.json())
@@ -370,7 +373,7 @@ window.addEventListener('DOMContentLoaded', event => {
                         const firstContainer = document.getElementById('sciviz-first-image');
                         if (firstContainer) {
                             const a = document.createElement('a');
-                            a.className = 'pswp-image sciviz-first-item';
+                            a.className = 'pswp-image sciviz-first-item gallery-entrance-anim';
                             a.style.display = 'block';
                             a.style.width = '100%';
                             a.style.borderRadius = '12px';
@@ -379,7 +382,12 @@ window.addEventListener('DOMContentLoaded', event => {
                             a.style.marginBottom = '20px';
                             
                             const img = document.createElement('img');
-                            img.src = firstItem.src;
+                            if (useLazy) {
+                                img.setAttribute('data-src', firstItem.src);
+                                galleryLazyRegistry.elements.push(img);
+                            } else {
+                                img.src = firstItem.src;
+                            }
                             img.alt = firstItem.title || '';
                             img.style.width = '100%';
                             img.style.height = 'auto';
@@ -400,6 +408,7 @@ window.addEventListener('DOMContentLoaded', event => {
                             });
                             
                             firstContainer.appendChild(a);
+                            galleryLazyRegistry.elements.push(a);
                         }
                     }
                     
@@ -408,7 +417,7 @@ window.addEventListener('DOMContentLoaded', event => {
                         const secondContainer = document.getElementById('sciviz-second-image');
                         if (secondContainer) {
                             const a = document.createElement('a');
-                            a.className = 'pswp-image sciviz-first-item';
+                            a.className = 'pswp-image sciviz-first-item gallery-entrance-anim';
                             a.style.display = 'block';
                             a.style.width = '100%';
                             a.style.borderRadius = '12px';
@@ -417,7 +426,12 @@ window.addEventListener('DOMContentLoaded', event => {
                             a.style.marginBottom = '20px';
                             
                             const img = document.createElement('img');
-                            img.src = secondItem.src;
+                            if (useLazy) {
+                                img.setAttribute('data-src', secondItem.src);
+                                galleryLazyRegistry.elements.push(img);
+                            } else {
+                                img.src = secondItem.src;
+                            }
                             img.alt = secondItem.title || '';
                             img.style.width = '100%';
                             img.style.height = 'auto';
@@ -438,6 +452,7 @@ window.addEventListener('DOMContentLoaded', event => {
                             });
                             
                             secondContainer.appendChild(a);
+                            galleryLazyRegistry.elements.push(a);
                         }
                     }
                 }
@@ -447,7 +462,7 @@ window.addEventListener('DOMContentLoaded', event => {
                     if (isSciviz && (idx === 0 || idx === 1)) return;
                     
                     const a = document.createElement('a');
-                    a.className = 'pswp-image';
+                    a.className = 'pswp-image gallery-entrance-anim';
                     
                     // Add featured class if item has featured flag
                     if (item.featured) {
@@ -466,7 +481,12 @@ window.addEventListener('DOMContentLoaded', event => {
                     }
                     
                     const img = document.createElement('img');
-                    img.src = item.src;
+                    if (useLazy) {
+                        img.setAttribute('data-src', item.src);
+                        galleryLazyRegistry.elements.push(img);
+                    } else {
+                        img.src = item.src;
+                    }
                     img.alt = item.title || '';
                     img.style.objectFit = isSciviz ? 'contain' : 'cover';
                     img.style.width = '100%';
@@ -489,16 +509,17 @@ window.addEventListener('DOMContentLoaded', event => {
                     });
                     
                     galleryEl.appendChild(a);
+                    galleryLazyRegistry.elements.push(a);
                 });
                 console.log(`Loaded ${sortedItems.length} images for ${galleryId}`);
             })
             .catch(err => console.error(`Error loading gallery ${galleryId}:`, err));
     };
 
-    // Load galleries
-    initGallery('sciviz-gallery', 'static/assets/gallery/sciviz/list.json');
-    initGallery('railway-gallery', 'static/assets/gallery/railway/list.json');
-    initGallery('plants-gallery', 'static/assets/gallery/plants/list.json');
+    // Load galleries with lazy loading enabled
+    initGallery('sciviz-gallery', 'static/assets/gallery/sciviz/list.json', { lazy: true });
+    initGallery('railway-gallery', 'static/assets/gallery/railway/list.json', { lazy: true });
+    initGallery('plants-gallery', 'static/assets/gallery/plants/list.json', { lazy: true });
 
     // Fade-in effect on scroll for gallery sections
     const fadeOnScrollElements = document.querySelectorAll('.fade-on-scroll');

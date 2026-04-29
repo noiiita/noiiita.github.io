@@ -1,5 +1,14 @@
 @import "./styles.css";
 
+html {
+    overflow-x: hidden;
+}
+
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
 
 :root {
     --h-title-color: #3948d2;
@@ -25,7 +34,7 @@
 [data-theme="dark"] {
     --h-title-color: #9ab3ff;
     --bg-primary: #121212;
-    --bg-secondary: #1e1e1e;
+    --bg-secondary: #2f2f2f;
     --bg-tertiary: #2d2d2d;
     --text-primary: #ffffff;
     --text-secondary: #e0e0e0;
@@ -37,7 +46,7 @@
     --accent-hover: #4a61ff;
     --blender-orange: #ff8c42;
     --blender-orange-hover: #ff701a;
-    --sky-blue: #64b5f6;
+    --sky-blue: #30b4ed;
     --sky-blue-hover: #42a5f5;
 }
 
@@ -585,7 +594,7 @@
 
 section header h2{
     font-family: "TikTok Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--h-title-color);
     font-size: 2rem;
     line-height: 4rem;
@@ -623,13 +632,13 @@ section header h2{
 
 section .main-body h4 {
     font-family: "TikTok Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-weight: 700;
+    font-weight: 500;
     margin-top: 2rem;
 }
 
 .gallery-section h3 {
     font-family: "TikTok Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-weight: 700;
+    font-weight: 500;
     margin-top: 4rem;
 }
 
@@ -869,7 +878,7 @@ footer .text-white-50 a:hover {
     margin-top: 0.5rem;
     font-size: 1rem;
     font-weight: 300;
-    text-decoration: underline;
+    
     text-align: center;
     color: #bbbbbb;
     transition: transform 0.3s ease, margin-top 0.3s ease;
@@ -879,8 +888,8 @@ footer .text-white-50 a:hover {
     transform: translateY(30px);
     font-weight: 400;
     text-shadow: #555;
-    color:#6c6c6c;
-    margin-top: 0.8rem;
+    color:#ededed;
+    margin-top: 0.3rem;
 }
 
 .k8525-entrance-overlay {
@@ -982,7 +991,7 @@ footer .text-white-50 a:hover {
 /* Style for sciviz note section */
 .sciviz-note {
     margin-top: 2rem;
-    margin-bottom: 6rem;
+    margin-bottom: 10rem;
     padding: 1rem 2rem;
     text-align: center;
 }
@@ -1092,9 +1101,10 @@ footer .text-white-50 a:hover {
 }
 
 .railway-quote-image {
+    margin-top: 1rem;
     flex: 1;
     max-width: 300px;
-    align-self: stretch;
+    align-self: center;
 }
 
 .quote-cover-image {
@@ -1120,19 +1130,48 @@ footer .text-white-50 a:hover {
     gap: 12px;
     padding: 20px 0;
     width: 100%;
+    overflow: visible;
+    position: relative;
+}
+
+/* Ensure gallery sections don't clip overflowing images during animation */
+.gallery-section {
+    overflow: visible;
+    position: relative;
+}
+
+#gallery .container {
+    overflow: visible;
+    position: relative;
+}
+
+#gallery {
+    overflow: visible;
+}
+
+/* Gallery images during entrance animation should not be clipped */
+.pswp-image.gallery-entrance-anim {
+    opacity: 0;
+    will-change: transform, opacity;
+    transition: none !important;
+    transform-origin: center center;
+    overflow: visible;
+    position: relative;
+    z-index: 10;
 }
 
 .pswp-image {
     display: inline-block !important;
     border-radius: 12px;
     overflow: hidden;
-    border: 1.5px solid #ffffff7c;
+    border: 1.5px solid #ffffff10;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background: #f0f0f0;
+    background: #f0f0f000;
 }
 
 .pswp-image:hover {
-    transform: scale(1.05);
+    transform: scale(0.98);
+    transition: all 0.4s ease;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
@@ -1169,12 +1208,20 @@ footer .text-white-50 a:hover {
     overflow: hidden;
 }
 
+/* Gallery entrance animation - scroll-bound reveal */
+.pswp-image.gallery-entrance-anim {
+    opacity: 0;
+    will-change: transform, opacity;
+    transition: none !important;
+    transform-origin: center center;
+}
+
 .pswp-image .gallery-caption {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4);
     color: white;
     font-family: "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 0.9rem;
@@ -1264,7 +1311,7 @@ footer .text-white-50 a:hover {
     margin-bottom: 2rem;
     color: #ffffff;
     font-family: "TikTok Sans", sans-serif;
-    font-weight: 700;
+    font-weight: 500;
 }
 
 .railway-charts {
@@ -1375,7 +1422,7 @@ footer .text-white-50 a:hover {
 .sciviz-workflow {
     margin: 2rem 0;
     padding: 0rem;
-    background: rgba(255, 255, 255, 0.05);
+    
     border-radius: 12px;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
