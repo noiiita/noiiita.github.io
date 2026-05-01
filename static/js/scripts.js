@@ -1360,9 +1360,14 @@ window.addEventListener('DOMContentLoaded', event => {
         console.log('Setting up new magnetic hero letter effect');
         console.log('New hero name element:', heroName);
         console.log('New hero section element:', heroSection);
-        
-        // Fix visibility and pointer events
-        heroName.style.opacity = '1';
+
+        if (!window.heroAnimationReady) {
+            heroName.style.opacity = '0';
+            console.log('Hero animation not ready, keeping opacity 0');
+        } else {
+            heroName.style.opacity = '1';
+            console.log('Hero animation ready, setting opacity 1');
+        }
         heroName.style.pointerEvents = 'auto';
         console.log('Fixed new hero name visibility and pointer events');
         
@@ -1423,6 +1428,19 @@ window.addEventListener('DOMContentLoaded', event => {
         // Animation state
         let animationId = null;
         let isMouseInSection = false;
+        let heroAnimationCompleted = false;
+        
+        // Check if hero entrance animation has completed
+        function checkHeroAnimationReady() {
+            if (window.heroAnimationReady) {
+                setTimeout(function() {
+                    heroAnimationCompleted = true;
+                }, 1500); // Wait 1.5s for entrance animation to complete
+            } else {
+                setTimeout(checkHeroAnimationReady, 100);
+            }
+        }
+        checkHeroAnimationReady();
         
         // Always keep animation running, but change target values based on mouse position
         function animate() {
@@ -1449,8 +1467,10 @@ window.addEventListener('DOMContentLoaded', event => {
                     letter.style.fontVariationSettings = `"wght" ${Math.round(newWeight)}, "wdth" ${Math.round(newWidth)}`;
                     // Apply font size
                     letter.style.fontSize = `${Math.round(newFontSize)}%`;
-                    // Apply skew
-                    letter.style.transform = `skew(${Math.round(newSkew)}deg)`;
+                    // Apply skew only if hero animation has completed
+                    if (heroAnimationCompleted) {
+                        letter.style.transform = `skew(${Math.round(newSkew)}deg)`;
+                    }
                 }
             });
             
