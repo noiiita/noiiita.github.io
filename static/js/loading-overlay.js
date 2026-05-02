@@ -48,20 +48,26 @@
         function onVideoReady() {
             if (hasTriggered) return;
             hasTriggered = true;
-            console.log('[Loading Overlay] Video ready');
+            console.log('[Loading Overlay] Video is playing');
+            videoEl.removeEventListener('playing', onVideoReady);
             videoEl.removeEventListener('canplaythrough', onVideoReady);
             videoEl.removeEventListener('loadeddata', onVideoReady);
             videoEl.removeEventListener('error', onVideoReady);
             triggerTransition();
         }
 
-        if (videoEl.readyState >= 3) {
-            console.log('[Loading Overlay] Video already loaded');
+        if (videoEl.readyState >= 3 && !videoEl.paused) {
+            console.log('[Loading Overlay] Video already playing');
             setTimeout(onVideoReady, 100);
         } else {
-            videoEl.addEventListener('canplaythrough', onVideoReady, { once: true });
+            videoEl.addEventListener('playing', onVideoReady, { once: true });
+            videoEl.addEventListener('canplaythrough', function() {
+                if (videoEl.readyState >= 3 && !videoEl.paused && !hasTriggered) {
+                    onVideoReady();
+                }
+            }, { once: true });
             videoEl.addEventListener('loadeddata', function() {
-                if (videoEl.readyState >= 3 && !hasTriggered) {
+                if (videoEl.readyState >= 3 && !videoEl.paused && !hasTriggered) {
                     onVideoReady();
                 }
             }, { once: true });
@@ -80,7 +86,7 @@
                 hasTriggered = true;
                 triggerTransition();
             }
-        }, 5000);
+        }, 6000);
     }
 
     function triggerTransition() {
