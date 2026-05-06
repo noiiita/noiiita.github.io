@@ -3,14 +3,14 @@
   { "src": "static/assets/gallery/railway/railway-02.jpg", "title": "合新高铁 定远东站", "width": 1200, "height": 900 },
   { "src": "static/assets/gallery/railway/railway-03.jpg", "title": "合肥地铁 8号线", "width": 1200, "height": 900 },
   { "src": "static/assets/gallery/railway/railway-04.jpg", "title": "CR400BF-AS", "width": 1200, "height": 900 },
-  { "src": "static/assets/gallery/railway/railway-05.jpg", "title": "CRH2A", "width": 1200, "height": 900 },
+  { "src": "static/assets/gallery/railway/railway-05.jpg", "title": "庐江站", "width": 1200, "height": 900 },
   { "src": "static/assets/gallery/railway/railway-06.jpg", "title": "老淮南线 钟油坊站", "width": 1200, "height": 900 },
   { "src": "static/assets/gallery/railway/railway-07.jpg", "title": "合新高铁 定远东站", "width": 1200, "height": 900 },
   { "src": "static/assets/gallery/railway/railway-08.jpg", "title": "武汉站", "width": 1200, "height": 900, "featured": true },
   { "src": "static/assets/gallery/railway/railway-09.jpg", "title": "庐铜铁路 无为南站", "width": 1200, "height": 900 },
   { "src": "static/assets/gallery/railway/railway-10.jpg", "title": "庐铜铁路", "width": 1200, "height": 900 },
   { "src": "static/assets/gallery/railway/railway-10a.jpg", "title": "宝成铁路 崭新C70E", "width": 1200, "height": 900 },
-  { "src": "static/assets/gallery/railway/railway-11.jpg", "title": "合九线 庐江站", "width": 1200, "height": 900, "featured": true },
+  { "src": "static/assets/gallery/railway/railway-11.jpg", "title": "郑州站", "width": 1200, "height": 900, "featured": true },
   { "src": "static/assets/gallery/railway/railway-12.jpg", "title": "合肥地铁 4号线", "width": 1200, "height": 900 },
   { "src": "static/assets/gallery/railway/railway-13.jpg", "title": "宝成铁路", "width": 1200, "height": 900 },
   { "src": "static/assets/gallery/railway/railway-14.jpg", "title": "合九线 雪霁桥", "width": 1200, "height": 900 },
@@ -25,7 +25,7 @@
   { "src": "static/assets/gallery/railway/railway-23.jpg", "title": "庐铜铁路 龙桥站", "width": 1200, "height": 900 },
   { "src": "static/assets/gallery/railway/railway-24.jpg", "title": "老淮南线 钟油坊站", "width": 1200, "height": 900 },
   { "src": "static/assets/gallery/railway/railway-25.jpg", "title": "合肥站", "width": 1200, "height": 900, "featured": true },
-  { "src": "static/assets/gallery/railway/railway-26.jpg", "title": "合肥站", "width": 1200, "height": 900 },
-  { "src": "static/assets/gallery/railway/railway-27.jpg", "title": "合蚌高铁 CRH380A", "width": 1200, "height": 900 },
-  { "src": "static/assets/gallery/railway/railway-28.jpg", "title": "淝河湿地公园 宁蓉铁路", "width": 1200, "height": 900 }
+  { "src": "static/assets/gallery/railway/railway-26.jpg", "title": "合肥站", "width": 1200, "height": 900 ,"featured":true},
+  { "src": "static/assets/gallery/railway/railway-27.jpg", "title": "合蚌高铁 CRH380A", "width": 1200, "height": 900 }
+  
 ]
