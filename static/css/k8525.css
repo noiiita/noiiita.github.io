@@ -267,28 +267,27 @@
     margin-bottom: 12px;
     opacity: 0.9;
     line-height: 1.6;
-    text-shadow: 0 0 7px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
 }
 
 /* Railway gallery animations */
-#railway-gallery {
+#railway-pin {
     transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
 
-/* 下沉淡化消失动画 */
-#railway-gallery.sink-fade-out {
+/* Railway horizontal gallery animations for K8525 transitions */
+#railway-pin.sink-fade-out {
     transform: translateY(50px);
     opacity: 0;
     pointer-events: none;
 }
 
-/* 上升渐变出现动画 */
-#railway-gallery.rise-fade-in {
+#railway-pin.rise-fade-in {
     transform: translateY(-50px);
     opacity: 0;
 }
 
-#railway-gallery.rise-fade-in.active {
+#railway-pin.rise-fade-in.active {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
@@ -318,11 +317,11 @@
     }
     
     /* Mobile: adjust railway gallery animations */
-    #railway-gallery.sink-fade-out {
+    #railway-pin.sink-fade-out {
         transform: translateY(30px);
     }
     
-    #railway-gallery.rise-fade-in {
+    #railway-pin.rise-fade-in {
         transform: translateY(-30px);
     }
 }

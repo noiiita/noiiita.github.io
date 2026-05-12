@@ -327,80 +327,70 @@
                     <h3>Scientific Visualization</h3>
                     <p style="font-size: 1rem; margin: 1rem 0 0 0;">I draw schematic figures for labmates' projects in exchange for 🧋</p>
                 </header>
-                <div id="sciviz-first-image"></div>
-                <div id="sciviz-second-image"></div>
-                <div id="sciviz-gallery" class="pswp-gallery sciviz-gallery"></div>
-                
-                <!-- Scientific Visualization Workflow -->
-                <div class="sciviz-workflow">
-                    <h4 class="workflow-title">Workflow</h4>
-                    <div class="workflow-container">
-                        <div class="workflow-step step-1">
-                            <div class="step-logo">
-                                <div class="logo-circle">1</div>
-                            </div>
-                            <h5 class="step-name">了解需求</h5>
-                            <h6 class="step-name-en">Purpose</h6>
-                            <p class="step-description">询问图的用处、原理和风格需求</p>
-                            <p class="step-description-en">Ask about the purpose, principles, and style requirements</p>
-                        </div>
-                        <div class="workflow-arrow">👉</div>
-                        <div class="workflow-step step-2">
-                            <div class="step-logo">
-                                <div class="logo-circle">2</div>
-                            </div>
-                            <h5 class="step-name">收集素材</h5>
-                            <h6 class="step-name-en">Materials</h6>
-                            <p class="step-description">论文、报告、xhs</p>
-                            <p class="step-description-en">from articles/reports/social media</p>
-                        </div>
-                        <div class="workflow-arrow">👉</div>
-                        <div class="workflow-step step-3">
-                            <div class="step-logo">
-                                <div class="logo-circle">3</div>
-                            </div>
-                            <h5 class="step-name">建模/利用模型</h5>
-                            <h6 class="step-name-en">Modeling</h6>
-                            <p class="step-description">Sketchfab, BlenderKit</p>
-                            <p class="step-description-en"> </p>
-                        </div>
-                        <div class="workflow-arrow">👉</div>
-                        <div class="workflow-step step-4">
-                            <div class="step-logo">
-                                <div class="logo-circle">4️</div>
-                            </div>
-                            <h5 class="step-name">渲染</h5>
-                            <h6 class="step-name-en">Rendering</h6>
-                            <p class="step-description">使用GPU和低精度设置以节省时间</p>
-                            <p class="step-description-en">Requires high-performance GPU</p>
-                        </div>
-                        <div class="workflow-arrow">👉</div>
-                        <div class="workflow-step step-5">
-                            <div class="step-logo">
-                                <div class="logo-circle">5</div>
-                            </div>
-                            <h5 class="step-name">后期拼装</h5>
-                            <h6 class="step-name-en">Post-production</h6>
-                            <p class="step-description">调整亮度对比度、放入PPT中添加文字</p>
-                            <p class="step-description-en">Adjust brightness/contrast, add text in PPT</p>
-                        </div>
+                <div class="gallery-pin-wrap" id="sciviz-pin">
+                    <div class="gallery-track sci-viz-track" id="sciviz-track"></div>
+                </div>
+            </div>
+
+            <!-- Scientific Visualization Workflow & Notes (outside gallery-section so pin-spacer won't push them) -->
+            <div class="sciviz-workflow">
+                <h4 class="workflow-title">Workflow</h4>
+                <div class="workflow-container">
+                    <div class="workflow-step step-1">
+                        <div class="step-logo"><div class="logo-circle">1</div></div>
+                        <h5 class="step-name">了解需求</h5>
+                        <h6 class="step-name-en">Purpose</h6>
+                        <p class="step-description">询问图的用处、原理和风格需求</p>
+                        <p class="step-description-en">Ask about the purpose, principles, and style requirements</p>
+                    </div>
+                    <div class="workflow-arrow">👉</div>
+                    <div class="workflow-step step-2">
+                        <div class="step-logo"><div class="logo-circle">2</div></div>
+                        <h5 class="step-name">收集素材</h5>
+                        <h6 class="step-name-en">Materials</h6>
+                        <p class="step-description">论文、报告、xhs</p>
+                        <p class="step-description-en">from articles/reports/social media</p>
+                    </div>
+                    <div class="workflow-arrow">👉</div>
+                    <div class="workflow-step step-3">
+                        <div class="step-logo"><div class="logo-circle">3</div></div>
+                        <h5 class="step-name">建模/利用模型</h5>
+                        <h6 class="step-name-en">Modeling</h6>
+                        <p class="step-description">Sketchfab, BlenderKit</p>
+                        <p class="step-description-en"> </p>
+                    </div>
+                    <div class="workflow-arrow">👉</div>
+                    <div class="workflow-step step-4">
+                        <div class="step-logo"><div class="logo-circle">4️</div></div>
+                        <h5 class="step-name">渲染</h5>
+                        <h6 class="step-name-en">Rendering</h6>
+                        <p class="step-description">使用GPU和低精度设置以节省时间</p>
+                        <p class="step-description-en">Requires high-performance GPU</p>
+                    </div>
+                    <div class="workflow-arrow">👉</div>
+                    <div class="workflow-step step-5">
+                        <div class="step-logo"><div class="logo-circle">5</div></div>
+                        <h5 class="step-name">后期拼装</h5>
+                        <h6 class="step-name-en">Post-production</h6>
+                        <p class="step-description">调整亮度对比度、放入PPT中添加文字</p>
+                        <p class="step-description-en">Adjust brightness/contrast, add text in PPT</p>
                     </div>
                 </div>
-                
-                <div class="sciviz-note">
-                    <p>推荐使用开源三维图形软件<a href="https://www.blender.org/" target="_blank">Blender</a>来完成建模和渲染 😚 </p>
-                    <p>I recommend using the open-source 3D graphics software <a href="https://www.blender.org/" target="_blank">Blender</a> for modeling and rendering.</p>
-                    <p><a href="https://www.chemblender.com/" target="_blank">🔗ChemBlender (分子建模插件)</a> </p>
-                    <p><a href="https://space.bilibili.com/1095345213" target="_blank">🔗Blender科研绘图-bilibili (科研绘图案例&教程)</a></p>
-                    <p><a href="https://sketchfab.com/" target="_blank">🔗Sketchfab (模型素材下载)</a> </p>
-                    <p><a href="https://www.blenderkit.com/" target="_blank">🔗BlnderKit (插件-Blender材质模型库)</a> </p>
-                </div>
+            </div>
+
+            <div class="sciviz-note">
+                <p>推荐使用开源三维图形软件<a href="https://www.blender.org/" target="_blank">Blender</a>来完成建模和渲染 😚 </p>
+                <p>I recommend using the open-source 3D graphics software <a href="https://www.blender.org/" target="_blank">Blender</a> for modeling and rendering.</p>
+                <p><a href="https://www.chemblender.com/" target="_blank">🔗ChemBlender (分子建模插件)</a> </p>
+                <p><a href="https://space.bilibili.com/1095345213" target="_blank">🔗Blender科研绘图-bilibili (科研绘图案例&教程)</a></p>
+                <p><a href="https://sketchfab.com/" target="_blank">🔗Sketchfab (模型素材下载)</a> </p>
+                <p><a href="https://www.blenderkit.com/" target="_blank">🔗BlnderKit (插件-Blender材质模型库)</a> </p>
             </div>
 
             <div id="railway"></div> <!-- Anchor for railway link -->
             <p> </p>
             <!-- Photography (Railway) -->
-            <div class="gallery-section fade-on-scroll" id="photography">
+            <div class="gallery-section" id="photography">
                 
                 <header>
                     <h3>
@@ -565,17 +555,21 @@
                     <p style="font-size: 0.8rem; text-align: right; margin-top: 1rem; color: #ccc;">2026.5.1 里程数据来源 <a href="https://kelibiao.com/" target="_blank">火车wiki</a></p>
                 </div>
                 
-                <div id="railway-gallery" class="pswp-gallery railway-gallery"></div>
+                <div class="gallery-pin-wrap" id="railway-pin">
+                    <div class="gallery-track railway-track" id="railway-track"></div>
+                </div>
             </div>
 
             <!-- Plants -->
-            <div class="gallery-section fade-on-scroll early-trigger" id="plants">
+            <div class="gallery-section" id="plants">
                 <div id="potplants"></div> <!-- Anchor for potplants link -->
                 <header>
                     <h3>Pot Plants</h3>
                 </header>
                 <p style="font-size: 1rem; margin: 1rem 0 0 0;">my collection of potplants🪴. "Pot" means you don't need a garden to look after them. Most of my plants have been handed to friends due to several moving.</p>
-                <div id="plants-gallery" class="pswp-gallery plants-gallery"></div>
+                <div class="gallery-pin-wrap" id="plants-pin">
+                    <div class="gallery-track plants-track" id="plants-track"></div>
+                </div>
             </div>
         </div>
     </section>
@@ -619,6 +613,7 @@
     <script src="static/js/loading-overlay.js"></script>
     <script src="static/js/gallery-loader.js"></script>
     <script src="static/js/scripts.js"></script>
+    <script src="static/js/horizontal-gallery.js"></script>
 
 </body>
 

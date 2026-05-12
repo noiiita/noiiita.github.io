@@ -5,7 +5,7 @@
         const photoEssay = document.getElementById('k8525-photo-essay');
         const slides = document.querySelectorAll('.k8525-slide');
         const backToTopBtn = document.querySelector('.back-to-top-btn');
-        const railwayGallery = document.getElementById('railway-gallery');
+        const railwayGallery = document.getElementById('railway-pin');
         
         if (!entrance || !photoEssay || slides.length === 0) return;
         
