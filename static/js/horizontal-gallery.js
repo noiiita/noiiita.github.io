@@ -32,6 +32,13 @@
         
         if (hasRailway) {
             promiseChain = promiseChain.then(function() {
+                // 等待photography section内所有图片加载完成后再初始化railway ScrollTrigger
+                var photographySection = document.getElementById('photography');
+                if (photographySection) {
+                    return waitForSectionImages(photographySection).then(function() {
+                        return initRailwayGallery();
+                    });
+                }
                 return initRailwayGallery();
             });
         }
@@ -44,9 +51,27 @@
 
         promiseChain.then(function() {
             console.log('[Horizontal Gallery] All galleries initialized');
-            // 所有相册初始化完成后刷新一次，确保pin spacing正确
-            ScrollTrigger.refresh();
+            // 多阶段延迟刷新，确保所有布局变化都已稳定
+            return deferredRefresh().then(function() {
+                // 再次延迟刷新，处理Chart.js等可能引发的二次布局变化
+                return deferredRefresh();
+            });
+        }).then(function() {
             window.addEventListener('resize', debounce(refreshAll, 250));
+            // 页面完全加载后做最终刷新
+            if (document.readyState === 'complete') {
+                setTimeout(function() {
+                    ScrollTrigger.refresh();
+                    console.log('[Horizontal Gallery] Final refresh done');
+                }, 500);
+            } else {
+                window.addEventListener('load', function() {
+                    setTimeout(function() {
+                        ScrollTrigger.refresh();
+                        console.log('[Horizontal Gallery] Final refresh done (on load)');
+                    }, 500);
+                });
+            }
         }).catch(function(err) {
             console.error('[Horizontal Gallery] Init error:', err);
         });
@@ -183,6 +208,58 @@
                     resolve();
                 }
             }, 5000);
+        });
+    }
+
+    function waitForSectionImages(sectionEl) {
+        return new Promise(function(resolve) {
+            if (!sectionEl) { resolve(); return; }
+            var imgs = sectionEl.querySelectorAll('img');
+            var total = imgs.length;
+            if (total === 0) { resolve(); return; }
+
+            var loaded = 0;
+            var resolved = false;
+
+            function onOneDone() {
+                loaded++;
+                if (!resolved && loaded >= total) {
+                    resolved = true;
+                    requestAnimationFrame(function() {
+                        requestAnimationFrame(resolve);
+                    });
+                }
+            }
+
+            imgs.forEach(function(img) {
+                if (img.complete && img.naturalWidth > 0) {
+                    onOneDone();
+                } else {
+                    img.addEventListener('load', onOneDone, { once: true });
+                    img.addEventListener('error', onOneDone, { once: true });
+                }
+            });
+
+            setTimeout(function() {
+                if (!resolved) {
+                    resolved = true;
+                    resolve();
+                }
+            }, 5000);
+        });
+    }
+
+    function deferredRefresh() {
+        return new Promise(function(resolve) {
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    ScrollTrigger.refresh();
+                    setTimeout(function() {
+                        ScrollTrigger.refresh();
+                        resolve();
+                    }, 300);
+                });
+            });
         });
     }
 
