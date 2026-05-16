@@ -204,6 +204,11 @@
             'trigger:', actualTriggerEl.id || actualTriggerEl.className,
             'fade:', fadeEnabled);
 
+        if (fullMove <= 0) {
+            console.warn('[Horizontal Gallery]', trackEl.id, 'fullMove <= 0, forcing to 500');
+            fullMove = 500;
+        }
+
         var galleryItems = trackEl.querySelectorAll('.gallery-item');
         var itemData = [];
         var trackRect = trackEl.getBoundingClientRect();
@@ -234,10 +239,15 @@
             scrub: 1,
             invalidateOnRefresh: true,
             onRefresh: function(self) {
-                pinWidth = pinWrapEl.offsetWidth;
-                fullMove = trackEl.scrollWidth - pinWidth;
-                if (fullMove <= 0) fullMove = 500;
-                self.end = self.start + fullMove;
+                var newPinWidth = pinWrapEl.offsetWidth;
+                var newTrackWidth = trackEl.scrollWidth;
+                var newFullMove = newTrackWidth - newPinWidth;
+                
+                if (newFullMove <= 0) newFullMove = 500;
+                if (Math.abs(newFullMove - fullMove) > 10) {
+                    fullMove = newFullMove;
+                    console.log('[Horizontal Gallery]', trackEl.id, 'refreshed fullMove:', Math.round(fullMove));
+                }
 
                 var tr = trackEl.getBoundingClientRect();
                 itemData.forEach(function(data) {
@@ -269,11 +279,13 @@
                 var revealProgress = 0;
                 if (itemRightOnScreen > 0 && itemLeftOnScreen < viewportWidth) {
                     revealProgress = 1;
+                    // 延迟淡入：图片进入视口更深一些才开始淡入（从25%改为15%）
                     if (itemRightOnScreen < viewportWidth * 0.15) {
                         revealProgress = itemRightOnScreen / (viewportWidth * 0.15);
                     }
+                    // 延迟淡出：图片离开视口更晚一些才开始淡出（从75%改为85%）
                     if (itemLeftOnScreen > viewportWidth * 0.85) {
-                        var entryProgress = (viewportWidth - itemLeftOnScreen) / (viewportWidth * 0.15);
+                        var entryProgress = (viewportWidth - itemLeftOnScreen) / (viewportWidth * 0.1);
                         revealProgress = Math.min(revealProgress, entryProgress);
                     }
                 }
@@ -297,20 +309,51 @@
             .then(function(items) {
                 var trackEl = document.getElementById('sciviz-track');
                 var pinWrap = document.getElementById('sciviz-pin');
-                var gallerySection = document.getElementById('sciviz');
-                if (!trackEl || !pinWrap) return;
+                if (!trackEl || !pinWrap || !items.length) return;
 
-                buildSingleRowTrack(trackEl, items, 'sci-viz-item');
+                trackEl.innerHTML = '';
+
+                var coverWrap = document.createElement('div');
+                coverWrap.className = 'sci-viz-cover-wrap';
+                trackEl.appendChild(coverWrap);
+
+                var columnsWrap = document.createElement('div');
+                columnsWrap.className = 'sci-viz-columns';
+                trackEl.appendChild(columnsWrap);
+
+                items.forEach(function(item, idx) {
+                    var el = createImageElement(item, 'sci-viz-item');
+                    el.addEventListener('click', (function(i) {
+                        return function(e) {
+                            e.preventDefault();
+                            var lb = getLightbox();
+                            if (lb) lb.open(items, i);
+                        };
+                    })(idx));
+
+                    if (idx === 0) {
+                        el.classList.add('sci-viz-cover');
+                        coverWrap.appendChild(el);
+                    } else {
+                        columnsWrap.appendChild(el);
+                    }
+                });
 
                 return waitForTrackImages(trackEl).then(function() {
-                    // 使用pinWrap作为trigger（与pin相同），避免位置突变
-                    // 触发时机设置为相册顶部到达视口顶部时，确保自然滚动到正确位置后才开始水平滚动
-                    var st = setupScrollTrigger(pinWrap, trackEl, 'top top+=128px', pinWrap, false);
-                    if (st) {
-                        st.update();
-                        scrollTriggers.push(st);
-                    }
-                    console.log('[Horizontal Gallery] sci-viz loaded:', items.length, 'images');
+                    var observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('visible');
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+                    trackEl.querySelectorAll('.gallery-item').forEach(function(item) {
+                        observer.observe(item);
+                    });
+
+                    console.log('[Horizontal Gallery] sci-viz loaded:', items.length, 'images (masonry)');
                 });
             })
             .catch(function(err) {
@@ -324,15 +367,12 @@
             .then(function(items) {
                 var trackEl = document.getElementById('plants-track');
                 var pinWrap = document.getElementById('plants-pin');
-                var gallerySection = document.getElementById('plants');
                 if (!trackEl || !pinWrap) return;
 
                 buildMultiRowTrack(trackEl, items, 3, 'plants-item', null);
 
                 return waitForTrackImages(trackEl).then(function() {
-                    // 使用pinWrap作为trigger（与pin相同），避免位置突变
-                    // 触发时机与其他相册保持一致：相册顶部到达视口顶部+128px偏移时开始pin
-                    var st = setupScrollTrigger(pinWrap, trackEl, 'top top+=128px', pinWrap);
+                    var st = setupScrollTrigger(pinWrap, trackEl, 'top top+=64px', pinWrap);
                     if (st) {
                         st.update();
                         scrollTriggers.push(st);
@@ -361,65 +401,11 @@
                 buildMultiRowTrack(trackEl, items, 3, 'railway-item', featuredList);
 
                 return waitForTrackImages(trackEl).then(function() {
-                    // 使用pinWrap作为trigger（与pin相同），避免位置突变
-                    // 确保railway相册有足够的滚动空间，最小滚动距离设置为1000px
-                    var viewportWidth = window.innerWidth;
-                    var pinWidth = pinWrap.offsetWidth;
-                    var fullMove = trackEl.scrollWidth - pinWidth;
-                    if (fullMove <= 0) fullMove = 1000;
-                    if (fullMove < 1000) fullMove = 1000;
-                    
-                    var st = ScrollTrigger.create({
-                        trigger: pinWrap,
-                        start: 'top top+=64px',
-                        end: function() { return '+=' + fullMove; },
-                        pin: pinWrap,
-                        pinSpacing: true,
-                        scrub: 1,
-                        invalidateOnRefresh: true,
-                        snap: {
-                            snapTo: "labels",
-                            duration: {min: 0.2, max: 0.5},
-                            ease: "power2.out"
-                        },
-                        onRefresh: function(self) {
-                            var pw = pinWrap.offsetWidth;
-                            var fm = trackEl.scrollWidth - pw;
-                            if (fm <= 0) fm = 1000;
-                            if (fm < 1000) fm = 1000;
-                            self.end = self.start + fm;
-                        },
-                        onLeave: function(self) {
-                            trackEl.style.transform = 'translate3d(' + (-fullMove) + 'px, 0, 0)';
-                        },
-                        onLeaveBack: function(self) {
-                            trackEl.style.transform = 'translate3d(0px, 0, 0)';
-                        },
-                        onUpdate: function(self) {
-                            var progress = self.progress;
-                            var x = -progress * fullMove;
-                            trackEl.style.transform = 'translate3d(' + x.toFixed(2) + 'px, 0, 0)';
-                            
-                            var galleryItems = trackEl.querySelectorAll('.gallery-item');
-                            galleryItems.forEach(function(el) {
-                                var rect = el.getBoundingClientRect();
-                                var itemRightOnScreen = rect.right;
-                                
-                                var revealProgress = 1;
-                                var fadeThreshold = viewportWidth * 0.15;
-                                if (itemRightOnScreen <= fadeThreshold) {
-                                    revealProgress = itemRightOnScreen / fadeThreshold;
-                                }
-                                
-                                revealProgress = Math.max(0, Math.min(1, revealProgress));
-                                var eased = 1 - Math.pow(1 - revealProgress, 2);
-                                el.style.opacity = eased.toFixed(3);
-                                el.style.transform = 'scale(' + (0.94 + 0.06 * eased).toFixed(3) + ')';
-                            });
-                        }
-                    });
-                    
-                    scrollTriggers.push(st);
+                    var st = setupScrollTrigger(pinWrap, trackEl, 'top top+=80px', pinWrap);
+                    if (st) {
+                        st.update();
+                        scrollTriggers.push(st);
+                    }
                     console.log('[Horizontal Gallery] railway loaded:', items.length, 'images');
                 });
             })
