@@ -1566,17 +1566,15 @@ footer .text-white-50 a:hover {
 /* Railway and Potplants galleries: full viewport width images */
 #railway-pin,
 #plants-pin {
-    width: 90vw;
-    max-width: none;
-    margin-left: calc(-45vw + 50%);
-    margin-right: calc(-45vw + 50%);
+    width: 100%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #railway-pin .gallery-track,
 #plants-pin .gallery-track {
     width: max-content;
-    padding-left: 5vw;
-    padding-right: 5vw;
 }
 
 #sciviz-pin {

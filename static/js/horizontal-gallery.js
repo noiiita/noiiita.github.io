@@ -32,10 +32,12 @@
         
         if (hasRailway) {
             promiseChain = promiseChain.then(function() {
+                console.log('[Horizontal Gallery] Starting railway init, waiting for photography section images');
                 // 等待photography section内所有图片加载完成后再初始化railway ScrollTrigger
                 var photographySection = document.getElementById('photography');
                 if (photographySection) {
                     return waitForSectionImages(photographySection).then(function() {
+                        console.log('[Horizontal Gallery] Photography section images loaded, initializing railway gallery');
                         return initRailwayGallery();
                     });
                 }
@@ -51,25 +53,82 @@
 
         promiseChain.then(function() {
             console.log('[Horizontal Gallery] All galleries initialized');
-            // 多阶段延迟刷新，确保所有布局变化都已稳定
-            return deferredRefresh().then(function() {
-                // 再次延迟刷新，处理Chart.js等可能引发的二次布局变化
-                return deferredRefresh();
-            });
-        }).then(function() {
             window.addEventListener('resize', debounce(refreshAll, 250));
-            // 页面完全加载后做最终刷新
-            if (document.readyState === 'complete') {
+
+            // 关键修复：将 railway 和 plants 的 ScrollTrigger 创建推迟到 window.load 之后
+            // 确保 Chart.js 图表、图片等所有上游内容完全渲染后再计算 pin 位置
+            // 逐个创建并刷新，避免 pinSpacing 相互干扰
+            function scheduleDeferredTriggers() {
+                console.log('[Horizontal Gallery] Scheduling deferred ScrollTrigger creation');
                 setTimeout(function() {
-                    ScrollTrigger.refresh();
-                    console.log('[Horizontal Gallery] Final refresh done');
-                }, 500);
+                    requestAnimationFrame(function() {
+                        requestAnimationFrame(function() {
+                            // Step 1: 创建 railway ScrollTrigger
+                            createRailwayScrollTrigger();
+                            ScrollTrigger.refresh();
+                            console.log('[Horizontal Gallery] Railway trigger created, pinSpacing applied');
+
+                            // 安装 railway 位置守卫
+                            installPositionGuard('railway-pin', 'railway-track',
+                                function() { return setupScrollTrigger(
+                                    document.getElementById('railway-pin'),
+                                    document.getElementById('railway-track'),
+                                    'top top+=64px',
+                                    document.getElementById('railway-pin'),
+                                    true,
+                                    2
+                                ); },
+                                'railway');
+
+                            // Step 2: 等待 railway 的 pinSpacing 完全被浏览器布局处理后再创建 plants
+                            // 使用多层 rAF + setTimeout 确保 layout 彻底稳定
+                            function waitForRailwayLayoutThenCreatePlants() {
+                                var railPin = document.getElementById('railway-pin');
+                                if (railPin) { railPin.offsetHeight; } // 强制重排
+
+                                requestAnimationFrame(function() {
+                                    var railPin2 = document.getElementById('railway-pin');
+                                    if (railPin2) { railPin2.offsetHeight; }
+
+                                    requestAnimationFrame(function() {
+                                        var railPin3 = document.getElementById('railway-pin');
+                                        if (railPin3) { railPin3.offsetHeight; }
+
+                                        requestAnimationFrame(function() {
+                                            console.log('[Horizontal Gallery] Railway layout stabilized, creating plants');
+
+                                            createPlantsScrollTrigger();
+                                            ScrollTrigger.refresh();
+                                            console.log('[Horizontal Gallery] Plants trigger created, final refresh done');
+
+                                            // 安装 plants 位置守卫
+                                            installPositionGuard('plants-pin', 'plants-track',
+                                                function() { return setupScrollTrigger(
+                                                    document.getElementById('plants-pin'),
+                                                    document.getElementById('plants-track'),
+                                                    'top top+=64px',
+                                                    document.getElementById('plants-pin'),
+                                                    true,
+                                                    1
+                                                ); },
+                                                'plants');
+                                        });
+                                    });
+                                });
+                            }
+
+                            // 给 railway pinSpacing 足够时间在浏览器中完成布局
+                            setTimeout(waitForRailwayLayoutThenCreatePlants, 300);
+                        });
+                    });
+                }, 800);
+            }
+
+            if (document.readyState === 'complete') {
+                scheduleDeferredTriggers();
             } else {
                 window.addEventListener('load', function() {
-                    setTimeout(function() {
-                        ScrollTrigger.refresh();
-                        console.log('[Horizontal Gallery] Final refresh done (on load)');
-                    }, 500);
+                    scheduleDeferredTriggers();
                 });
             }
         }).catch(function(err) {
@@ -87,6 +146,7 @@
 
     function refreshAll() {
         ScrollTrigger.refresh();
+        setTimeout(validateAllGuards, 200);
     }
 
     function getLightbox() {
@@ -254,129 +314,86 @@
             requestAnimationFrame(function() {
                 requestAnimationFrame(function() {
                     ScrollTrigger.refresh();
-                    setTimeout(function() {
-                        ScrollTrigger.refresh();
-                        resolve();
-                    }, 300);
+                    console.log('[Horizontal Gallery] Deferred refresh done');
+                    resolve();
                 });
             });
         });
     }
 
-    function setupScrollTrigger(pinWrapEl, trackEl, startValue, triggerEl, enableFade) {
+    function setupScrollTrigger(pinWrapEl, trackEl, startValue, triggerEl, enableFade, priority) {
         if (!pinWrapEl || !trackEl) return null;
 
-        var viewportWidth = window.innerWidth;
+        console.log('[Horizontal Gallery] ===', trackEl.id, '=== Initializing ScrollTrigger ===');
+
+        var forced1 = pinWrapEl.offsetHeight;
+        var forced2 = trackEl.offsetHeight;
+
         var pinWidth = pinWrapEl.offsetWidth;
         var fullMove = trackEl.scrollWidth - pinWidth;
+
         if (fullMove <= 0) fullMove = 500;
 
-        var actualTriggerEl = triggerEl || pinWrapEl;
+        console.log('[Horizontal Gallery]', trackEl.id, 
+            'pinWidth:', pinWidth, 
+            'scrollWidth:', trackEl.scrollWidth, 
+            'fullMove:', fullMove,
+            'start:', startValue,
+            'refreshPriority:', priority || 0);
+
+        // 初始化 fade 状态
+        var galleryItems = trackEl.querySelectorAll('.gallery-item');
         var fadeEnabled = enableFade !== false;
 
-        console.log('[Horizontal Gallery]', trackEl.id,
-            'pinW:', pinWidth, 'scrollW:', trackEl.scrollWidth,
-            'fullMove:', Math.round(fullMove),
-            'start:', startValue,
-            'trigger:', actualTriggerEl.id || actualTriggerEl.className,
-            'fade:', fadeEnabled);
-
-        if (fullMove <= 0) {
-            console.warn('[Horizontal Gallery]', trackEl.id, 'fullMove <= 0, forcing to 500');
-            fullMove = 500;
-        }
-
-        var galleryItems = trackEl.querySelectorAll('.gallery-item');
-        var itemData = [];
-        var trackRect = trackEl.getBoundingClientRect();
-
         galleryItems.forEach(function(el) {
-            var rect = el.getBoundingClientRect();
-            itemData.push({
-                el: el,
-                offsetLeft: rect.left - trackRect.left,
-                width: rect.width
-            });
             if (fadeEnabled) {
                 el.style.opacity = '0';
                 el.style.transform = 'scale(0.94)';
-                el.style.willChange = 'transform, opacity';
             } else {
                 el.style.opacity = '1';
                 el.style.transform = 'scale(1)';
             }
         });
 
+        // 最基本、最稳定的 ScrollTrigger 配置
         var st = ScrollTrigger.create({
-            trigger: actualTriggerEl,
-            start: startValue,
-            end: function() { return '+=' + fullMove; },
+            trigger: pinWrapEl,
             pin: pinWrapEl,
             pinSpacing: true,
-            scrub: 1,
+            start: startValue,
+            end: function() { return '+=' + fullMove; },
             invalidateOnRefresh: true,
-            onRefresh: function(self) {
-                var newPinWidth = pinWrapEl.offsetWidth;
-                var newTrackWidth = trackEl.scrollWidth;
-                var newFullMove = newTrackWidth - newPinWidth;
-                
-                if (newFullMove <= 0) newFullMove = 500;
-                if (Math.abs(newFullMove - fullMove) > 10) {
-                    fullMove = newFullMove;
-                    console.log('[Horizontal Gallery]', trackEl.id, 'refreshed fullMove:', Math.round(fullMove));
-                }
+            refreshPriority: priority || 0,
+            scrub: 1,
+            onUpdate: function(self) {
+                var x = -self.progress * fullMove;
+                trackEl.style.transform = 'translateX(' + x + 'px)';
 
-                var tr = trackEl.getBoundingClientRect();
-                itemData.forEach(function(data) {
-                    var rect = data.el.getBoundingClientRect();
-                    if (rect && rect.width) {
-                        data.offsetLeft = rect.left - tr.left;
-                        data.width = rect.width;
-                    }
-                });
-            },
-            onUpdate: onUpdate
+                // 处理 fade 动画
+                if (fadeEnabled) {
+                    var viewportWidth = window.innerWidth;
+                    var trackRect = trackEl.getBoundingClientRect();
+                    
+                    galleryItems.forEach(function(el) {
+                        var elRect = el.getBoundingClientRect();
+                        var elCenter = elRect.left + elRect.width / 2;
+                        
+                        // 当元素接近屏幕中心时淡入，离开时淡出
+                        var distFromCenter = Math.abs(elCenter - viewportWidth / 2);
+                        var fadeRadius = viewportWidth / 2;
+                        var revealProgress = 1 - Math.min(1, distFromCenter / fadeRadius);
+                        
+                        // 平滑过渡
+                        revealProgress = 1 - Math.pow(1 - revealProgress, 2);
+                        
+                        el.style.opacity = (0.5 + revealProgress * 0.5).toFixed(3);
+                        el.style.transform = 'scale(' + (0.94 + 0.06 * revealProgress).toFixed(3) + ')';
+                    });
+                }
+            }
         });
 
-        function onUpdate(self) {
-            var progress = self.progress;
-
-            var x = -progress * fullMove;
-            trackEl.style.transform = 'translate3d(' + x.toFixed(2) + 'px, 0, 0)';
-
-            if (!fadeEnabled) return;
-
-            itemData.forEach(function(data) {
-                var el = data.el;
-                if (!data.width) return;
-
-                var itemLeftOnScreen = data.offsetLeft - progress * fullMove;
-                var itemRightOnScreen = itemLeftOnScreen + data.width;
-
-                var revealProgress = 0;
-                if (itemRightOnScreen > 0 && itemLeftOnScreen < viewportWidth) {
-                    revealProgress = 1;
-                    // 延迟淡入：图片进入视口更深一些才开始淡入（从25%改为15%）
-                    if (itemRightOnScreen < viewportWidth * 0.15) {
-                        revealProgress = itemRightOnScreen / (viewportWidth * 0.15);
-                    }
-                    // 延迟淡出：图片离开视口更晚一些才开始淡出（从75%改为85%）
-                    if (itemLeftOnScreen > viewportWidth * 0.85) {
-                        var entryProgress = (viewportWidth - itemLeftOnScreen) / (viewportWidth * 0.1);
-                        revealProgress = Math.min(revealProgress, entryProgress);
-                    }
-                }
-
-                revealProgress = Math.max(0, Math.min(1, revealProgress));
-                var eased = 1 - Math.pow(1 - revealProgress, 2);
-
-                el.style.opacity = eased.toFixed(3);
-                el.style.transform = 'scale(' + (0.94 + 0.06 * eased).toFixed(3) + ')';
-            });
-        }
-
-        onUpdate({ progress: 0 });
-
+        console.log('[Horizontal Gallery]', trackEl.id, 'ScrollTrigger created successfully');
         return st;
     }
 
@@ -449,12 +466,8 @@
                 buildMultiRowTrack(trackEl, items, 3, 'plants-item', null);
 
                 return waitForTrackImages(trackEl).then(function() {
-                    var st = setupScrollTrigger(pinWrap, trackEl, 'top top+=64px', pinWrap);
-                    if (st) {
-                        st.update();
-                        scrollTriggers.push(st);
-                    }
-                    console.log('[Horizontal Gallery] plants loaded:', items.length, 'images');
+                    console.log('[Horizontal Gallery] plants images loaded:', items.length, 'images (ScrollTrigger deferred)');
+                    // 不在此处创建 ScrollTrigger，推迟到 window.load 之后
                 });
             })
             .catch(function(err) {
@@ -478,17 +491,320 @@
                 buildMultiRowTrack(trackEl, items, 3, 'railway-item', featuredList);
 
                 return waitForTrackImages(trackEl).then(function() {
-                    var st = setupScrollTrigger(pinWrap, trackEl, 'top top+=80px', pinWrap);
-                    if (st) {
-                        st.update();
-                        scrollTriggers.push(st);
-                    }
-                    console.log('[Horizontal Gallery] railway loaded:', items.length, 'images');
+                    console.log('[Horizontal Gallery] railway images loaded:', items.length, 'images (ScrollTrigger deferred)');
+                    // 不在此处创建 ScrollTrigger，推迟到 window.load 之后
+                    // 以确保 Chart.js 图表等上游内容完全渲染后再计算 pin 位置
                 });
             })
             .catch(function(err) {
                 console.error('[Horizontal Gallery] railway error:', err);
             });
+    }
+
+    function createRailwayScrollTrigger() {
+        var trackEl = document.getElementById('railway-track');
+        var pinWrap = document.getElementById('railway-pin');
+        if (!trackEl || !pinWrap) return;
+
+        // 检查是否已经创建过
+        var existing = scrollTriggers.filter(function(st) {
+            return st.vars && st.vars.trigger === pinWrap;
+        });
+        if (existing.length > 0) {
+            console.log('[Horizontal Gallery] railway ScrollTrigger already exists, skipping');
+            return;
+        }
+
+        // 强制重排，确保读取到最新的布局尺寸
+        pinWrap.offsetHeight;
+        trackEl.offsetHeight;
+
+        console.log('[Horizontal Gallery] Creating railway ScrollTrigger after full page load');
+        var st = setupScrollTrigger(pinWrap, trackEl, 'top top+=64px', pinWrap, true, 2);
+        if (st) {
+            st.update();
+            scrollTriggers.push(st);
+            console.log('[Horizontal Gallery] railway ScrollTrigger created successfully');
+        }
+    }
+
+    function createPlantsScrollTrigger() {
+        var trackEl = document.getElementById('plants-track');
+        var pinWrap = document.getElementById('plants-pin');
+        if (!trackEl || !pinWrap) return;
+
+        var existing = scrollTriggers.filter(function(st) {
+            return st.vars && st.vars.trigger === pinWrap;
+        });
+        if (existing.length > 0) {
+            console.log('[Horizontal Gallery] plants ScrollTrigger already exists, skipping');
+            return;
+        }
+
+        pinWrap.offsetHeight;
+        trackEl.offsetHeight;
+
+        console.log('[Horizontal Gallery] Creating plants ScrollTrigger after full page load');
+        var st = setupScrollTrigger(pinWrap, trackEl, 'top top+=64px', pinWrap, true, 1);
+        if (st) {
+            st.update();
+            scrollTriggers.push(st);
+            console.log('[Horizontal Gallery] plants ScrollTrigger created successfully');
+        }
+    }
+
+    // ============================================================
+    //  自检测 + 自纠错系统
+    //  确保 railway 和 plants 相册始终处于正确的文档位置，
+    //  不会跳变到其他区域或遮挡其他内容
+    // ============================================================
+
+    var positionGuards = [];
+    var guardIntervals = [];
+
+    function findBoundaryElements(pinWrap) {
+        var prev = pinWrap.previousElementSibling;
+        var next = pinWrap.nextElementSibling;
+
+        // 向上查找：如果 pinWrap 没有前一个兄弟，找父元素的前一个兄弟的最后一个子元素
+        if (!prev && pinWrap.parentElement) {
+            var parentPrev = pinWrap.parentElement.previousElementSibling;
+            if (parentPrev) {
+                prev = parentPrev;
+            }
+        }
+
+        // 向下查找：如果 pinWrap 没有后一个兄弟，找父元素的后一个兄弟
+        if (!next && pinWrap.parentElement) {
+            var parentNext = pinWrap.parentElement.nextElementSibling;
+            if (parentNext) {
+                next = parentNext;
+            }
+        }
+
+        return { prev: prev, next: next };
+    }
+
+    function validateGalleryPosition(pinWrap, label) {
+        if (!pinWrap) return { valid: true, reason: 'no element' };
+
+        var activeST = null;
+        for (var i = 0; i < scrollTriggers.length; i++) {
+            var st = scrollTriggers[i];
+            if (st && st.vars && st.vars.trigger === pinWrap && st.isActive) {
+                activeST = st;
+                break;
+            }
+        }
+
+        if (activeST) {
+            // Pin 状态下：验证 pin 位置是否正确，以及是否遮挡了 DOM 中之前的元素
+            var pinRect = pinWrap.getBoundingClientRect();
+            var expectedPinTop = 64;
+            var pinTopTolerance = 25;
+
+            if (Math.abs(pinRect.top - expectedPinTop) > pinTopTolerance) {
+                console.warn('[Position Guard] ' + label + ' PIN POSITION ERROR: top=' +
+                    Math.round(pinRect.top) + ' expected ~' + expectedPinTop);
+                return { valid: false, reason: 'pin at wrong position: top=' + Math.round(pinRect.top) };
+            }
+
+            // 检查是否遮挡了 DOM 中位于 pinWrap 之前的元素
+            // 如果前一个元素仍在视口内可见，说明 pin 开始得太早
+            var boundaries = findBoundaryElements(pinWrap);
+            if (boundaries.prev) {
+                var prevRect = boundaries.prev.getBoundingClientRect();
+                if (prevRect.height > 0 && prevRect.bottom > 50) {
+                    console.warn('[Position Guard] ' + label + ' PIN TOO EARLY: previous element still visible, bottom=' +
+                        Math.round(prevRect.bottom) + ', pinRect.top=' + Math.round(pinRect.top));
+                    return { valid: false, reason: 'pin started too early: prev element visible at bottom=' + Math.round(prevRect.bottom) };
+                }
+            }
+
+            return { valid: true, reason: 'pinned correctly at top=' + Math.round(pinRect.top) };
+        }
+
+        // 非 pin 状态：检查与前后元素的边界
+        // 只在至少一个边界接近视口时才做检测，避免元素都在视口外时误报
+        var boundaries = findBoundaryElements(pinWrap);
+        var pinRect = pinWrap.getBoundingClientRect();
+        var tolerance = 5;
+        var issues = [];
+
+        if (boundaries.prev) {
+            var prevRect = boundaries.prev.getBoundingClientRect();
+            if (prevRect.height > 0 && pinRect.top < prevRect.bottom - tolerance) {
+                // 只在 prev 或 pinWrap 至少一个接近视口时才报错
+                var viewportH = window.innerHeight;
+                var prevNearViewport = prevRect.bottom > -200 && prevRect.top < viewportH + 200;
+                var pinNearViewport = pinRect.bottom > -200 && pinRect.top < viewportH + 200;
+                if (prevNearViewport || pinNearViewport) {
+                    var overlap = Math.round(prevRect.bottom - pinRect.top);
+                    issues.push('overlaps with previous element by ' + overlap + 'px');
+                }
+            }
+        }
+
+        if (boundaries.next) {
+            var nextRect = boundaries.next.getBoundingClientRect();
+            if (nextRect.height > 0 && pinRect.bottom > nextRect.top + tolerance) {
+                var overlap = Math.round(pinRect.bottom - nextRect.top);
+                issues.push('overlaps with next element by ' + overlap + 'px');
+            }
+        }
+
+        if (issues.length > 0) {
+            console.warn('[Position Guard] ' + label + ' POSITION ERROR:', issues.join('; '),
+                'pinRect:', JSON.stringify({top: Math.round(pinRect.top), bottom: Math.round(pinRect.bottom), height: Math.round(pinRect.height)}));
+            return { valid: false, reason: issues.join('; ') };
+        }
+
+        return { valid: true, reason: 'ok' };
+    }
+
+    function killGalleryScrollTrigger(pinWrap, label) {
+        for (var i = scrollTriggers.length - 1; i >= 0; i--) {
+            var st = scrollTriggers[i];
+            if (st && st.vars && st.vars.trigger === pinWrap) {
+                console.log('[Position Guard] ' + label + ' killing old ScrollTrigger');
+                try { st.kill(); } catch(e) {}
+                scrollTriggers.splice(i, 1);
+            }
+        }
+    }
+
+    function repairGallery(pinWrapId, trackId, createFn, label) {
+        var pinWrap = document.getElementById(pinWrapId);
+        var trackEl = document.getElementById(trackId);
+        if (!pinWrap || !trackEl) {
+            console.warn('[Position Guard] ' + label + ' cannot repair: elements not found');
+            return false;
+        }
+
+        if (pinWrap._repairing) {
+            console.warn('[Position Guard] ' + label + ' already repairing, skipping');
+            return false;
+        }
+        pinWrap._repairing = true;
+
+        // 防止无限修复循环：每个 guard 最多修复 6 次
+        if (!pinWrap._repairCount) pinWrap._repairCount = 0;
+        if (pinWrap._repairCount >= 6) {
+            console.error('[Position Guard] ' + label + ' repair limit reached (6), giving up');
+            return false;
+        }
+        pinWrap._repairCount++;
+
+        console.log('[Position Guard] ' + label + ' starting repair #' + pinWrap._repairCount + '...');
+
+        // 1. 杀死旧 ScrollTrigger
+        killGalleryScrollTrigger(pinWrap, label);
+
+        // 2. 清除 GSAP 可能残留的 inline styles
+        pinWrap.style.position = '';
+        pinWrap.style.top = '';
+        pinWrap.style.bottom = '';
+        pinWrap.style.left = '';
+        pinWrap.style.right = '';
+        pinWrap.style.transform = '';
+        pinWrap.style.margin = '';
+        pinWrap.style.padding = '';
+        trackEl.style.transform = '';
+
+        // 3. 强制重排
+        pinWrap.offsetHeight;
+        trackEl.offsetHeight;
+
+        // 4. 重新创建 ScrollTrigger
+        var st = createFn();
+        if (st) {
+            scrollTriggers.push(st);
+        }
+
+        // 5. 全局刷新 — 让 GSAP 正确放置 pinSpacing spacer 到 DOM 中
+        //    注意: railway(refreshPriority=2) 先于 plants(refreshPriority=1) 刷新
+        //    railway 的 pinSpacing 先应用，plants 基于正确布局计算 start
+        ScrollTrigger.refresh();
+
+        // 6. 等布局稳定后验证（异步，让浏览器完成重排）
+        setTimeout(function() {
+            var recheckPin = document.getElementById(pinWrapId);
+            if (!recheckPin) return;
+            recheckPin.offsetHeight;
+
+            var result = validateGalleryPosition(recheckPin, label);
+            if (result.valid) {
+                recheckPin._repairCount = 0;
+                console.log('[Position Guard] ' + label + ' repair SUCCESS');
+            } else {
+                console.error('[Position Guard] ' + label + ' repair FAILED:', result.reason);
+            }
+            recheckPin._repairing = false;
+        }, 250);
+
+        return true;
+    }
+
+    function installPositionGuard(pinWrapId, trackId, createFn, label) {
+        var pinWrap = document.getElementById(pinWrapId);
+        if (!pinWrap) return;
+
+        console.log('[Position Guard] Installing guard for', label);
+
+        // 初始验证
+        var initResult = validateGalleryPosition(pinWrap, label);
+        if (!initResult.valid) {
+            console.warn('[Position Guard] ' + label + ' initial position invalid, repairing...');
+            repairGallery(pinWrapId, trackId, createFn, label);
+        } else {
+            console.log('[Position Guard] ' + label + ' initial position valid');
+        }
+
+        // 周期性检测（前 60 秒每 3 秒检测一次，覆盖所有可能的延迟加载）
+        var checkCount = 0;
+        var maxChecks = 20;
+        var intervalId = setInterval(function() {
+            checkCount++;
+            var currentPinWrap = document.getElementById(pinWrapId);
+            if (!currentPinWrap) {
+                clearInterval(intervalId);
+                return;
+            }
+
+            var result = validateGalleryPosition(currentPinWrap, label);
+            if (!result.valid) {
+                console.warn('[Position Guard] ' + label + ' periodic check #' + checkCount + ' FAILED, repairing...');
+                repairGallery(pinWrapId, trackId, createFn, label);
+            }
+
+            if (checkCount >= maxChecks) {
+                clearInterval(intervalId);
+                console.log('[Position Guard] ' + label + ' periodic checks completed (' + maxChecks + ' rounds)');
+            }
+        }, 3000);
+
+        guardIntervals.push(intervalId);
+
+        // 注册到全局列表
+        positionGuards.push({
+            pinWrapId: pinWrapId,
+            trackId: trackId,
+            createFn: createFn,
+            label: label,
+            intervalId: intervalId
+        });
+    }
+
+    function validateAllGuards() {
+        positionGuards.forEach(function(guard) {
+            var pinWrap = document.getElementById(guard.pinWrapId);
+            if (!pinWrap) return;
+            var result = validateGalleryPosition(pinWrap, guard.label);
+            if (!result.valid) {
+                console.warn('[Position Guard] validateAll: ' + guard.label + ' invalid, repairing...');
+                repairGallery(guard.pinWrapId, guard.trackId, guard.createFn, guard.label);
+            }
+        });
     }
 
     if (document.readyState === 'loading') {

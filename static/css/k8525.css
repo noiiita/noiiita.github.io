@@ -270,10 +270,7 @@
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
 }
 
-/* Railway gallery animations */
-#railway-pin {
-    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-}
+/* Railway gallery animations - removed transition to avoid interfering with GSAP ScrollTrigger */
 
 /* Railway horizontal gallery animations for K8525 transitions */
 #railway-pin.sink-fade-out {
