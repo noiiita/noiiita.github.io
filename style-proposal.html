@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Style Proposal — Editorial Monocle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wdth,wght@75..150,300..900&display=swap" rel="stylesheet">
+<style>
+  /* ===================== EDITORIAL-MONOCLE PALETTE ===================== */
+  :root {
+    --bg:      oklch(98% 0.004 95);
+    --surface: oklch(100% 0.002 95);
+    --fg:      oklch(20% 0.018 70);
+    --muted:   oklch(48% 0.012 70);
+    --border:  oklch(90% 0.006 95);
+    --accent:  oklch(52% 0.10 28);
+
+    --font-display: 'Iowan Old Style', 'Charter', Georgia, serif;
+    --font-body:    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono:    ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
+
+  /* Header */
+  .proposal-header {
+    text-align: center;
+    padding: 4rem 0 3rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 3rem;
+  }
+  .proposal-header .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  .proposal-header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.75rem;
+  }
+  .proposal-header .subtitle {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* Section headers */
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+
+  /* ===================== PALETTE SWATCHES ===================== */
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0 3rem;
+  }
+  .swatch {
+    border: 1px solid var(--border);
+    border-radius: 0;
+    overflow: hidden;
+  }
+  .swatch-block {
+    height: 80px;
+  }
+  .swatch-label {
+    padding: 0.65rem 0.75rem;
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    line-height: 1.4;
+    border-top: 1px solid var(--border);
+  }
+  .swatch-label strong { display: block; font-size: 0.85rem; font-weight: 500; }
+
+  /* ===================== COMPARISON GRID ===================== */
+  .comparison-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  @media (max-width: 768px) {
+    .comparison-row { grid-template-columns: 1fr; }
+  }
+
+  .col-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .col-label .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.6rem;
+    letter-spacing: 0.05em;
+  }
+  .tag-before { background: oklch(92% 0.01 30); color: oklch(35% 0.06 25); }
+  .tag-after  { background: oklch(92% 0.01 160); color: oklch(35% 0.06 160); }
+
+  /* ===================== TYPOGRAPHY SAMPLES ===================== */
+  .type-sample {
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+  .type-sample .specimen-h1 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+  .type-sample .specimen-h2 {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+  .type-sample .specimen-h3 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1.25;
+    margin-bottom: 0.5rem;
+  }
+  .type-sample .specimen-body {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--fg);
+    max-width: 540px;
+  }
+  .type-sample .specimen-mono {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.75rem;
+  }
+
+  /* Before type samples (current) */
+  .current-h1 { font-family: 'TikTok Sans', sans-serif; font-size: 2.5rem; font-weight: 600; line-height: 1.1; }
+  .current-h2 { font-family: 'TikTok Sans', sans-serif; font-size: 1.75rem; font-weight: 500; color: #3948d2; }
+  .current-h3 { font-family: 'TikTok Sans', sans-serif; font-size: 1.3rem; font-weight: 500; line-height: 1.3; }
+  .current-body { font-family: 'Mulish', sans-serif; font-size: 1.1rem; font-weight: 200; line-height: 2.4rem; }
+
+  /* ===================== IMAGE STYLING ===================== */
+  .image-demo-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin: 1.5rem 0 2.5rem;
+  }
+  .image-demo-item {
+    text-align: center;
+  }
+  .image-placeholder {
+    aspect-ratio: 4/3;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .img-current {
+    border-radius: 12px;
+    border: 1.5px solid rgba(255,255,255,0.06);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    background: oklch(95% 0.004 95);
+  }
+  .img-proposed {
+    border-radius: 0;
+    border: 1px solid var(--border);
+    box-shadow: none;
+    background: oklch(97% 0.003 95);
+  }
+  .img-proposed-soft {
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    box-shadow: none;
+    background: oklch(97% 0.003 95);
+  }
+  .image-demo-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ===================== ICON DIRECTION ===================== */
+  .icon-demo {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    margin: 1.5rem 0 2.5rem;
+    flex-wrap: wrap;
+  }
+  .icon-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .icon-current {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    background: oklch(92% 0.01 255);
+    color: oklch(45% 0.1 260);
+    border-radius: 8px;
+  }
+  .icon-proposed {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .icon-label {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+
+  /* ===================== SECTION PREVIEW ===================== */
+  .preview-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .preview-card .pub-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.6;
+  }
+  .preview-card .pub-item:last-child { border-bottom: none; }
+  .pub-index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+  .pub-title {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--fg);
+  }
+  .pub-authors {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+  .pub-venue {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-top: 0.25rem;
+  }
+
+  .preview-card .gallery-preview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  @media (max-width: 500px) {
+    .preview-card .gallery-preview { grid-template-columns: repeat(2, 1fr); }
+  }
+  .gallery-preview-item {
+    aspect-ratio: 4/3;
+    background: var(--border);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--muted);
+  }
+
+  /* ===================== CHANGE LIST ===================== */
+  .change-list {
+    list-style: none;
+    padding: 0;
+  }
+  .change-list li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .change-list li:last-child { border-bottom: none; }
+  .change-category {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  /* ===================== COLOR BAR ===================== */
+  .color-bar {
+    display: flex;
+    margin: 1.5rem 0 2.5rem;
+    height: 6px;
+    border: 1px solid var(--border);
+  }
+  .color-bar div { flex: 1; }
+
+  /* ===================== NAV ===================== */
+  .proposal-nav {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    padding: 1rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .proposal-nav a {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-decoration: none;
+    padding-bottom: 2px;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .proposal-nav a:hover { color: var(--fg); border-color: var(--accent); }
+
+  .note {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    padding: 1.5rem;
+    margin-top: 2rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    line-height: 1.6;
+  }
+  .note strong { color: var(--fg); }
+
+  /* Intro text */
+  .intro-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0 auto 2.5rem;
+    text-align: center;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header class="proposal-header">
+    <div class="eyebrow">Style Proposal</div>
+    <h1>Editorial Monocle</h1>
+    <p class="subtitle">Print-magazine restraint for an academic homepage. Serif headlines, paper-white backgrounds, one warm accent.</p>
+  </header>
+
+  <!-- Nav -->
+  <nav class="proposal-nav">
+    <a href="#palette">Palette</a>
+    <a href="#typography">Typography</a>
+    <a href="#images">Images</a>
+    <a href="#icons">Icons</a>
+    <a href="#preview">Preview</a>
+    <a href="#changes">All Changes</a>
+  </nav>
+
+  <!-- ==================== PALETTE ==================== -->
+  <section id="palette" style="margin-bottom: 2.5rem;">
+    <div class="section-subtitle">01</div>
+    <h2 class="section-title">Color Palette</h2>
+
+    <div class="color-bar">
+      <div style="background: oklch(98% 0.004 95);"></div>
+      <div style="background: oklch(100% 0.002 95);"></div>
+      <div style="background: oklch(90% 0.006 95);"></div>
+      <div style="background: oklch(48% 0.012 70);"></div>
+      <div style="background: oklch(20% 0.018 70);"></div>
+      <div style="background: oklch(52% 0.10 28);"></div>
+    </div>
+
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-block" style="background: oklch(98% 0.004 95);"></div>
+        <div class="swatch-label"><strong>--bg</strong>Paper white · oklch(98% 0.004 95)</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background: oklch(100% 0.002 95); border-bottom: 1px solid var(--border);"></div>
+        <div class="swatch-label"><strong>--surface</strong>True white · oklch(100% 0.002 95)</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background: oklch(90% 0.006 95);"></div>
+        <div class="swatch-label"><strong>--border</strong>Light border · oklch(90% 0.006 95)</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background: oklch(48% 0.012 70);"></div>
+        <div class="swatch-label"><strong>--muted</strong>Mid grey · oklch(48% 0.012 70)</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background: oklch(20% 0.018 70);"></div>
+        <div class="swatch-label"><strong>--fg</strong>Near-black · oklch(20% 0.018 70)</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background: oklch(52% 0.10 28);"></div>
+        <div class="swatch-label"><strong>--accent</strong>Warm red-brown · oklch(52% 0.10 28)</div>
+      </div>
+    </div>
+
+    <div class="comparison-row">
+      <div>
+        <div class="col-label"><span>Current Palette</span><span class="tag tag-before">BEFORE</span></div>
+        <div class="color-bar">
+          <div style="background: #ffffff;"></div>
+          <div style="background: #f0f0f0;"></div>
+          <div style="background: #ccc;"></div>
+          <div style="background: #666666;"></div>
+          <div style="background: #000000;"></div>
+          <div style="background: #3948d2;"></div>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);line-height:1.5;margin-top:0.5rem;">
+          Cool blue accent (#3948d2). Pure black/white extremes. Plain grey mid-tones. Works but feels generic — no warmth, no editorial character.
+        </p>
+      </div>
+      <div>
+        <div class="col-label"><span>Proposed Palette</span><span class="tag tag-after">AFTER</span></div>
+        <div class="color-bar">
+          <div style="background: oklch(98% 0.004 95);"></div>
+          <div style="background: oklch(100% 0.002 95);"></div>
+          <div style="background: oklch(90% 0.006 95);"></div>
+          <div style="background: oklch(48% 0.012 70);"></div>
+          <div style="background: oklch(20% 0.018 70);"></div>
+          <div style="background: oklch(52% 0.10 28);"></div>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);line-height:1.5;margin-top:0.5rem;">
+          Warm red-brown accent. Paper-white canvases with perceptually-balanced greys. Feels authored — like a monograph, not a template.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TYPOGRAPHY ==================== -->
+  <section id="typography" style="margin-bottom: 2.5rem;">
+    <div class="section-subtitle">02</div>
+    <h2 class="section-title">Typography</h2>
+
+    <div class="comparison-row">
+      <div>
+        <div class="col-label"><span>Current</span><span class="tag tag-before">BEFORE</span></div>
+        <div class="type-sample">
+          <div class="current-h1">PUBLICATIONS</div>
+          <div class="current-h2" style="font-size:1.5rem;margin-top:1rem;">LUO Ruihao</div>
+          <div class="current-h3" style="margin-top:1rem;">Scientific Visualization</div>
+          <div class="current-body" style="margin-top:1rem;">
+            I draw schematic figures for labmates' projects in exchange for tea. Most work uses Blender for modeling and rendering.
+          </div>
+          <div style="font-family:'Misans',sans-serif;font-size:0.85rem;color:#777;margin-top:0.75rem;">
+            — 6 font families in use across the page
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="col-label"><span>Proposed</span><span class="tag tag-after">AFTER</span></div>
+        <div class="type-sample">
+          <div class="specimen-h1">Publications</div>
+          <div class="specimen-h2" style="margin-top:1rem;">LUO Ruihao</div>
+          <div class="specimen-h3" style="margin-top:1rem;">Scientific Visualization</div>
+          <div class="specimen-body" style="margin-top:1rem;">
+            I draw schematic figures for labmates' projects in exchange for tea. Most work uses Blender for modeling and rendering.
+          </div>
+          <div class="specimen-mono">
+            — 2 font families · Serif display + System sans body
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;">
+      <div class="section-subtitle">Font Stack</div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.9rem;margin-top:0.75rem;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);text-align:left;">
+            <th style="padding:0.5rem 0.75rem;font-family:var(--font-mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;">Role</th>
+            <th style="padding:0.5rem 0.75rem;font-family:var(--font-mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;">Current</th>
+            <th style="padding:0.5rem 0.75rem;font-family:var(--font-mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;">Proposed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem 0.75rem;">Heading</td>
+            <td style="padding:0.6rem 0.75rem;color:var(--muted);">TikTok Sans / Misans / Newsreader</td>
+            <td style="padding:0.6rem 0.75rem;">Iowan Old Style · Charter · Georgia</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem 0.75rem;">Body</td>
+            <td style="padding:0.6rem 0.75rem;color:var(--muted);">Mulish (weight 200) / Misans</td>
+            <td style="padding:0.6rem 0.75rem;">System sans-serif (weight 400)</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem 0.75rem;">Metadata / Code</td>
+            <td style="padding:0.6rem 0.75rem;color:var(--muted);">— implicit</td>
+            <td style="padding:0.6rem 0.75rem;">ui-monospace · SF Mono · JetBrains Mono</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem 0.75rem;">Hero Name</td>
+            <td style="padding:0.6rem 0.75rem;">TikTok Sans</td>
+            <td style="padding:0.6rem 0.75rem;">TikTok Sans <span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--accent);">(preserved)</span></td>
+          </tr>
+          <tr>
+            <td style="padding:0.6rem 0.75rem;">Line-height</td>
+            <td style="padding:0.6rem 0.75rem;color:var(--muted);">2.4rem (body) — too loose</td>
+            <td style="padding:0.6rem 0.75rem;">1.65–1.75 — comfortable reading</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== IMAGE STYLING ==================== -->
+  <section id="images" style="margin-bottom: 2.5rem;">
+    <div class="section-subtitle">03</div>
+    <h2 class="section-title">Image Borders & Radius</h2>
+
+    <p style="font-size:0.95rem;color:var(--muted);line-height:1.6;margin-bottom:1.5rem;">
+      Currently the page has <strong>5 different border-radius values</strong> (12px, 8px, 16px, 24px, 10px) and <strong>3 different border styles</strong> across gallery images, cover photos, containers, and the avatar. The editorial direction unifies to a single system.
+    </p>
+
+    <div class="image-demo-row">
+      <div class="image-demo-item">
+        <div class="image-placeholder img-current">Gallery Image<br>radius: 12px<br>border: 1.5px</div>
+        <div class="image-demo-label">Current — Gallery</div>
+      </div>
+      <div class="image-demo-item">
+        <div class="image-placeholder img-proposed">Gallery Image<br>radius: 0<br>border: 1px</div>
+        <div class="image-demo-label">Proposed — Sharp</div>
+      </div>
+      <div class="image-demo-item">
+        <div class="image-placeholder img-proposed-soft">Gallery Image<br>radius: 3px<br>border: 1px</div>
+        <div class="image-demo-label">Proposed — Subtle</div>
+      </div>
+      <div class="image-demo-item">
+        <div class="image-placeholder img-current" style="aspect-ratio:1/1;border-radius:8px;">Avatar<br>radius: 8px<br>shadow</div>
+        <div class="image-demo-label">Current — Avatar</div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;">
+      <div class="section-subtitle">Unified Image Rules</div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.9rem;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);text-align:left;">
+            <th style="padding:0.5rem 0.75rem;font-family:var(--font-mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;">Element</th>
+            <th style="padding:0.5rem 0.75rem;font-family:var(--font-mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;">Border</th>
+            <th style="padding:0.5rem 0.75rem;font-family:var(--font-mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;">Radius</th>
+            <th style="padding:0.5rem 0.75rem;font-family:var(--font-mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;">Shadow</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem 0.75rem;">Gallery thumbnails</td>
+            <td style="padding:0.6rem 0.75rem;">1px solid var(--border)</td>
+            <td style="padding:0.6rem 0.75rem;">0–3px</td>
+            <td style="padding:0.6rem 0.75rem;">None</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem 0.75rem;">Cover / hero images</td>
+            <td style="padding:0.6rem 0.75rem;">1px solid var(--border)</td>
+            <td style="padding:0.6rem 0.75rem;">0</td>
+            <td style="padding:0.6rem 0.75rem;">None</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem 0.75rem;">Avatar</td>
+            <td style="padding:0.6rem 0.75rem;">1px solid var(--border)</td>
+            <td style="padding:0.6rem 0.75rem;">3px</td>
+            <td style="padding:0.6rem 0.75rem;">None</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem 0.75rem;">Section containers</td>
+            <td style="padding:0.6rem 0.75rem;">1px solid var(--border)</td>
+            <td style="padding:0.6rem 0.75rem;">0</td>
+            <td style="padding:0.6rem 0.75rem;">None</td>
+          </tr>
+          <tr>
+            <td style="padding:0.6rem 0.75rem;">Lightbox overlay</td>
+            <td style="padding:0.6rem 0.75rem;">— preserved</td>
+            <td style="padding:0.6rem 0.75rem;">— preserved</td>
+            <td style="padding:0.6rem 0.75rem;">— preserved</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== ICONS ==================== -->
+  <section id="icons" style="margin-bottom: 2.5rem;">
+    <div class="section-subtitle">04</div>
+    <h2 class="section-title">Icons</h2>
+
+    <p style="font-size:0.95rem;color:var(--muted);line-height:1.6;margin-bottom:1.5rem;">
+      The page uses a mix of Bootstrap Icons, Font Awesome, and emoji. Editorial direction replaces decorative icons with typographic marks — borders and whitespace do the work.
+    </p>
+
+    <div class="comparison-row">
+      <div>
+        <div class="col-label"><span>Current</span><span class="tag tag-before">BEFORE</span></div>
+        <div class="icon-demo">
+          <div class="icon-group">
+            <div class="icon-current"><span style="font-size:1rem;">📄</span></div>
+            <div class="icon-label">Section icon</div>
+          </div>
+          <div class="icon-group">
+            <div class="icon-current" style="color:#00aced;">B</div>
+            <div class="icon-label">Social</div>
+          </div>
+          <div class="icon-group">
+            <div class="icon-current">🧋</div>
+            <div class="icon-label">Inline emoji</div>
+          </div>
+          <div class="icon-group">
+            <div class="icon-current">👉</div>
+            <div class="icon-label">Arrow</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="col-label"><span>Proposed</span><span class="tag tag-after">AFTER</span></div>
+        <div class="icon-demo">
+          <div class="icon-group">
+            <div class="icon-proposed">§</div>
+            <div class="icon-label">Typographic mark</div>
+          </div>
+          <div class="icon-group">
+            <div class="icon-proposed">B</div>
+            <div class="icon-label">Minimal social</div>
+          </div>
+          <div class="icon-group">
+            <div class="icon-proposed" style="font-size:0.85rem;">tea</div>
+            <div class="icon-label">Mono label</div>
+          </div>
+          <div class="icon-group">
+            <div class="icon-proposed" style="font-size:1rem;">→</div>
+            <div class="icon-label">Text arrow</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION PREVIEW ==================== -->
+  <section id="preview" style="margin-bottom: 2.5rem;">
+    <div class="section-subtitle">05</div>
+    <h2 class="section-title">Section Preview</h2>
+
+    <p style="font-size:0.95rem;color:var(--muted);line-height:1.6;margin-bottom:1.5rem;">
+      How key sections look with the editorial-monocle system applied.
+    </p>
+
+    <!-- Publications Preview -->
+    <div class="preview-card">
+      <div class="section-subtitle">Publications</div>
+      <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:400;margin-bottom:1.25rem;letter-spacing:-0.01em;">Publications</h3>
+      <div class="pub-item">
+        <div class="pub-index">01</div>
+        <div class="pub-title">Title of the Research Paper Would Appear Here</div>
+        <div class="pub-authors">Author One, Author Two, Luo Ruihao, Author Three</div>
+        <div class="pub-venue">CVPR 2025</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-index">02</div>
+        <div class="pub-title">Another Paper Title with Full Description</div>
+        <div class="pub-authors">Author A, Luo Ruihao, Author B</div>
+        <div class="pub-venue">ICCV 2025</div>
+      </div>
+    </div>
+
+    <!-- Gallery Preview -->
+    <div class="preview-card">
+      <div class="section-subtitle">Gallery</div>
+      <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:400;margin-bottom:0.25rem;letter-spacing:-0.01em;">Scientific Visualization</h3>
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:1rem;">I draw schematic figures for labmates' projects in exchange for tea.</p>
+      <div class="gallery-preview">
+        <div class="gallery-preview-item">01</div>
+        <div class="gallery-preview-item">02</div>
+        <div class="gallery-preview-item">03</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FULL CHANGE LIST ==================== -->
+  <section id="changes" style="margin-bottom: 2.5rem;">
+    <div class="section-subtitle">06</div>
+    <h2 class="section-title">Complete Change Map</h2>
+
+    <ul class="change-list">
+      <li>
+        <span class="change-category">Color</span>
+        <span>Replace cool-blue accent (#3948d2) with warm red-brown (oklch 52% 0.10 28). Paper-white backgrounds instead of pure white/grey. Perceptually balanced dark mode.</span>
+      </li>
+      <li>
+        <span class="change-category">Fonts</span>
+        <span>Reduce from 6 font families to 2 (serif display + system sans body). Headings: Iowan Old Style / Charter / Georgia. Body: system sans at weight 400. TikTok Sans stays for hero name only.</span>
+      </li>
+      <li>
+        <span class="change-category">Spacing</span>
+        <span>Body line-height from 2.4rem to 1.65. Consistent section margins. Generous whitespace between sections — borders replace shadow/blur containers.</span>
+      </li>
+      <li>
+        <span class="change-category">Images</span>
+        <span>Unify all gallery images to 0–3px border-radius, 1px solid border, no shadow. Remove 5 competing radius values (8/10/12/16/24px). Avatar gets 3px radius.</span>
+      </li>
+      <li>
+        <span class="change-category">Icons</span>
+        <span>Replace Bootstrap/Font Awesome section icons with typographic marks. Replace inline emoji with mono-wrapped labels. Keep social icons minimal.</span>
+      </li>
+      <li>
+        <span class="change-category">Containers</span>
+        <span>Replace rounded cards + shadows + blur with flat bordered containers. No backdrop-filter on content sections — let borders define hierarchy.</span>
+      </li>
+      <li>
+        <span class="change-category">Workflow</span>
+        <span>Remove orange gradient circles, replace with numbered mono indicators. Thin border container instead of shadow card. Emoji arrows → text arrows.</span>
+      </li>
+      <li>
+        <span class="change-category">Nav</span>
+        <span>Preserve glass-effect on scroll (user-requested). Replace pill-shaped nav links with rectangular bordered links. Monospace uppercase labels.</span>
+      </li>
+      <li>
+        <span class="change-category">Footer</span>
+        <span>Clean separation with border-top. Mono copyright. No decoration.</span>
+      </li>
+      <li>
+        <span class="change-category">Links</span>
+        <span>Unify link colors to accent. Remove the 200% size hover effect — use underline and color shift instead.</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================== PRESERVED ELEMENTS ==================== -->
+  <div class="note">
+    <strong>Preserved (not changed):</strong><br>
+    · Hero name entrance animation (blurFadeIn) + TikTok Sans font<br>
+    · Video background with fixed positioning<br>
+    · LOADING overlay letter animation<br>
+    · K8525 full-screen essay experience + scroll-snap<br>
+    · Gallery masonry layout (Scientific Visualization) + lightbox<br>
+    · Railway charts (Chart.js) + CR.svg watermark<br>
+    · Scroll-reveal animations (GSAP + ScrollTrigger)<br>
+    · Theme toggle (dark/light) — will be adapted to new palette<br>
+    · Glass-effect navbar on scroll (Chromium detection) — refined to match
+  </div>
+
+</div>
+</body>
+</html>

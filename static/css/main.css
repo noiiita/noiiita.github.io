@@ -11,7 +11,7 @@ body {
 
 
 :root {
-    --h-title-color: #3948d2;
+    --h-title-color: #b0553a;
     /* 亮色模式颜色变量 */
     --bg-primary: #ffffff;
     --bg-secondary: #f0f0f0;
@@ -22,17 +22,22 @@ body {
     --text-quaternary: #777777;
     --border-color: #ccc;
     --shadow-color: rgba(0, 0, 0, 0.1);
-    --accent-color: #3948d2;
-    --accent-hover: #2a36b1;
-    --blender-orange: #ff6b00;
-    --blender-orange-hover: #cc5500;
-    --sky-blue: #1E90FF;
-    --sky-blue-hover: #0066CC;
+    --accent-color: #b0553a;
+    --accent-hover: #8a3f2a;
+    --blender-orange: #b0553a;
+    --blender-orange-hover: #8a3f2a;
+    --sky-blue: #b0553a;
+    --sky-blue-hover: #8a3f2a;
+    --surface: #fafafa;
+    --muted: #888888;
+    --font-display: 'Iowan Old Style', 'Charter', Georgia, serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', Menlo, monospace;
 }
 
 /* 暗黑模式 */
 [data-theme="dark"] {
-    --h-title-color: #9ab3ff;
+    --h-title-color: #d4947a;
     --bg-primary: #121212;
     --bg-secondary: #2f2f2f;
     --bg-tertiary: #2d2d2d;
@@ -42,12 +47,17 @@ body {
     --text-quaternary: #909090;
     --border-color: #333333;
     --shadow-color: rgba(0, 0, 0, 0.3);
-    --accent-color: #6b83ff;
-    --accent-hover: #4a61ff;
-    --blender-orange: #ff8c42;
-    --blender-orange-hover: #ff701a;
-    --sky-blue: #30b4ed;
-    --sky-blue-hover: #42a5f5;
+    --accent-color: #d4947a;
+    --accent-hover: #e8b09a;
+    --blender-orange: #d4947a;
+    --blender-orange-hover: #e8b09a;
+    --sky-blue: #d4947a;
+    --sky-blue-hover: #e8b09a;
+    --surface: #1e1e1e;
+    --muted: #777777;
+    --font-display: 'Iowan Old Style', 'Charter', Georgia, serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', Menlo, monospace;
 }
 
 .header {
@@ -479,11 +489,11 @@ body {
     color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .sciviz-note a {
+[data-theme="dark"] .sciviz-tip a {
     color: var(--blender-orange);
 }
 
-[data-theme="dark"] .sciviz-note a:hover {
+[data-theme="dark"] .sciviz-tip a:hover {
     color: var(--blender-orange-hover);
 }
 
@@ -538,11 +548,6 @@ body {
     color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] #publications-subtitle i,
-[data-theme="dark"] #gallery-subtitle i {
-    color: var(--text-primary) !important;
-}
-
 /* 暗黑模式下的导航栏样式 */
 [data-theme="dark"] .header .nav-link,
 [data-theme="dark"] .header .navbar-nav .nav-link {
@@ -593,19 +598,14 @@ body {
 }
 
 section header h2{
-    font-family: "TikTok Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
-    font-weight: 500;
+    font-family: var(--font-display) !important;
+    font-weight: 400;
     color: var(--h-title-color);
     font-size: 2rem;
-    line-height: 4rem;
+    line-height: 1.3;
 }
 
 /* Home subtitle letter hover effect */
-#home-subtitle {
-    font-family: "TikTok Sans", sans-serif;
-    font-weight: 300;
-}
-
 #home-subtitle .letter {
     display: inline-block;
     font-family: "TikTok Sans", sans-serif;
@@ -619,15 +619,10 @@ section header h2{
     transform: scale(1.2);
 }
 
-/* PUBLICATIONS and GALLERY titles - pure black */
+/* PUBLICATIONS and GALLERY titles */
 #publications-subtitle,
 #gallery-subtitle {
-    color: #000 !important;
-}
-
-#publications-subtitle i,
-#gallery-subtitle i {
-    color: #000 !important;
+    color: var(--h-title-color) !important;
 }
 
 section .main-body h4 {
@@ -636,10 +631,28 @@ section .main-body h4 {
     margin-top: 2rem;
 }
 
+/* Gallery section counter reset */
+#gallery {
+    counter-reset: gallery-counter;
+}
+
 .gallery-section h3 {
-    font-family: "TikTok Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-weight: 500;
-    margin-top: 4rem;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.65rem;
+    letter-spacing: 0.01em;
+    margin-top: 2.5rem;
+    counter-increment: gallery-counter;
+}
+
+.gallery-section h3::before {
+    content: counter(gallery-counter, decimal-leading-zero) "  —  ";
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--accent-color);
+    letter-spacing: 0.05em;
+    vertical-align: 0.25em;
 }
 
 /* Reduce margin-top for Scientific Visualization Work title */
@@ -649,11 +662,13 @@ section .main-body h4 {
 
 /* Style for subtitle in gallery headers */
 .gallery-section h3 .subtitle {
-    font-size: 0.75rem;
-    color: #888;
-    margin-left: 1rem;
-    font-weight: normal;
-    vertical-align: middle;
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    color: var(--muted);
+    margin-left: 0.75rem;
+    font-weight: 400;
+    vertical-align: 0.15em;
+    letter-spacing: 0.04em;
 }
 
 /* Increase spacing between sci viz gallery and next section */
@@ -663,8 +678,8 @@ section .main-body h4 {
 
 section .main-body{
     font-size: 1.1rem;
-    font-weight: 200;
-    line-height: 2.4rem;
+    font-weight: 350;
+    line-height: 1.65;
 }
 
 .scroll-reveal-init {
@@ -687,17 +702,15 @@ section .main-body{
 
 #home-subtitle {
     color: var(--text-primary) !important;
-    font-family: "Google Sans Flex", "Misans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "TikTok Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-weight: 400;
     font-size: 1.5rem;
-    font-stretch: semi-expanded;
     transition: all 0.3s ease;
     padding-right: 8rem;
 }
 
 #home-subtitle:hover {
     font-weight: 800;
-    font-stretch: expanded;
     transform: translateY(-1px);
 }
 
@@ -742,8 +755,9 @@ section .main-body{
 
 #avatar img {
     height: max(130px,min(200px,calc(100vw/6)));
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    border: 1px solid var(--border-color);
     margin-right: 2rem;
     margin-top: 1rem;
 }
@@ -837,91 +851,9 @@ footer .text-white-50 a:hover {
     text-decoration: underline;
 }
 
-/* Railway quote image entrance for K8525 */
+/* K8525 entrance click target */
 #k8525-entrance {
-    position: relative;
     cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.k8525-image-wrapper {
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-#k8525-entrance:hover .k8525-image-wrapper {
-    transform: scale(1.15);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.quote-cover-image {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-#k8525-entrance:hover .quote-cover-image {
-    filter: blur(3px) brightness(0.8);
-}
-
-/* Ensure quote-image-description is always visible */
-#k8525-entrance .quote-image-description {
-    position: relative;
-    display: block;
-    visibility: visible;
-    opacity: 1;
-    margin-top: 0.5rem;
-    font-size: 1rem;
-    font-weight: 300;
-    
-    text-align: center;
-    color: #bbbbbb;
-    transition: transform 0.3s ease, margin-top 0.3s ease;
-}
-
-#k8525-entrance:hover .quote-image-description {
-    transform: translateY(30px);
-    font-weight: 400;
-    text-shadow: #555;
-    color:#ededed;
-    margin-top: 0.3rem;
-}
-
-.k8525-entrance-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.4);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-#k8525-entrance:hover .k8525-entrance-overlay {
-    opacity: 1;
-}
-
-.k8525-entrance-text {
-    color: white;
-    font-size: 1.2rem;
-    font-weight: 600;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
 }
 
 /* Sciviz first image container (full width, outside masonry) */
@@ -932,7 +864,7 @@ footer .text-white-50 a:hover {
 #sciviz-first-image .pswp-image.sciviz-first-item {
     display: block;
     width: 100%;
-    border-radius: 12px;
+    border-radius: 3px;
     overflow: hidden;
 }
 
@@ -971,7 +903,7 @@ footer .text-white-50 a:hover {
     aspect-ratio: auto;
     min-height: auto;
     max-height: none;
-    border: 3px solid #fff;
+    border: 1px solid var(--border-color);
     background: #f0f0f0;
 }
 
@@ -984,43 +916,123 @@ footer .text-white-50 a:hover {
 
 /* First image also has border */
 #sciviz-first-image .pswp-image.sciviz-first-item {
-    border: 1.5px solid #fff;
+    border: 1px solid var(--border-color);
     background: #f0f0f0;
 }
 
-/* Style for sciviz note section */
+/* ===== sciviz-note section ===== */
 .sciviz-note {
     margin-top: 2rem;
-    margin-bottom: 10rem;
-    padding: 1rem 2rem;
-    text-align: center;
+    margin-bottom: 8rem;
+    padding: 0 2rem;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.sciviz-note p {
-    font-size: 1rem;
-    font-weight: 300; /* light weight */
-    margin: 0.5rem 0;
-    line-height: 1.6;
+.sciviz-tip-heading,
+.sciviz-links-heading {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-style: normal;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 2rem 0 0.75rem 0;
+    text-align: left;
+}
+.sciviz-tip-heading {
+    margin-top: 0;
 }
 
-/* Hover effect for sciviz-note links */
-.sciviz-note a {
-    color: #ff6b00; /* Blender orange color */
+.sciviz-tip {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--accent-color);
+    border-radius: 3px;
+    padding: 1rem 1.25rem;
+}
+
+.sciviz-tip p {
+    font-size: 0.95rem;
+    font-weight: 350;
+    line-height: 1.65;
+    margin: 0.35rem 0;
+    color: var(--text-primary);
+}
+
+.sciviz-tip a {
+    color: var(--accent-color);
     text-decoration: underline;
-    transition: all 0.4s ease;
-    display: inline-block;
-    transform-origin: center center;
+    transition: color 0.25s ease;
 }
 
-.sciviz-note a:hover {
-    color: #cc5500;
-    text-decoration: none;
-    font-size: 200%;
+.sciviz-tip a:hover {
+    color: var(--accent-hover);
+}
+
+/* ===== Resource link cards ===== */
+.sciviz-links {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.sciviz-link-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    background: var(--surface);
+    text-decoration: none !important;
+    color: var(--text-primary);
+    transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+    cursor: pointer;
+}
+
+.sciviz-link-card:hover {
+    border-color: var(--accent-color);
+    background: color-mix(in oklch, var(--accent-color) 6%, var(--surface));
+    transform: translateY(-1px);
+}
+
+.link-card-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.link-card-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.link-card-desc {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 350;
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+    .sciviz-note {
+        padding: 0 1rem;
+    }
+    .sciviz-links {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Hover effect for publications links */
 #publications-md a {
-    color: #1E90FF; /* Sky blue color */
+    color: var(--accent-color);
     text-decoration: underline;
     transition: all 0.4s ease;
     display: inline-block;
@@ -1028,9 +1040,90 @@ footer .text-white-50 a:hover {
 }
 
 #publications-md a:hover {
-    color: #0066CC;
+    color: var(--accent-hover);
     text-decoration: none;
     font-size: 180%;
+}
+
+/* ===== Publications card layout ===== */
+#publications-md ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#publications-md ul li {
+    list-style: none;
+}
+
+.pub-card {
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pub-card:last-child {
+    border-bottom: none;
+}
+
+.pub-card .pub-card-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+
+.pub-card .pub-card-authors {
+    font-size: 0.9rem;
+    font-weight: 350;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin-bottom: 0.2rem;
+}
+
+.pub-card .pub-card-authors strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.pub-card .pub-card-venue {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--muted, var(--text-tertiary));
+}
+
+.pub-card .pub-card-links {
+    margin-top: 0.4rem;
+}
+
+.pub-card .pub-card-links a {
+    font-family: var(--font-mono);
+    font-size: 0.8rem !important;
+    color: var(--accent-color);
+    text-decoration: none;
+    margin-right: 1rem;
+    transition: opacity 0.2s;
+}
+
+.pub-card .pub-card-links a:hover {
+    opacity: 0.7;
+    font-size: 0.8rem !important;
+}
+
+#publications-md h4 {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-tertiary);
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 /* Fade-in effect on scroll for gallery sections */
@@ -1049,8 +1142,8 @@ footer .text-white-50 a:hover {
 .railway-quote-container {
     display: flex;
     align-items: flex-start;
-    gap: 4rem;
-    margin-top: 4rem;
+    gap: 3rem;
+    margin-top: 2.5rem;
     margin-bottom: 2rem;
     padding-right: 0.8rem;
     padding-left: 0.5rem;
@@ -1060,7 +1153,7 @@ footer .text-white-50 a:hover {
 @media screen and (max-width: 768px) {
     .railway-quote-container {
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 2rem;
     }
     
     .railway-quote-text {
@@ -1073,53 +1166,157 @@ footer .text-white-50 a:hover {
         width: 100% !important;
         align-self: center;
     }
-    
-    .quote-cover-image {
-        max-height: 200px;
-        width: 100%;
-        object-fit: cover;
-    }
 }
 
+/* ===== Railway news timeline ===== */
 .railway-quote-text {
     flex: 2;
-    max-width: calc(100% - 300px); /* Take up space equivalent to two gallery images */
+    max-width: calc(100% - 320px);
 }
 
-.railway-quote-text p {
-    font-size: 1rem;
-    font-weight: 300; /* light weight */
-    margin: 0.5rem 0;
-    line-height: 2;
-    text-align: left;
+.timeline-header {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.railway-quote-text .quote-attribution {
-    font-style: italic;
-    text-align: right;
-    margin-top: 1rem;
+.railway-timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
 }
 
+.railway-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 4px;
+    bottom: 4px;
+    width: 1px;
+    background: var(--border-color);
+}
+
+.timeline-item {
+    position: relative;
+    padding: 0 0 0.8rem 1.8rem;
+    font-size: 0.9rem;
+    font-weight: 350;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    opacity: 0.6;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.timeline-item:hover::before {
+    opacity: 1;
+    transform: scale(1.3);
+}
+
+.timeline-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--accent-color);
+    display: block;
+    margin-bottom: 0.15rem;
+}
+
+.timeline-text {
+    color: var(--text-secondary);
+}
+
+/* ===== K8525 Entrance Card ===== */
 .railway-quote-image {
-    margin-top: 1rem;
     flex: 1;
-    max-width: 300px;
-    align-self: center;
+    max-width: 280px;
+    min-width: 220px;
+    align-self: flex-start;
 }
 
-.quote-cover-image {
+.k8525-entrance-card {
+    display: block;
+    text-decoration: none;
+    background: var(--surface, var(--bg-secondary));
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.k8525-entrance-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.k8525-card-image {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    position: relative;
+}
+
+.k8525-card-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
+    display: block;
+    transition: transform 0.4s ease;
 }
 
-.quote-image-description {
-    font-size: 1rem;
-    font-weight: 300; /* light weight */
-    text-align: center;
-    margin-top: 0.5rem;
-    color: #666;
+.k8525-entrance-card:hover .k8525-card-image img {
+    transform: scale(1.05);
+}
+
+.k8525-card-body {
+    padding: 0.8rem 1rem 1rem;
+}
+
+.k8525-card-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-color);
+    margin-bottom: 0.3rem;
+}
+
+.k8525-card-title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 0.2rem;
+}
+
+.k8525-card-desc {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 350;
+    color: var(--text-tertiary);
 }
 
 /* PhotoSwipe gallery styles */
@@ -1162,17 +1359,16 @@ footer .text-white-50 a:hover {
 
 .pswp-image {
     display: inline-block !important;
-    border-radius: 12px;
+    border-radius: 3px;
     overflow: hidden;
-    border: 1.5px solid #ffffff10;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease;
     background: #f0f0f000;
 }
 
 .pswp-image:hover {
     transform: scale(0.98);
     transition: all 0.4s ease;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .pswp-image img {
@@ -1189,10 +1385,11 @@ footer .text-white-50 a:hover {
     height: auto;
 }
 
-/* Railway gallery: featured images (4x size) */
+/* Railway gallery: featured images (2x width, same height) */
 #railway-gallery .pswp-image.featured {
     flex: 2 1 calc(66.666% - 12px);
     max-width: calc(66.666% - 12px);
+    aspect-ratio: 8 / 3;
 }
 
 /* Plants gallery: 180x180px thumbnails */
@@ -1200,6 +1397,15 @@ footer .text-white-50 a:hover {
     width: 180px;
     height: 180px;
     flex-shrink: 0;
+}
+
+.railway-camera-info {
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 8rem;
+    font-size: 0.85rem;
+    color: #888;
+    font-style: italic;
 }
 
 /* Hover effect for Railway and Plants galleries */

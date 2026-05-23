@@ -185,6 +185,100 @@ window.addEventListener('DOMContentLoaded', event => {
     // Marked
     marked.use({ mangle: false, headerIds: false })
 
+    // Restructure publications markdown list items into card layout
+    function restructurePublications() {
+        var pubContainer = document.getElementById('publications-md');
+        if (!pubContainer) return;
+
+        var allLists = pubContainer.querySelectorAll('ul');
+        allLists.forEach(function(ul) {
+            var items = ul.querySelectorAll('li');
+            items.forEach(function(li) {
+                var html = li.innerHTML.trim();
+                if (!html) return;
+
+                var strongRegex = /<strong>(.*?)<\/strong>/g;
+                var strongMatches = [];
+                var match;
+                while ((match = strongRegex.exec(html)) !== null) {
+                    strongMatches.push(match);
+                }
+
+                var authorPart = '';
+                var titlePart = '';
+                var venuePart = '';
+                var linksPart = '';
+
+                if (strongMatches.length > 0) {
+                    var nonEmptyStrongs = strongMatches.filter(function(m) { return m[1].trim().length > 0; });
+
+                    if (nonEmptyStrongs.length >= 2) {
+                        var lastStrong = nonEmptyStrongs[nonEmptyStrongs.length - 1];
+                        venuePart = lastStrong[1].trim();
+                        var beforeJournal = html.substring(0, lastStrong.index);
+                        linksPart = html.substring(lastStrong.index + lastStrong[0].length);
+
+                        var yearMatch = beforeJournal.match(/\((\d{4})\)\.\s*/);
+                        if (yearMatch) {
+                            authorPart = beforeJournal.substring(0, yearMatch.index + yearMatch[0].length).trim();
+                            titlePart = beforeJournal.substring(yearMatch.index + yearMatch[0].length).trim();
+                        } else {
+                            authorPart = beforeJournal.trim();
+                        }
+                    } else {
+                        var ym = html.match(/\((\d{4})\)\.\s*/);
+                        if (ym) {
+                            authorPart = html.substring(0, ym.index + ym[0].length).trim();
+                            titlePart = html.substring(ym.index + ym[0].length).trim();
+                        } else {
+                            authorPart = html;
+                        }
+                    }
+                } else {
+                    authorPart = html;
+                }
+
+                titlePart = titlePart.replace(/^[.\s]+/, '').replace(/[.\s]+$/, '').trim();
+                authorPart = authorPart.replace(/^[.\s]+/, '').replace(/[.\s]+$/, '').trim();
+                linksPart = linksPart.replace(/^[.\s]+/, '').trim();
+
+                var card = document.createElement('div');
+                card.className = 'pub-card';
+
+                if (titlePart) {
+                    var titleEl = document.createElement('div');
+                    titleEl.className = 'pub-card-title';
+                    titleEl.textContent = titlePart;
+                    card.appendChild(titleEl);
+                }
+
+                if (authorPart) {
+                    var authorEl = document.createElement('div');
+                    authorEl.className = 'pub-card-authors';
+                    authorEl.innerHTML = authorPart;
+                    card.appendChild(authorEl);
+                }
+
+                if (venuePart) {
+                    var venueEl = document.createElement('div');
+                    venueEl.className = 'pub-card-venue';
+                    venueEl.textContent = venuePart;
+                    card.appendChild(venueEl);
+                }
+
+                if (linksPart) {
+                    var linksEl = document.createElement('div');
+                    linksEl.className = 'pub-card-links';
+                    linksEl.innerHTML = linksPart;
+                    card.appendChild(linksEl);
+                }
+
+                li.innerHTML = '';
+                li.appendChild(card);
+            });
+        });
+    }
+
     Promise.all(section_names.map(name => {
         return fetch(content_dir + name + '.md')
             .then(response => response.text())
@@ -194,6 +288,8 @@ window.addEventListener('DOMContentLoaded', event => {
             })
             .catch(error => console.log(error));
     })).then(() => {
+        // Restructure publications into card layout
+        restructurePublications();
         // MathJax
         MathJax.typeset();
         // Setup scroll animation after content is loaded

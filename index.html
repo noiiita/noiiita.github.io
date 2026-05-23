@@ -86,11 +86,6 @@
 
     <!-- Google fonts-->
     <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,600;1,600&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,300;1,500;1,600;1,700&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;1,400&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@600;800&amp;display=swap" rel="stylesheet" />
     
     <!-- Misans Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -306,7 +301,7 @@
     <section class="bg-gradient-primary-to-secondary-gray mt5 md5" id="publications">
         <div class="container px-5">
             <header>
-                <h2 id="publications-subtitle"><i class="bi bi-file-text-fill"></i>&nbsp;PUBLICATIONS</h2>
+                <h2 id="publications-subtitle">PUBLICATIONS</h2>
             </header>
             <div class="main-body" id="publications-md"></div>
 
@@ -318,7 +313,7 @@
     <section class="bg-gradient-primary-to-secondary-light mt5 md5" id="gallery">
         <div class="container px-5">
             <header>
-                <h2 id="gallery-subtitle"><i class="bi bi-images"></i>&nbsp;GALLERY</h2>
+                <h2 id="gallery-subtitle">GALLERY</h2>
             </header>
 
             <!-- Scientific Visualization -->
@@ -388,12 +383,34 @@
                 </div>
                 
                 <div class="sciviz-note">
-                    <p>推荐使用开源三维图形软件<a href="https://www.blender.org/" target="_blank">Blender</a>来完成建模和渲染 😚 </p>
-                    <p>I recommend using the open-source 3D graphics software <a href="https://www.blender.org/" target="_blank">Blender</a> for modeling and rendering.</p>
-                    <p><a href="https://www.chemblender.com/" target="_blank">🔗ChemBlender (分子建模插件)</a> </p>
-                    <p><a href="https://space.bilibili.com/1095345213" target="_blank">🔗Blender科研绘图-bilibili (科研绘图案例&教程)</a></p>
-                    <p><a href="https://sketchfab.com/" target="_blank">🔗Sketchfab (模型素材下载)</a> </p>
-                    <p><a href="https://www.blenderkit.com/" target="_blank">🔗BlnderKit (插件-Blender材质模型库)</a> </p>
+                    <p class="sciviz-tip-heading">💡 Tips</p>
+                    <div class="sciviz-tip">
+                        <p>推荐使用开源三维图形软件 <a href="https://www.blender.org/" target="_blank">Blender</a> 来完成建模和渲染 😚</p>
+                        <p>I recommend using the open-source 3D graphics software <a href="https://www.blender.org/" target="_blank">Blender</a> for modeling and rendering.</p>
+                    </div>
+                    <p class="sciviz-links-heading">🔗 Useful Resources</p>
+                    <div class="sciviz-links">
+                        <a href="https://www.chemblender.com/" target="_blank" class="sciviz-link-card">
+                            <span class="link-card-icon">🧬</span>
+                            <span class="link-card-title">ChemBlender</span>
+                            <span class="link-card-desc">Blender 分子建模插件</span>
+                        </a>
+                        <a href="https://space.bilibili.com/1095345213" target="_blank" class="sciviz-link-card">
+                            <span class="link-card-icon">🎬</span>
+                            <span class="link-card-title">Blender 科研绘图</span>
+                            <span class="link-card-desc">bilibili 科研绘图案例与教程</span>
+                        </a>
+                        <a href="https://sketchfab.com/" target="_blank" class="sciviz-link-card">
+                            <span class="link-card-icon">🗿</span>
+                            <span class="link-card-title">Sketchfab</span>
+                            <span class="link-card-desc">三维模型素材下载</span>
+                        </a>
+                        <a href="https://www.blenderkit.com/" target="_blank" class="sciviz-link-card">
+                            <span class="link-card-icon">🧰</span>
+                            <span class="link-card-title">BlenderKit</span>
+                            <span class="link-card-desc">材质模型库插件</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -411,23 +428,41 @@
                 </header>
                 <div class="railway-quote-container">
                     <div class="railway-quote-text">
-                        <p>News: </p>
-                        <p>2026.4.8 - 武汉市开通普速环线列车 全程票价6元</p>
-                        <p>2026.3.31 - 成渝中线全线桥梁合龙 预留提速至400km/h条件</p>
-                        <p>2026.2.2 - CR450动车组试验考核里程过半</p>
-                        <p>2025.12.30 - 合新高铁安徽段开通 新合肥西站启用</p>
-                        <p>2025.12.26 - 合肥地铁6号线开通</p>
-                        <p></p>  
-                        
+                        <p class="timeline-header">News</p>
+                        <ul class="railway-timeline">
+                            <li class="timeline-item">
+                                <span class="timeline-date">2026.4.8</span>
+                                <span class="timeline-text">武汉市开通普速环线列车 全程票价6元</span>
+                            </li>
+                            <li class="timeline-item">
+                                <span class="timeline-date">2026.3.31</span>
+                                <span class="timeline-text">成渝中线全线桥梁合龙 预留提速至400km/h条件</span>
+                            </li>
+                            <li class="timeline-item">
+                                <span class="timeline-date">2026.2.2</span>
+                                <span class="timeline-text">CR450动车组试验考核里程过半</span>
+                            </li>
+                            <li class="timeline-item">
+                                <span class="timeline-date">2025.12.30</span>
+                                <span class="timeline-text">合新高铁安徽段开通 新合肥西站启用</span>
+                            </li>
+                            <li class="timeline-item">
+                                <span class="timeline-date">2025.12.26</span>
+                                <span class="timeline-text">合肥地铁6号线开通</span>
+                            </li>
+                        </ul>
                     </div>
                     <div class="railway-quote-image" id="k8525-entrance">
-                        <div class="k8525-image-wrapper">
-                            <img src="static/assets/gallery/railway/cover.jpg" alt="铁路风景" class="quote-cover-image">
-                            <div class="k8525-entrance-overlay">
-                                <span class="k8525-entrance-text">了解K8525次列车</span>
+                        <div class="k8525-entrance-card">
+                            <div class="k8525-card-image">
+                                <img src="static/assets/gallery/railway/cover.jpg" alt="铁路风景" class="quote-cover-image">
+                            </div>
+                            <div class="k8525-card-body">
+                                <span class="k8525-card-label">Photo Essay</span>
+                                <span class="k8525-card-title">K8525 合肥—芜湖</span>
+                                <span class="k8525-card-desc">庐铜线上的绿皮记忆</span>
                             </div>
                         </div>
-                        <p class="quote-image-description">K8525 合肥—芜湖</p>
                     </div>
                 </div>
                 
@@ -569,6 +604,7 @@
             </div>
 
             <!-- Plants -->
+            <div class="railway-camera-info">📸 Nikon Z30 DX50-250</div>
             <div class="gallery-section fade-on-scroll early-trigger" id="plants">
                 <div id="potplants"></div> <!-- Anchor for potplants link -->
                 <header>
