@@ -1,11 +1,11 @@
 
 [🔗Google Scholar](https://scholar.google.com/citations?user=4-Rvxc4AAAAJ&hl=en)
-#### In progress
+#### in progress
 
 - <strong>R. Luo</strong>, Z. Zhang, et al., X. Zheng*, W. Chen*. Polycation-enhanced Phase Separation for High-capacity Zinc-halogen Battery. <strong> </strong> 
 
 
-#### Published
+#### published
 
 - <strong>R. Luo</strong>, X. Zheng, T. Jiang, D. Shen, et al., W. Chen* (2025). Reshaping Electrical Double Layer via Synergistic Dual Additives for Ah-Level Zinc Battery. <strong>Advanced Energy Materials</strong>. [[Paper]](https://www.researchgate.net/publication/392533069_Reshaping_Electrical_Double_Layer_via_Synergistic_Dual_Additives_for_Ah-Level_Zinc_Battery)
 

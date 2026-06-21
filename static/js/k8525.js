@@ -1,5 +1,7 @@
 // K8525 Photo Essay - Refactored Implementation
 (function() {
+    var reduceMotion = window.__reducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const initK8525PhotoEssay = () => {
         const entrance = document.getElementById('k8525-entrance');
         const photoEssay = document.getElementById('k8525-photo-essay');
@@ -100,6 +102,14 @@
         const setupScrollListener = () => {
             textLayer.addEventListener('scroll', (e) => {
                 if (isAnimating || exitTriggered) return;
+
+                if (reduceMotion) {
+                    var textEls = textLayer.querySelectorAll('.k8525-text-content');
+                    textEls.forEach(function(content) {
+                        content.className = 'k8525-text-content';
+                    });
+                    return;
+                }
                 
                 const scrollTop = textLayer.scrollTop;
                 const direction = scrollTop > lastScrollTop ? 'down' : 'up';

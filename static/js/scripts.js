@@ -2,6 +2,9 @@ const content_dir = 'contents/'
 const config_file = 'config.yml'
 const section_names = ['home', 'publications', 'gallery']
 
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+window.__reducedMotion = prefersReducedMotion;
+
 
 window.addEventListener('DOMContentLoaded', event => {
 
@@ -731,6 +734,10 @@ window.addEventListener('DOMContentLoaded', event => {
     const publicationsSection = document.getElementById('publications');
 
     function handleScroll() {
+        if (prefersReducedMotion) {
+            if (videoBackground) videoBackground.style.opacity = '1';
+            return;
+        }
         if (!homeSection || !videoBackground || !publicationsSection) return;
         
         const scrollY = window.scrollY;
@@ -1027,6 +1034,11 @@ window.addEventListener('DOMContentLoaded', event => {
 
         gsap.registerPlugin(ScrollTrigger);
 
+        if (prefersReducedMotion) {
+            console.log('setupScrollAnimation: reduced motion, skipping GSAP animations');
+            return;
+        }
+
         const sections = [
             { selector: '.home-section-with-video-bg', containerId: 'home-md' },
             { selector: '#publications', containerId: 'publications-md' }
@@ -1071,6 +1083,34 @@ window.addEventListener('DOMContentLoaded', event => {
             });
         });
     }
+
+    function setupPubCardReveal() {
+        if (prefersReducedMotion) return;
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+        const pubCards = document.querySelectorAll('.pub-card');
+        if (pubCards.length === 0) return;
+
+        pubCards.forEach((card, i) => {
+            gsap.fromTo(card,
+                { opacity: 0, y: 32 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.7,
+                    delay: i * 0.08,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 92%',
+                        toggleActions: 'play none none none'
+                    }
+                }
+            );
+        });
+    }
+
+    setupPubCardReveal();
 
     // Home subtitle letter hover effect
     function setupHomeSubtitleEffect() {
@@ -1450,6 +1490,12 @@ window.addEventListener('DOMContentLoaded', event => {
         
         if (!heroName || !heroSection) {
             console.log('New hero name or section not found');
+            return;
+        }
+
+        if (prefersReducedMotion) {
+            console.log('Magnetic hero effect: reduced motion, skipping');
+            heroName.style.opacity = '1';
             return;
         }
         

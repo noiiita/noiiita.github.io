@@ -3,6 +3,8 @@
 
     console.log('Gallery Loader initialized');
 
+    var reduceMotion = window.__reducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     var videoEl = document.querySelector('.top-section-video');
     var galleryLoadingStarted = false;
     var scrollAnimator = null;
@@ -205,6 +207,16 @@
 
     GalleryScrollAnimator.prototype._update = function() {
         this.ticking = false;
+
+        if (reduceMotion) {
+            this.elements.forEach(function(el) {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+                el.classList.remove('gallery-entrance-anim');
+            });
+            this.elements = [];
+            return;
+        }
 
         var vh = window.innerHeight;
         var scrollDist = SCROLL_DISTANCE;

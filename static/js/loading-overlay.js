@@ -13,6 +13,11 @@
     var heroAnimationReady = false;
     window.heroAnimationReady = false;
 
+    var reduceMotion = window.__reducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+        MIN_DISPLAY_TIME = 300;
+    }
+
     function init() {
         loadingOverlay = document.getElementById('loading-overlay');
         heroLetter = document.querySelector('.new-hero-letter');
@@ -27,13 +32,19 @@
         loadingLetters = loadingOverlay.querySelectorAll('.loading-letter');
 
         // 依次显示 loading-letter
-        setTimeout(function() {
-            loadingLetters.forEach(function(letter, index) {
-                setTimeout(function() {
-                    letter.classList.add('visible');
-                }, index * 30);
+        if (reduceMotion) {
+            loadingLetters.forEach(function(letter) {
+                letter.classList.add('visible');
             });
-        }, 100);
+        } else {
+            setTimeout(function() {
+                loadingLetters.forEach(function(letter, index) {
+                    setTimeout(function() {
+                        letter.classList.add('visible');
+                    }, index * 30);
+                });
+            }, 100);
+        }
 
         if (!heroLetter) {
             console.warn('[Loading Overlay] Hero letter not found');

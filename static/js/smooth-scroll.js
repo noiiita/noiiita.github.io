@@ -45,6 +45,12 @@
     };
 
     SmoothScroll.prototype.scrollToElement = function(element) {
+        var reduceMotion = window.__reducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion) {
+            element.scrollIntoView({ behavior: 'instant' });
+            return;
+        }
+
         var targetPosition = element.getBoundingClientRect().top + window.scrollY;
         var startPosition = window.scrollY;
         var distance = targetPosition - startPosition;
