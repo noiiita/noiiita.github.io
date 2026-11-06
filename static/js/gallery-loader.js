@@ -235,6 +235,14 @@
                 var rect = el.getBoundingClientRect();
                 var elCenter = rect.top + rect.height / 2;
 
+                // The first Scientific Visualization figure is tall and full-width,
+                // so anchoring progress at its center keeps it invisible far too long
+                // (the section title reaches mid-screen first). Anchor nearer the top
+                // edge to trigger its entrance earlier.
+                if (el.closest && el.closest('#sciviz-first-image')) {
+                    elCenter = rect.top + rect.height * 0.3;
+                }
+
                 var startY = vh + params.randomOffset;
                 var endY = vh - scrollDist + params.randomOffset;
 

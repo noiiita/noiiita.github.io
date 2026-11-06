@@ -302,6 +302,8 @@ window.addEventListener('DOMContentLoaded', event => {
         } else {
             console.error('GSAP or ScrollTrigger not available');
         }
+        // Per-block home section scroll dissolve (needs the loaded markdown blocks)
+        setupHomeSectionFade();
     });
 
     // Simple custom lightbox implementation
@@ -962,7 +964,7 @@ window.addEventListener('DOMContentLoaded', event => {
                     data: {
                         labels: ['高速铁路', '普速铁路'],
                         datasets: [{
-                            data: [6758, 3378],
+                            data: [6758, 3617],
                             backgroundColor: ['#af4949ff', '#4b8f5aff'],
                             borderColor: ['#b03434ff', '#176929ff'],
                             borderWidth: 1,
@@ -975,7 +977,7 @@ window.addEventListener('DOMContentLoaded', event => {
                         maintainAspectRatio: false,
                         cutout: '72%',
                         layout: { padding: basePadding },
-                        _centerTitle: { big: '10136 km', small: '总运转里程' },
+                        _centerTitle: { big: '10375 km', small: '总运转里程' },
                         plugins: {
                             legend: { display: false },
                             tooltip: { callbacks: { label: tooltipCb } }
@@ -1040,7 +1042,6 @@ window.addEventListener('DOMContentLoaded', event => {
         }
 
         const sections = [
-            { selector: '.home-section-with-video-bg', containerId: 'home-md' },
             { selector: '#publications', containerId: 'publications-md' }
         ];
 
@@ -1733,11 +1734,155 @@ window.addEventListener('DOMContentLoaded', event => {
         console.log('Event listeners added to section element');
     }
 
+    // Hero name scroll dissolve — as the name exits the top of the page on scroll
+    // it fades, blurs and widens its letter-spacing, dissolving naturally like the
+    // home-section text does when it fades in.
+    function setupHeroScrollFade() {
+        const heroName = document.querySelector('.new-hero-letter');
+        if (!heroName || prefersReducedMotion) return;
+
+        const MAX_BLUR = 12;        // px
+        const MAX_TRACKING = 0.4;   // em
+
+        let nameTopDoc = 0;
+        let nameHeight = 1;
+        let ticking = false;
+
+        function measure() {
+            const rect = heroName.getBoundingClientRect();
+            nameTopDoc = rect.top + (window.scrollY || window.pageYOffset || 0);
+            nameHeight = rect.height || 1;
+        }
+
+        function update() {
+            ticking = false;
+            const scrollY = window.scrollY || window.pageYOffset || 0;
+            const vh = window.innerHeight;
+            // Current viewport top of the name.
+            const rectTop = nameTopDoc - scrollY;
+            // Only start dissolving once the name is near the top of the viewport.
+            const startY = vh * 0.15;
+            const endY = -nameHeight;
+            const span = startY - endY;
+            let p = span > 0 ? (startY - rectTop) / span : 1;
+            p = Math.max(0, Math.min(1, p));
+            // Ease-in: stays crisp until it is close to the top, then dissolves.
+            const progress = p * p;
+
+            heroName.style.transition = 'none';
+            heroName.style.opacity = String(1 - progress);
+            heroName.style.filter = progress > 0.001
+                ? 'blur(' + (progress * MAX_BLUR).toFixed(2) + 'px)'
+                : '';
+            heroName.style.letterSpacing = progress > 0.001
+                ? (progress * MAX_TRACKING).toFixed(3) + 'em'
+                : '';
+        }
+
+        function onScroll() {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(update);
+        }
+
+        window.addEventListener('resize', function () { measure(); onScroll(); }, { passive: true });
+        window.addEventListener('scroll', onScroll, { passive: true });
+
+        measure();
+        update();
+    }
+
+    // Home section text scroll dissolve — per block, so the topmost line leaves
+    // (fades + blurs + widens its tracking + dissolves its frosted band) first,
+    // then the following blocks in order. Blocks already scrolled past are skipped.
+    function setupHomeSectionFade() {
+        const section = document.querySelector('.home-section-with-video-bg');
+        if (!section || prefersReducedMotion) return;
+        if (section.dataset.homeFadeBound === '1') return;
+        section.dataset.homeFadeBound = '1';
+
+        const MAX_BLUR = 10;        // px
+        const MAX_TRACKING = 0.35;  // em
+
+        const items = [];
+        let ticking = false;
+
+        function measure() {
+            const scrollY = window.scrollY || window.pageYOffset || 0;
+            items.forEach(function (item) {
+                const r = item.el.getBoundingClientRect();
+                item.absTop = r.top + scrollY;
+            });
+        }
+
+        function collect() {
+            items.length = 0;
+            const header = section.querySelector('header');
+            if (header) {
+                header.querySelectorAll('.home-video-note, #home-subtitle').forEach(function (el) {
+                    items.push({ el: el, base: el.id === 'home-subtitle' ? 0.06 : 0.05, entry: false, last: '' });
+                });
+            }
+            section.querySelectorAll('#home-md > p, #home-md > h4').forEach(function (el) {
+                items.push({ el: el, base: el.tagName === 'H4' ? 0.05 : 0.04, entry: true, last: '' });
+            });
+            measure();
+        }
+
+        function update() {
+            ticking = false;
+            const scrollY = window.scrollY || window.pageYOffset || 0;
+            const vh = window.innerHeight;
+
+            items.forEach(function (item) {
+                const el = item.el;
+                const rectTop = item.absTop - scrollY;
+
+                // Exit: only dissolve once the block is near the top of the viewport.
+                let exitP = (vh * 0.15 - rectTop) / (vh * 0.30);
+                exitP = exitP < 0 ? 0 : exitP > 1 ? 1 : exitP;
+
+                // Entry (body blocks only): gentle reveal from the bottom.
+                let entryOpacity = 1;
+                if (item.entry) {
+                    let entryP = (vh * 0.9 - rectTop) / (vh * 0.3);
+                    entryP = entryP < 0 ? 0 : entryP > 1 ? 1 : entryP;
+                    entryOpacity = 0.25 + 0.75 * entryP;
+                }
+
+                const key = Math.round(entryOpacity * 100) + '|' + Math.round(exitP * 100);
+                if (key === item.last) return;   // skip unchanged frames
+                item.last = key;
+
+                el.style.opacity = String(Math.min(entryOpacity, 1 - exitP));
+                el.style.filter = exitP > 0.02
+                    ? 'blur(' + (exitP * MAX_BLUR).toFixed(2) + 'px)'
+                    : '';
+                el.style.letterSpacing = (item.base + exitP * MAX_TRACKING).toFixed(3) + 'em';
+                // Frosted band clears a little ahead of the text.
+                el.style.setProperty('--band-fade', Math.max(0, 1 - exitP * 1.15).toFixed(3));
+            });
+        }
+
+        function onScroll() {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(update);
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', function () { measure(); onScroll(); }, { passive: true });
+
+        collect();
+        update();
+    }
+
     // Initialize all effects
     setupScrollAnimation();
     // setupHomeSubtitleEffect(); // Disabled to test CSS hover
     setupHeroNameEffect();
     setupTestHeroNameEffect();
     setupNewHeroNameEffect();
+    setupHeroScrollFade();
 
 });
